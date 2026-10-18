@@ -11,6 +11,8 @@ export interface AiProfile {
   bluff: number;
   /** Willingness to call down with marginal equity. */
   stickiness: number;
+  /** Spell temperament: base probability of using each spell when its conditions are met. */
+  magic: { cinder: number; unmask: number; briar: number; fate: number };
 }
 
 export const PROFILES: Record<string, AiProfile> = {
@@ -22,6 +24,7 @@ export const PROFILES: Record<string, AiProfile> = {
     aggression: 0.85,
     bluff: 0.3,
     stickiness: 0.3,
+    magic: { cinder: 0.85, unmask: 0.35, briar: 0.3, fate: 0.45 },
   },
   oracle: {
     id: 'oracle',
@@ -31,6 +34,7 @@ export const PROFILES: Record<string, AiProfile> = {
     aggression: 0.3,
     bluff: 0.08,
     stickiness: 0.8,
+    magic: { cinder: 0.4, unmask: 0.8, briar: 0.25, fate: 0.7 },
   },
   corvin: {
     id: 'corvin',
@@ -40,5 +44,6 @@ export const PROFILES: Record<string, AiProfile> = {
     aggression: 0.5,
     bluff: 0.05,
     stickiness: 0.15,
+    magic: { cinder: 0.4, unmask: 0.5, briar: 0.75, fate: 0.35 },
   },
 };

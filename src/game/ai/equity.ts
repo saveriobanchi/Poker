@@ -17,8 +17,10 @@ export function estimateEquity(
   minPercentile: number[],
   iterations: number,
   rng: Rng,
+  /** Per opponent: a hole card this player legitimately knows (via Unmask), or null. */
+  knownCards: (Card | null)[] = [],
 ): number {
-  const known = new Set([...hole, ...board]);
+  const known = new Set([...hole, ...board, ...knownCards.filter((c): c is Card => c !== null)]);
   const unseen: Card[] = [];
   for (let c = 0; c < 52; c++) if (!known.has(c)) unseen.push(c);
   const missing = 5 - board.length;
@@ -34,7 +36,13 @@ export function estimateEquity(
       return pool[used++];
     };
     const oppHands: Card[][] = [];
-    for (const minPct of minPercentile) {
+    for (let o = 0; o < minPercentile.length; o++) {
+      const minPct = minPercentile[o];
+      const fixed = knownCards[o] ?? null;
+      if (fixed !== null) {
+        oppHands.push([fixed, take()]);
+        continue;
+      }
       let a = take();
       let b = take();
       for (let tries = 0; tries < 12 && preflopPercentile(a, b) < minPct; tries++) {

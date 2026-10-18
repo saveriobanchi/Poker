@@ -3,6 +3,7 @@
  * the board, stacks and the public action log. It never sees the deck or other
  * seats' hidden cards (design bible §4, §6 fairness invariant).
  */
+import type { Card } from '../rules/cards';
 import type { LegalActions, PlayerAction, PublicView } from '../rules/engine';
 import { Rng } from '../rules/rng';
 import { estimateEquity } from './equity';
@@ -52,11 +53,19 @@ export function inferRange(view: PublicView, seat: number): number {
   return pct;
 }
 
-export function decide(view: PublicView, profile: AiProfile, rng: Rng): PlayerAction {
+/**
+ * @param known opponent cards this seat legitimately learned (Unmask), never anything else.
+ */
+export function decide(
+  view: PublicView,
+  profile: AiProfile,
+  rng: Rng,
+  known: { seat: number; card: Card }[] = [],
+): PlayerAction {
   const legal = view.legal;
   const me = view.seats[view.viewer];
   if (!legal || !me.hole) throw new Error('AI asked to act when it is not its turn');
-  return view.street === 'preflop' ? preflop(view, profile, legal, rng) : postflop(view, profile, legal, rng);
+  return view.street === 'preflop' ? preflop(view, profile, legal, rng) : postflop(view, profile, legal, rng, known);
 }
 
 function preflop(view: PublicView, p: AiProfile, legal: LegalActions, rng: Rng): PlayerAction {
@@ -95,13 +104,28 @@ function preflop(view: PublicView, p: AiProfile, legal: LegalActions, rng: Rng):
   return passive(legal);
 }
 
-function postflop(view: PublicView, p: AiProfile, legal: LegalActions, rng: Rng): PlayerAction {
+/** Postflop equity against inferred ranges, honoring legitimately known cards. */
+export function postflopEquity(view: PublicView, rng: Rng, known: { seat: number; card: Card }[] = []): number {
   const me = view.seats[view.viewer];
   const opponents = view.seats
     .map((s, i) => i)
     .filter((i) => i !== view.viewer && view.seats[i].inHand && !view.seats[i].folded);
   const ranges = opponents.map((i) => inferRange(view, i));
-  const equity = estimateEquity(me.hole!, view.board, ranges, POSTFLOP_ITERATIONS, rng);
+  const fixed = opponents.map((i) => known.find((k) => k.seat === i)?.card ?? null);
+  return estimateEquity(me.hole!, view.board, ranges, POSTFLOP_ITERATIONS, rng, fixed);
+}
+
+function postflop(
+  view: PublicView,
+  p: AiProfile,
+  legal: LegalActions,
+  rng: Rng,
+  known: { seat: number; card: Card }[],
+): PlayerAction {
+  const opponents = view.seats
+    .map((s, i) => i)
+    .filter((i) => i !== view.viewer && view.seats[i].inHand && !view.seats[i].folded);
+  const equity = postflopEquity(view, rng, known);
   const fair = 1 / (opponents.length + 1);
   const strength = (equity - fair) / (1 - fair);
   const pot = view.seats.reduce((sum, s) => sum + s.totalCommitted, 0);

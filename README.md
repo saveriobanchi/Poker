@@ -3,7 +3,7 @@
 A mobile-first, single-player, dark-fantasy poker roguelike built on real
 three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth and life.
 
-- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v0.3)
+- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v0.4), art: [`docs/art-bible.md`](docs/art-bible.md)
 - Rule departures: [`docs/poker-rules-exceptions.md`](docs/poker-rules-exceptions.md)
 - History: [`docs/change-log.md`](docs/change-log.md)
 
@@ -13,13 +13,19 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
 - **P1 — Playable 4-seat table:** done. You against three AI rivals in the phone
   browser (`src/game/ai/`, `src/game/table/`, `src/ui/`), with save/resume after
   every action.
+- **P2 — Magic kernel:** done. Spellbooks, Aether, the four spells with legal
+  windows and public tells, rivals that cast, real card art, portraits, sounds
+  (`src/game/magic/`, `src/game/ai/magic.ts`).
 
 ```sh
 npm install
 npm run dev        # play at http://localhost:5173 (also reachable from a phone on the same Wi-Fi)
 npm test           # unit tests, AI tests, 10,000-hand simulation
 npm run build      # production build in dist/
+npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
+
+Third-party art and fonts are listed in [`CREDITS.md`](CREDITS.md).
 
 ### Playing on an iPhone
 
@@ -60,7 +66,7 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P2
+## Next: P3
 
-The magic kernel: separate Spellbooks, Aether, legal casting windows, the first four
-spells, visible magic tells. It waits on ChatGPT's answers in `docs/briefs/001`.
+Life and consequences: the zero-chip interrupt, the Last Claim scene, funded
+covenants, and the Fallen state. It waits on ChatGPT's answers in `docs/briefs/002`.

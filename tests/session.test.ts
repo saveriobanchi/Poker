@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  applyHumanAction,
+  applyHumanCommand,
   createDefaultSession,
   KeyValueStore,
   loadSession,
@@ -28,9 +28,10 @@ function playOutHand(s: TableSession): TableSession {
   for (let guard = 0; guard < 200; guard++) {
     const status = sessionStatus(s);
     if (status === 'aiToAct') s = stepAi(s);
+    else if (status === 'humanWindow') s = applyHumanCommand(s, { kind: 'pass' });
     else if (status === 'humanToAct') {
-      const legal = getLegalActions(s.hand)!;
-      s = applyHumanAction(s, legal.canCheck ? { type: 'check' } : { type: 'call' });
+      const legal = getLegalActions(s.table.hand)!;
+      s = applyHumanCommand(s, { kind: 'act', action: legal.canCheck ? { type: 'check' } : { type: 'call' } });
     } else return s;
   }
   throw new Error('hand did not finish');
@@ -41,9 +42,9 @@ describe('table session', () => {
     let s = createDefaultSession(123);
     const buttons: number[] = [];
     for (let i = 0; i < 12 && sessionStatus(s) !== 'humanBusted' && sessionStatus(s) !== 'tableWon'; i++) {
-      buttons.push(s.hand.button);
+      buttons.push(s.table.hand.button);
       s = playOutHand(s);
-      expect(s.hand.seats.reduce((a, p) => a + p.stack, 0)).toBe(410);
+      expect(s.table.hand.seats.reduce((a, p) => a + p.stack, 0)).toBe(410);
       expect(s.history.at(-1)!.handNumber).toBe(s.handNumber);
       if (sessionStatus(s) === 'handComplete') s = startNextHand(s);
     }
@@ -76,7 +77,7 @@ describe('table session', () => {
     const store = memoryStore();
     saveSession(store, createDefaultSession(1));
     const data = JSON.parse(store.data.get(SAVE_KEY)!);
-    data.hand.seats[0].stack += 50;
+    data.table.hand.seats[0].stack += 50;
     store.setItem(SAVE_KEY, JSON.stringify(data));
     expect(loadSession(store)).toBeNull();
     store.setItem(SAVE_KEY, '{not json');
@@ -90,12 +91,13 @@ describe('table session', () => {
     for (let guard = 0; guard < 20_000 && sessionStatus(s) !== 'humanBusted' && sessionStatus(s) !== 'tableWon'; guard++) {
       const status = sessionStatus(s);
       if (status === 'aiToAct') s = stepAi(s);
-      else if (status === 'humanToAct') s = applyHumanAction(s, { type: 'allIn' });
+      else if (status === 'humanWindow') s = applyHumanCommand(s, { kind: 'pass' });
+      else if (status === 'humanToAct') s = applyHumanCommand(s, { kind: 'act', action: { type: 'allIn' } });
       else s = startNextHand(s);
     }
     expect(['humanBusted', 'tableWon']).toContain(sessionStatus(s));
     if (sessionStatus(s) === 'humanBusted') {
-      expect(s.hand.result!.zeroChipSeats.some((z) => z.seat === 0)).toBe(true);
+      expect(s.table.hand.result!.zeroChipSeats.some((z) => z.seat === 0)).toBe(true);
       expect(() => startNextHand(s)).toThrow();
     }
   });

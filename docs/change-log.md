@@ -1,5 +1,56 @@
 # Change log
 
+## 2026-10-18 — Design bible v0.4 + P2: magic kernel
+
+**Design (from ChatGPT's v0.4 hand-off):** nine decisions adopted
+(`docs/design-decisions-v0.4.md`), the art bible v0.1 (`docs/art-bible.md`), and the
+spell data (`src/game/magic/spells.json`). The bible is bumped to v0.4. The
+exceptions register now lists the Briar Lock and Fate Exchange rules.
+
+**Implementation**
+- **Engine:** a per-street pot-limit ceiling (`setStreetLimit`) and a hole-card
+  exchange from the undealt stub (`exchangeHoleCard`). Both are recorded as
+  effects, so `replayHand` stays exact.
+- **`src/game/magic/`:**
+  - Spellbooks: 8 instances each, with their own RNG; draw 3, discard, and
+    reshuffle only when needed.
+  - Aether (2 to start, cap 3), street-opening windows in action order, and the
+    four spells.
+  - Settlement: showdown regeneration, then Cinder rewards.
+  - `MagicView` gives per-seat privacy. There are magic invariants and full
+    command replay.
+- **AI** (`src/game/ai/magic.ts`): spell temperament per rival. Equity sampling
+  now honours a legitimately unmasked card.
+- **Session v2:** magic-aware statuses (`humanWindow`), deterministic AI commands,
+  and validated saves. Old v1 saves start a fresh table.
+- **UI:**
+  - Real card art and portrait medallions with public Aether pips.
+  - A spell tray with discipline colours, Unmask target and Fate card pickers,
+    and Cinder arming on the raise button.
+  - A "Pot-limit" badge, public tell banners, and a violet outline on unmasked cards.
+  - A second tap to confirm any all-in, the art-bible button hierarchy, and a
+    mute toggle.
+- **Assets:**
+  - `scripts/build-assets.mjs` generates the 52-card deck (public-domain court
+    art recolored, OFL index font), the felt, the Lifechip and the dealer button.
+  - `scripts/pack-assets.py` packs the runtime files: 692 KB in total, against
+    about 11 MB of source PNGs.
+  - Fonts are bundled offline with `@fontsource`. Sounds are synthesized with Web Audio.
+  - `CREDITS.md` lists every source and license.
+- **Service worker v2:** network-first for un-hashed files, so art updates are
+  never stuck in the cache.
+
+**Measured:** 68 tests. A 1,000-hand random-cast fuzz and 1,200 AI-only magic
+hands found 0 invariant violations. AI casts: Cinder 160, Briar 100, Unmask 52,
+Fate 41.
+
+**Verified on an iPhone 13 viewport:**
+- Every spell can be cast through the UI.
+- There is no overflow and no horizontal scroll.
+- There are no console errors.
+
+**Open for design:** the questions in `docs/briefs/002-report-for-chatgpt.md`.
+
 ## 2026-10-18 — P1: playable 4-seat table
 
 **Implementation**

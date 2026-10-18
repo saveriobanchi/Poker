@@ -18,6 +18,7 @@
     <header id="hud">
       <span id="hand-info">The Last Wager</span>
       <span class="hud-buttons">
+        <button id="btn-sound" type="button" aria-pressed="true" aria-label="Sound">🔊</button>
         <button id="btn-speed" type="button" aria-pressed="false">Normal ▶</button>
         <button id="btn-new" type="button">New table</button>
       </span>
@@ -25,6 +26,11 @@
     <main id="game" aria-label="Poker table"></main>
     <section id="panel" aria-label="Your actions">
       <p id="ticker" aria-live="polite"></p>
+      <div id="spell-row" hidden>
+        <span id="aether" title="Aether"></span>
+        <div id="spells" aria-label="Your spells"></div>
+      </div>
+      <div id="spell-choice" hidden></div>
       <div id="raise-row" hidden>
         <div id="raise-presets"></div>
         <input id="raise-slider" type="range" aria-label="Raise amount" />
@@ -34,6 +40,7 @@
         <button id="btn-call" type="button" disabled>Check</button>
         <button id="btn-raise" type="button" class="primary" disabled>Raise</button>
       </div>
+      <button id="btn-pass" type="button" class="wide" hidden>Let the street open without magic</button>
       <button id="btn-next" type="button" class="primary wide" hidden>Deal next hand</button>
     </section>
     <div id="overlay" hidden></div>

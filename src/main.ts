@@ -1,23 +1,32 @@
+import '@fontsource/cinzel/latin-600.css';
+import '@fontsource/cormorant-garamond/latin-600.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
 import Phaser from 'phaser';
 import './style.css';
-import { getPublicView, PlayerAction } from './game/rules/engine';
+import { getMagicView } from './game/magic/table';
+import { SPELLS } from './game/magic/spells';
+import { getPublicView } from './game/rules/engine';
 import {
-  applyHumanAction,
+  applyHumanCommand,
   createDefaultSession,
   humanSeat,
-  KeyValueStore,
+  type HumanCommand,
+  type KeyValueStore,
   loadSession,
   saveSession,
   sessionStatus,
   startNextHand,
   stepAi,
-  TableSession,
+  type TableSession,
 } from './game/table/session';
 import { Controls } from './ui/controls';
 import { describeAction } from './ui/format';
+import { Sound } from './ui/sound';
 import { RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
 const PREFS_KEY = 'lastWager.prefs.v1';
+const PORTRAITS: Record<string, string> = { you: 'wagerer', vesper: 'vesper', oracle: 'oracle', corvin: 'corvin' };
 
 /** localStorage can throw (private mode, blocked storage): fall back to memory. */
 function safeStore(): KeyValueStore {
@@ -51,32 +60,45 @@ function randomSeed(): number {
   return crypto.getRandomValues(new Uint32Array(1))[0];
 }
 
+interface Prefs {
+  fast: boolean;
+  muted: boolean;
+}
+
 class Game {
   private session: TableSession;
   private readonly store = safeStore();
   private readonly controls: Controls;
+  private readonly sound = new Sound();
   private readonly ticker = document.getElementById('ticker')!;
   private readonly handInfo = document.getElementById('hand-info')!;
   private readonly overlay = document.getElementById('overlay')!;
   private timer: number | undefined;
-  private fast = false;
+  private prefs: Prefs = { fast: false, muted: false };
+  private animatedEvents = 0;
 
   constructor(private readonly scene: TableScene) {
     try {
-      this.fast = JSON.parse(this.store.getItem(PREFS_KEY) ?? '{}').fast === true;
+      this.prefs = { ...this.prefs, ...JSON.parse(this.store.getItem(PREFS_KEY) ?? '{}') };
     } catch {
-      this.fast = false;
+      /* keep defaults */
     }
+    this.sound.muted = this.prefs.muted;
     this.controls = new Controls({
-      onAction: (a) => this.humanAction(a),
+      onAction: (action) => this.human({ kind: 'act', action }),
+      onCast: (uid, params) => this.human({ kind: 'cast', uid, params }),
+      onPass: () => this.human({ kind: 'pass' }),
       onNextHand: () => this.nextHand(),
     });
     const restored = loadSession(this.store);
     this.session = restored ?? createDefaultSession(randomSeed());
+    this.animatedEvents = this.session.table.magic.events.length;
     if (restored) this.flash('Your table was restored exactly where you left it.');
     document.getElementById('btn-speed')!.addEventListener('click', () => this.toggleSpeed());
+    document.getElementById('btn-sound')!.addEventListener('click', () => this.toggleSound());
     document.getElementById('btn-new')!.addEventListener('click', () => this.confirmNewTable());
-    this.updateSpeedButton();
+    window.addEventListener('pointerdown', () => this.sound.unlock(), { passive: true });
+    this.updateHudButtons();
     this.save();
     this.refresh();
   }
@@ -85,64 +107,117 @@ class Game {
     saveSession(this.store, this.session);
   }
 
-  private set(session: TableSession): void {
-    this.session = session;
+  private savePrefs(): void {
+    this.store.setItem(PREFS_KEY, JSON.stringify(this.prefs));
+  }
+
+  private set(next: TableSession): void {
+    this.playSounds(this.session, next);
+    this.session = next;
     this.save();
     this.refresh();
+  }
+
+  private playSounds(prev: TableSession, next: TableSession): void {
+    const a = prev.table;
+    const b = next.table;
+    if (next.handNumber !== prev.handNumber) {
+      this.sound.shuffle();
+      for (let i = 0; i < 4; i++) this.sound.card(0.35 + i * 0.09);
+      return;
+    }
+    for (const e of b.hand.log.slice(a.hand.log.length)) {
+      if (e.action.type === 'fold') this.sound.fold();
+      else if (e.action.type === 'check') this.sound.check();
+      else this.sound.chips(e.action.type === 'call' ? 2 : 4);
+    }
+    for (let i = a.hand.board.length; i < b.hand.board.length; i++) this.sound.card(0.15 + (i - a.hand.board.length) * 0.12);
+    for (const e of b.magic.events.slice(a.magic.events.length)) this.sound.spell(SPELLS[e.spell].discipline);
+    const me = humanSeat(next);
+    if (a.hand.phase === 'betting' && b.hand.phase === 'complete' && (b.hand.result?.netChange[me] ?? 0) > 0) this.sound.win();
   }
 
   private refresh(): void {
     window.clearTimeout(this.timer);
     const s = this.session;
+    const t = s.table;
     const me = humanSeat(s);
-    const view = getPublicView(s.hand, me);
+    const view = getPublicView(t.hand, me);
+    const magic = getMagicView(t, me);
+    const names = s.seats.map((x) => x.name);
+    const freshEvents = t.magic.events.slice(this.animatedEvents);
+    this.animatedEvents = t.magic.events.length;
     this.scene.renderModel({
       view,
-      names: s.seats.map((x) => x.name),
+      magic,
+      names,
+      portraits: s.seats.map((x) => PORTRAITS[x.id] ?? 'wagerer'),
       humanSeat: me,
       handNumber: s.handNumber,
+      freshEvents,
     });
-    this.handInfo.textContent = `Hand ${s.handNumber} · Blinds ${s.hand.setup.smallBlind}/${s.hand.setup.bigBlind}`;
+    this.handInfo.textContent = `Hand ${s.handNumber} · Blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
 
-    const status = sessionStatus(s);
-    const last = s.hand.log.at(-1);
-    switch (status) {
+    const last = t.hand.log.at(-1);
+    const lastText = last ? describeAction(last, names[last.seat]) : '';
+    const lastSpell = t.magic.events.at(-1);
+    const spellText = freshEvents.length && lastSpell ? `${names[lastSpell.seat]}: “${SPELLS[lastSpell.spell].tell}”` : '';
+    switch (sessionStatus(s)) {
+      case 'humanWindow':
+        this.ticker.textContent = `${spellText ? spellText + ' ' : ''}The ${t.hand.street} opens. Cast an opening spell?`;
+        this.controls.showWindow(view, magic, names);
+        break;
       case 'humanToAct':
-        this.ticker.textContent = last ? `${describeAction(last, s.seats[last.seat].name)} Your move.` : 'Your move.';
-        this.controls.showTurn(view);
+        this.ticker.textContent = `${spellText || lastText} Your move.`.trim();
+        this.controls.showTurn(view, magic, names);
         break;
       case 'aiToAct': {
-        this.controls.showWaiting();
-        const seat = s.hand.toAct!;
-        this.ticker.textContent = last ? describeAction(last, s.seats[last.seat].name) : `${s.seats[seat].name} is thinking…`;
-        const delay = this.fast ? 180 : 650 + Math.random() * 500;
+        this.controls.showWaiting(view, magic);
+        this.ticker.textContent = spellText || lastText || 'The cards are dealt.';
+        const delay = this.prefs.fast ? 200 : 700 + Math.random() * 500 + (freshEvents.length ? 900 : 0);
         this.timer = window.setTimeout(() => this.set(stepAi(this.session)), delay);
         break;
       }
       case 'handComplete':
-        this.ticker.textContent = s.history.at(-1)?.lines.join(' · ') ?? '';
-        this.controls.showHandComplete('Deal next hand');
-        if (this.fast) this.timer = window.setTimeout(() => this.nextHand(), 1600);
+        this.ticker.textContent = this.summaryText();
+        this.controls.showHandComplete('Deal next hand', magic);
+        if (this.prefs.fast) this.timer = window.setTimeout(() => this.nextHand(), 1800);
         break;
       case 'humanBusted':
-        this.ticker.textContent = s.history.at(-1)?.lines.join(' · ') ?? '';
-        this.controls.showHandComplete('Face the Ledger');
+        this.ticker.textContent = this.summaryText();
+        this.controls.showHandComplete('Face the Ledger', null);
         this.showEnd(
           'Your last Lifechip is gone',
           'The Ledger of Souls marks your claim as expired. The Last Claim bargaining scene arrives in milestone P3. For now, this run ends here.',
         );
         break;
       case 'tableWon':
-        this.ticker.textContent = s.history.at(-1)?.lines.join(' · ') ?? '';
-        this.controls.showHandComplete('Table cleared');
+        this.ticker.textContent = this.summaryText();
+        this.controls.showHandComplete('Table cleared', null);
         this.showEnd('The table is yours', 'Every rival’s Lifechips now sit in your stack. Their fates await the Last Claim rules of P3.');
         break;
     }
   }
 
-  private humanAction(action: PlayerAction): void {
-    if (sessionStatus(this.session) !== 'humanToAct') return;
-    this.set(applyHumanAction(this.session, action));
+  private summaryText(): string {
+    const h = this.session.history.at(-1);
+    if (!h) return '';
+    const gains = this.session.table.magic.gains
+      .filter((g) => g.seat === humanSeat(this.session) && g.reason !== 'showdown')
+      .map((g) => `+${g.amount} Aether from Cinder Challenge`);
+    return [...h.lines, ...gains].join(' · ');
+  }
+
+  private human(command: HumanCommand): void {
+    this.sound.unlock();
+    const status = sessionStatus(this.session);
+    if (status !== 'humanToAct' && status !== 'humanWindow') return;
+    try {
+      this.set(applyHumanCommand(this.session, command));
+    } catch (e) {
+      this.flash((e as Error).message);
+      this.refresh();
+    }
   }
 
   private nextHand(): void {
@@ -153,7 +228,9 @@ class Game {
 
   private newTable(): void {
     this.overlay.hidden = true;
-    this.set(createDefaultSession(randomSeed()));
+    const next = createDefaultSession(randomSeed());
+    this.animatedEvents = 0;
+    this.set(next);
   }
 
   private showEnd(title: string, body: string): void {
@@ -181,16 +258,27 @@ class Game {
   }
 
   private toggleSpeed(): void {
-    this.fast = !this.fast;
-    this.store.setItem(PREFS_KEY, JSON.stringify({ fast: this.fast }));
-    this.updateSpeedButton();
+    this.prefs.fast = !this.prefs.fast;
+    this.savePrefs();
+    this.updateHudButtons();
     this.refresh();
   }
 
-  private updateSpeedButton(): void {
-    const b = document.getElementById('btn-speed')!;
-    b.textContent = this.fast ? 'Fast ⏩' : 'Normal ▶';
-    b.setAttribute('aria-pressed', String(this.fast));
+  private toggleSound(): void {
+    this.prefs.muted = !this.prefs.muted;
+    this.sound.muted = this.prefs.muted;
+    this.sound.unlock();
+    this.savePrefs();
+    this.updateHudButtons();
+  }
+
+  private updateHudButtons(): void {
+    const speed = document.getElementById('btn-speed')!;
+    speed.textContent = this.prefs.fast ? 'Fast ⏩' : 'Normal ▶';
+    speed.setAttribute('aria-pressed', String(this.prefs.fast));
+    const sound = document.getElementById('btn-sound')!;
+    sound.textContent = this.prefs.muted ? '🔇' : '🔊';
+    sound.setAttribute('aria-pressed', String(!this.prefs.muted));
   }
 
   private flash(text: string): void {
@@ -201,13 +289,19 @@ class Game {
   }
 }
 
+// Wait for the web fonts so canvas text renders with them from the first frame.
+await document.fonts.ready;
+await Promise.all(
+  ['600 16px Cinzel', '500 16px Inter', '600 16px Inter', '600 16px "Cormorant Garamond"'].map((f) => document.fonts.load(f).catch(() => undefined)),
+);
+
 const scene = new TableScene();
 new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: TABLE_WIDTH * RENDER_ZOOM,
   height: TABLE_HEIGHT * RENDER_ZOOM,
-  backgroundColor: '#0b0907',
+  backgroundColor: '#0b1013',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   scene,
   callbacks: {
@@ -222,3 +316,4 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
     navigator.serviceWorker.register('./sw.js').catch(() => undefined);
   });
 }
+

@@ -5,7 +5,7 @@ export default defineConfig({
   // Relative asset paths: the build works from any folder (GitHub Pages, local file server).
   base: './',
   build: {
-    target: 'es2020',
+    target: 'es2022',
     chunkSizeWarningLimit: 1600,
   },
   test: {
