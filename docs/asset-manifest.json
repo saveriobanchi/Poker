@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "notes": [
+    "Claude lists the assets the code needs; ChatGPT produces them; Claude integrates them.",
+    "Sizes are in pixels at 3x the logical game size (the table is 400x520 logical, rendered at up to 3x on iPhone).",
+    "status: needed -> delivered (in art/incoming/) -> integrated. Until integrated, the game draws placeholder vectors.",
+    "Templated ids/paths: {rank} = 2,3,4,5,6,7,8,9,T,J,Q,K,A and {suit} = c,d,h,s."
+  ],
+  "assets": [
+    {
+      "id": "card.face.{rank}{suit}",
+      "count": 52,
+      "path": "public/assets/cards/{rank}{suit}.png",
+      "width": 150,
+      "height": 210,
+      "alpha": true,
+      "usedBy": "TableScene.cardFace (board, hole cards)",
+      "requirements": "Rounded corners transparent. Rank and suit readable at 50x70 logical: big top-left index, big suit. Hearts/diamonds crimson, spades/clubs ink.",
+      "status": "needed",
+      "origin": null,
+      "license": null
+    },
+    {
+      "id": "card.back",
+      "path": "public/assets/cards/back.png",
+      "width": 150,
+      "height": 210,
+      "alpha": true,
+      "usedBy": "TableScene.cardBack (hidden opponent cards)",
+      "requirements": "Must not resemble any face. Symmetric under 180-degree rotation.",
+      "status": "needed",
+      "origin": null,
+      "license": null
+    },
+    {
+      "id": "chip.lifechip",
+      "path": "public/assets/chips/lifechip.png",
+      "width": 96,
+      "height": 96,
+      "alpha": true,
+      "usedBy": "TableScene.chip (bets), stack labels",
+      "requirements": "Reads as a coin/chip that is also a soul token. Clear silhouette at 18 logical px.",
+      "status": "needed",
+      "origin": null,
+      "license": null
+    },
+    {
+      "id": "table.felt",
+      "path": "public/assets/table/felt.png",
+      "width": 1200,
+      "height": 1560,
+      "alpha": false,
+      "usedBy": "TableScene.drawFelt (background)",
+      "requirements": "Portrait. Oval table centered in the 400x520 logical frame (table spans y 120-420 logical). Keep the board area (y 265-335 logical) low-contrast so cards stay readable.",
+      "status": "needed",
+      "origin": null,
+      "license": null
+    },
+    {
+      "id": "ui.dealer-button",
+      "path": "public/assets/ui/dealer-button.png",
+      "width": 60,
+      "height": 60,
+      "alpha": true,
+      "usedBy": "TableScene.drawSeat",
+      "status": "needed",
+      "origin": null,
+      "license": null
+    },
+    {
+      "id": "portrait.{rival}",
+      "variants": ["vesper", "oracle", "corvin", "wagerer"],
+      "path": "public/assets/portraits/{rival}.png",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "usedBy": "Seat plates (P1 shows names only), dialogue and Last Claim scenes (P3)",
+      "requirements": "Bust portrait, consistent lighting and style across all four; readable as a 64px circle crop. Non-sexualized.",
+      "status": "needed",
+      "origin": null,
+      "license": null
+    },
+    {
+      "id": "app.icon",
+      "path": "public/icon-512.png",
+      "width": 512,
+      "height": 512,
+      "alpha": false,
+      "usedBy": "Home Screen icon (also 180 and 192 sizes)",
+      "status": "placeholder",
+      "origin": "Claude vector placeholder",
+      "license": "project"
+    }
+  ]
+}

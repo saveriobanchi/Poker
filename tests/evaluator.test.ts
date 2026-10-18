@@ -56,3 +56,14 @@ describe('hand evaluator', () => {
     expect(() => best('Ah Ah 2c 3d 4s')).toThrow();
   });
 });
+
+describe('fast evaluator', () => {
+  it('matches the exhaustive evaluator on 50,000 random 5-7 card hands', async () => {
+    const { Rng, freshDeck, scoreBest } = await import('../src/game/rules');
+    const rng = new Rng(99);
+    for (let i = 0; i < 50_000; i++) {
+      const cards = rng.shuffle(freshDeck()).slice(0, 5 + (i % 3));
+      expect(scoreBest(cards)).toBe(evaluateBest(cards).score);
+    }
+  });
+});

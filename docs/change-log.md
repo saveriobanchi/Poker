@@ -1,5 +1,38 @@
 # Change log
 
+## 2026-10-18 — P1: playable 4-seat table
+
+**Implementation**
+- `src/game/ai/`: a local AI that uses only public information. It combines a
+  preflop hand ranking (Chen formula percentiles), range-aware Monte Carlo
+  equity, and three personalities: Lady Vesper (loose and aggressive), the
+  Sightless Oracle (calls a lot), Sir Corvin (tight). Decisions are seeded per
+  turn, so they are deterministic.
+- `src/game/rules/evaluator.ts`: a fast 7-card scorer (`scoreBest`), checked
+  against the exhaustive evaluator on 50,000 hands.
+- `src/game/table/session.ts`: hand sequencing, starting stacks from the table's
+  own budget, hand summaries, and save/load with invariant validation.
+- `src/ui/` and `src/main.ts`: a Phaser table scene with placeholder vector art,
+  plus native HTML controls (Fold / Check-Call / Bet-Raise with presets and a
+  slider). It has a fast mode and stops for Last Claim when the player busts. It
+  is a PWA (manifest, offline service worker, Home Screen icons).
+- CI workflow, plus GitHub Pages deployment.
+
+**Measured** (about 7,000 AI-only hands): VPIP/PFR is 34%/32% for Vesper, 29%/11%
+for the Oracle and 17%/12% for Corvin; 14% of hands reach showdown; a decision
+takes about 0.13 ms.
+
+**Verified on an iPhone 13 viewport (390×844):** a full four-handed hand
+completes with no overflow and no horizontal scroll, every button is at least
+40 px tall, and a reload restores the identical state (acceptance test 12 in
+emulation; a real device is still to be checked).
+
+**Collaboration:** added `docs/collaboration.md`, `docs/asset-manifest.json`,
+`docs/briefs/001-report-for-chatgpt.md`, and `art/incoming/`.
+
+**Gameplay / visual impact:** the first playable build. All art is placeholder
+until the manifest assets arrive.
+
 ## 2026-10-18 — Design bible v0.3 adopted; P0 poker kernel
 
 **Design**

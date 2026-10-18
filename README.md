@@ -9,14 +9,30 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
 
 ## Status
 
-**P0 — Poker kernel** is done: a pure TypeScript rules engine (`src/game/rules/`)
-with tests. It has no UI and no graphics dependency yet.
+- **P0 — Poker kernel:** done. A pure TypeScript rules engine (`src/game/rules/`).
+- **P1 — Playable 4-seat table:** done. You against three AI rivals in the phone
+  browser (`src/game/ai/`, `src/game/table/`, `src/ui/`), with save/resume after
+  every action.
 
 ```sh
 npm install
-npm test           # unit tests + 10,000-hand randomized simulation
-npm run typecheck
+npm run dev        # play at http://localhost:5173 (also reachable from a phone on the same Wi-Fi)
+npm test           # unit tests, AI tests, 10,000-hand simulation
+npm run build      # production build in dist/
 ```
+
+### Playing on an iPhone
+
+Every push to the default branch is published to GitHub Pages by
+`.github/workflows/deploy-pages.yml`. One-time setup: on GitHub, open
+**Settings → Pages → Source** and choose **GitHub Actions**. Then open
+`https://<user>.github.io/<repo>/` in Safari and use **Share → Add to Home Screen**.
+The game works offline after the first visit.
+
+## Working with ChatGPT
+
+See [`docs/collaboration.md`](docs/collaboration.md). The latest report to paste into
+ChatGPT is in [`docs/briefs/`](docs/briefs/).
 
 ## Using the engine
 
@@ -44,7 +60,7 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P1
+## Next: P2
 
-One playable 4-seat table: the player plus three distinct local AI agents, on
-Phaser + Vite, playable in a phone browser with immediate save/resume.
+The magic kernel: separate Spellbooks, Aether, legal casting windows, the first four
+spells, visible magic tells. It waits on ChatGPT's answers in `docs/briefs/001`.

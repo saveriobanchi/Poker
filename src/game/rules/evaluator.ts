@@ -107,3 +107,75 @@ export function evaluateBest(cards: Card[]): HandValue {
           }
   return best!;
 }
+
+/** Highest straight in a rank bitmask (bit r set for rank r, ace also as bit 1), or 0. */
+function straightHigh(mask: number): number {
+  for (let high = 14; high >= 5; high--) {
+    const need = 0b11111 << (high - 4);
+    if ((mask & need) === need) return high;
+  }
+  return 0;
+}
+
+/**
+ * Fast path: same score as evaluateBest(cards).score for 5–7 cards, without
+ * enumerating combinations. Used by AI equity sampling and simulations.
+ */
+export function scoreBest(cards: Card[]): number {
+  const counts = new Array<number>(15).fill(0);
+  const suitCounts = [0, 0, 0, 0];
+  const suitMasks = [0, 0, 0, 0];
+  let mask = 0;
+  for (const c of cards) {
+    const r = (c >> 2) + 2;
+    const s = c & 3;
+    counts[r]++;
+    suitCounts[s]++;
+    suitMasks[s] |= 1 << r;
+    mask |= 1 << r;
+  }
+  const withLowAce = (m: number) => (m & (1 << 14) ? m | 2 : m);
+
+  const flushSuit = suitCounts.findIndex((n) => n >= 5);
+  if (flushSuit >= 0) {
+    const sf = straightHigh(withLowAce(suitMasks[flushSuit]));
+    if (sf) return encode(HandCategory.StraightFlush, [sf]);
+  }
+
+  const quads: number[] = [];
+  const trips: number[] = [];
+  const pairs: number[] = [];
+  const singles: number[] = [];
+  for (let r = 14; r >= 2; r--) {
+    if (counts[r] === 4) quads.push(r);
+    else if (counts[r] === 3) trips.push(r);
+    else if (counts[r] === 2) pairs.push(r);
+    else if (counts[r] === 1) singles.push(r);
+  }
+  const highestExcept = (...excluded: number[]) => {
+    for (let r = 14; r >= 2; r--) if (counts[r] > 0 && !excluded.includes(r)) return r;
+    return 0;
+  };
+
+  if (quads.length) return encode(HandCategory.FourOfAKind, [quads[0], highestExcept(quads[0])]);
+  if (trips.length && (trips.length > 1 || pairs.length)) {
+    const pair = Math.max(trips[1] ?? 0, pairs[0] ?? 0);
+    return encode(HandCategory.FullHouse, [trips[0], pair]);
+  }
+  if (flushSuit >= 0) {
+    const ranks: number[] = [];
+    for (let r = 14; r >= 2 && ranks.length < 5; r--) if (suitMasks[flushSuit] & (1 << r)) ranks.push(r);
+    return encode(HandCategory.Flush, ranks);
+  }
+  const st = straightHigh(withLowAce(mask));
+  if (st) return encode(HandCategory.Straight, [st]);
+  if (trips.length) {
+    const kickers = singles.slice(0, 2);
+    return encode(HandCategory.ThreeOfAKind, [trips[0], ...kickers]);
+  }
+  if (pairs.length >= 2) {
+    return encode(HandCategory.TwoPair, [pairs[0], pairs[1], highestExcept(pairs[0], pairs[1])]);
+  }
+  if (pairs.length === 1) return encode(HandCategory.OnePair, [pairs[0], ...singles.slice(0, 3)]);
+  return encode(HandCategory.HighCard, singles.slice(0, 5));
+}

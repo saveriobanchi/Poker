@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0b0907" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Last Wager" />
+    <meta name="description" content="A dark-fantasy poker roguelike where chips are life." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icon-180.png" />
+    <title>The Last Wager</title>
+  </head>
+  <body>
+    <header id="hud">
+      <span id="hand-info">The Last Wager</span>
+      <span class="hud-buttons">
+        <button id="btn-speed" type="button" aria-pressed="false">Normal ▶</button>
+        <button id="btn-new" type="button">New table</button>
+      </span>
+    </header>
+    <main id="game" aria-label="Poker table"></main>
+    <section id="panel" aria-label="Your actions">
+      <p id="ticker" aria-live="polite"></p>
+      <div id="raise-row" hidden>
+        <div id="raise-presets"></div>
+        <input id="raise-slider" type="range" aria-label="Raise amount" />
+      </div>
+      <div id="action-row">
+        <button id="btn-fold" type="button" disabled>Fold</button>
+        <button id="btn-call" type="button" disabled>Check</button>
+        <button id="btn-raise" type="button" class="primary" disabled>Raise</button>
+      </div>
+      <button id="btn-next" type="button" class="primary wide" hidden>Deal next hand</button>
+    </section>
+    <div id="overlay" hidden></div>
+    <div id="toast" role="status" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

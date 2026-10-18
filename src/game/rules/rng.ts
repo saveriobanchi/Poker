@@ -32,6 +32,11 @@ export class Rng {
     return x % n;
   }
 
+  /** Float in [0, 1). */
+  nextFloat(): number {
+    return this.nextUint32() / 0x100000000;
+  }
+
   /** In-place Fisher–Yates shuffle. */
   shuffle<T>(items: T[]): T[] {
     for (let i = items.length - 1; i > 0; i--) {
