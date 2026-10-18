@@ -1,5 +1,54 @@
 # Change log
 
+## 2026-10-18 — Design bible v0.5 + P3: Life and consequences
+
+**Design (ChatGPT's v0.5 hand-off):** `docs/design-decisions-v0.5.md` and
+`docs/art-bible-v0.2-addendum.md`. The bible is bumped to v0.5.
+
+**P2 corrections**
+- **Cinder Challenge matching:** a call or legal re-raise that commits at least
+  the enchanted amount counts as a match; a short all-in call does not. Each
+  response is recorded when it happens, and side-pot eligibility is enforced.
+- **Fate Exchange tell:** now reads "A mirrored card turns face-down."
+- **Card back:** the new 300×420 back is checked on every asset build to be
+  exactly symmetric under 180° rotation.
+
+**Implementation**
+- **`src/game/world/`:**
+  - Characters, reputation, relationships, the Ledger relief treasury, covenants
+    and an append-only transfer journal.
+  - A global invariant: table chips + off-table chips + treasury stay constant.
+- **The Last Claim state machine:**
+  - Claims open only after settlement and resolve clockwise from the button.
+  - The claimant is the sole winner of the pot holding the debtor's last chips;
+    a split pot goes to the neutral adjudicator.
+  - Funding comes from the named claimant's own stack, who must hold more than
+    the endowment.
+  - One persisted roll per claim and one counteroffer, so reloading cannot
+    change an answer.
+  - The player may survive at most one covenant per run.
+- **Willingness and debt:** willingness follows the design tables (clamped,
+  with banded labels only). Debt repayment, defaulting at 30% and overdue after
+  4 tables, is a tested function ready for P4.
+- **Session v3:** claims block the next hand. NPC-vs-NPC claims resolve by the
+  same rules. A survivor leaves the table as one of the Fallen with
+  `pendingNode = FALLEN_RECOVERY`. Saves validate the world ledger.
+- **UI:**
+  - The Last Claim scene on ChatGPT's parchment contract (three-sliced so
+    ornaments never stretch), with the Ledger title card, wax seal and portraits.
+  - Every word and choice is real, accessible HTML.
+  - A review step before sealing; second-step confirmation for Accept Fate,
+    Claim Life and declining a counteroffer.
+  - "The Cinder Warrens — to be continued" and end-of-run screens. A Fallen
+    save is archived when a new run starts.
+
+**Measured:** 94 tests. 30 whole tables with claims kept the world ledger
+balanced, and departed seats never played again.
+
+**Verified on an iPhone 13 viewport:** the full claim flow (choose, review,
+seal, counteroffer, outcome, Fallen screen) with no console errors and no
+horizontal overflow.
+
 ## 2026-10-18 — Design bible v0.4 + P2: magic kernel
 
 **Design (from ChatGPT's v0.4 hand-off):** nine decisions adopted

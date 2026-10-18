@@ -318,3 +318,259 @@ button.ghost {
     transition: none !important;
   }
 }
+
+/* ───────────── Last Claim (art bible addendum v0.2) ───────────── */
+#claim {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  overflow-y: auto;
+  padding: calc(env(safe-area-inset-top) + 8px) 12px calc(env(safe-area-inset-bottom) + 12px);
+  background: radial-gradient(ellipse at 50% 30%, rgba(35, 26, 24, 0.94), rgba(5, 6, 7, 0.98));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: claim-in 400ms ease-out;
+}
+
+@keyframes claim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.ledger-title {
+  width: min(100%, 380px);
+  aspect-ratio: 1200 / 630;
+  max-height: 128px;
+  background: url('/assets/ui/ledger-title.webp') center / contain no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 6%;
+  font-family: var(--display);
+  color: var(--gold-light);
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.ledger-kicker {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.ledger-title strong {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contract {
+  /* Bands are laid out from the card width so the ornaments keep their proportions. */
+  --cw: min(calc(100vw - 24px), 380px);
+  position: relative;
+  isolation: isolate;
+  width: var(--cw);
+  min-height: calc(var(--cw) * 1.25);
+  padding: calc(var(--cw) * 0.18) calc(var(--cw) * 0.105) calc(var(--cw) * 0.165);
+  color: var(--ink);
+  flex: 0 0 auto;
+}
+
+.contract::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--cw) * 0.2) 0 calc(var(--cw) * 0.17);
+  background: url('/assets/ui/contract-mid.webp') top / 100% auto repeat-y;
+  z-index: -2;
+}
+
+.contract::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    url('/assets/ui/contract-top.webp') top / 100% auto no-repeat,
+    url('/assets/ui/contract-bottom.webp') bottom / 100% auto no-repeat;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.contract-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.contract-body p {
+  margin: 0;
+}
+
+.contract-body .lead {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--crimson);
+  text-align: center;
+}
+
+.contract-body .settlement,
+.contract-body .muted {
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b4336;
+  text-align: center;
+}
+
+.audience {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid #c9a24a88;
+  border-bottom: 1px solid #c9a24a88;
+}
+
+.audience img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: #231a18;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.audience div {
+  display: flex;
+  flex-direction: column;
+}
+
+.audience strong {
+  font-family: var(--display);
+  font-size: 15px;
+}
+
+.audience span {
+  font-size: 14px;
+  color: #4b4336;
+}
+
+.contract-body .outlook {
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: #3a2f4f;
+}
+
+.contract-body button {
+  color: var(--ink);
+  border-color: var(--gold-muted);
+  background: rgba(255, 250, 235, 0.55);
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  padding: 6px 12px;
+}
+
+.contract-body button.primary {
+  align-items: center;
+  background: linear-gradient(#e0bd63, var(--gold));
+}
+
+.contract-body button.danger {
+  align-items: center;
+  background: var(--crimson);
+  color: #fff4dc;
+  border-color: var(--crimson);
+}
+
+.contract-body button.danger-outline {
+  border-color: var(--crimson);
+}
+
+.contract-body button.ghost {
+  align-items: center;
+  background: transparent;
+}
+
+.choice-label {
+  font-family: var(--ui);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.choice-detail {
+  font-family: var(--ui);
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b4336;
+}
+
+.contract-body .terms {
+  margin: 0;
+  padding-left: 18px;
+  font-family: var(--ui);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.contract-body .warning,
+.contract-body .counter {
+  font-size: 16px;
+  color: var(--crimson);
+}
+
+.contract-body .review-title,
+.outcome h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.outcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.outcome .seal {
+  width: 64px;
+  height: 64px;
+  animation: seal-in 420ms ease-out;
+}
+
+@keyframes seal-in {
+  from {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.modal p + p {
+  margin-top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #claim,
+  .outcome .seal {
+    animation: none;
+  }
+}

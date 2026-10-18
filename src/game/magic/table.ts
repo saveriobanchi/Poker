@@ -55,6 +55,19 @@ export interface AetherGain {
   reason: 'showdown' | 'cinder_called' | 'cinder_folded';
 }
 
+/**
+ * An enchanted raise and each opponent's first response to it on that street.
+ * `match`: a call or re-raise committing at least `raiseTo` (design v0.5);
+ * `short`: an all-in call for less; `fold`.
+ */
+export interface CinderMark {
+  seat: number;
+  logIndex: number;
+  street: Street;
+  raiseTo: number;
+  responses: { seat: number; kind: 'match' | 'short' | 'fold' }[];
+}
+
 export interface HandMagic {
   /** Spells drawn this hand, per seat (private to the owner). Cast cards stay here until hand end. */
   hands: SpellCard[][];
@@ -63,7 +76,7 @@ export interface HandMagic {
   window: { street: Street; queue: number[] } | null;
   /** Streets whose opening window has already been offered. */
   openedStreets: Street[];
-  cinder: { seat: number; logIndex: number }[];
+  cinder: CinderMark[];
   /** Unmask results; each is visible only to its caster. */
   reveals: { caster: number; target: number; card: Card }[];
   events: MagicEvent[];
@@ -273,7 +286,7 @@ export function castSpell(t0: MagicTable, seat: number, uid: string, params: Cas
         if (!Number.isInteger(params.raiseTo) || params.raiseTo < r.minTo || params.raiseTo > r.maxTo) {
           throw new MagicError(`Cinder Challenge needs a legal raise from ${r.minTo} to ${r.maxTo}`);
         }
-        t.magic.cinder.push({ seat, logIndex: t.hand.log.length });
+        t.magic.cinder.push({ seat, logIndex: t.hand.log.length, street: t.hand.street, raiseTo: params.raiseTo, responses: [] });
         t.hand = applyAction(t.hand, seat, { type: r.isBet ? 'bet' : 'raise', to: params.raiseTo });
         break;
       }
@@ -311,11 +324,27 @@ export function passWindow(t0: MagicTable, seat: number): MagicTable {
 export function act(t0: MagicTable, seat: number, action: PlayerAction): MagicTable {
   if (t0.magic.window) throw new MagicError('The street-opening magic window must close first');
   const t = structuredClone(t0);
+  const before = t0.hand.seats[seat];
+  const street = t0.hand.street;
   t.hand = applyAction(t.hand, seat, action);
+  recordCinderResponse(t, seat, street, before.streetCommitted + before.stack, t0.hand.currentBet);
   t.magic.commands.push({ kind: 'act', seat, action });
   afterChange(t);
   assertMagicInvariants(t);
   return t;
+}
+
+/** Records `seat`'s first response to any open enchanted raise on this street. */
+function recordCinderResponse(t: MagicTable, seat: number, street: Street, maxLevel: number, betBefore: number): void {
+  const applied = t.hand.log.at(-1)!.action;
+  for (const mark of t.magic.cinder) {
+    if (mark.seat === seat || mark.street !== street || mark.responses.some((r) => r.seat === seat)) continue;
+    let level = 0;
+    if (applied.type === 'call') level = Math.min(betBefore, maxLevel);
+    else if (applied.type === 'bet' || applied.type === 'raise') level = applied.to;
+    if (applied.type === 'fold') mark.responses.push({ seat, kind: 'fold' });
+    else if (level > 0) mark.responses.push({ seat, kind: level >= mark.raiseTo ? 'match' : 'short' });
+  }
 }
 
 // ──────────────────────────── settlement ────────────────────────────
@@ -327,33 +356,24 @@ function gain(t: MagicTable, seat: number, amount: number, reason: AetherGain['r
   t.seats[seat].aether = after;
 }
 
-/** Each opponent's first action after `logIndex` (the marked raise). */
-function responses(t: MagicTable, caster: number, logIndex: number): Map<number, PlayerAction['type']> {
-  const first = new Map<number, PlayerAction['type']>();
-  for (const e of t.hand.log.slice(logIndex + 1)) {
-    if (e.seat !== caster && !first.has(e.seat)) first.set(e.seat, e.action.type);
-  }
-  return first;
-}
-
 /** After pot settlement: showdown regeneration first, then Cinder Challenge, all capped (decision 05). */
 function settleMagic(t: MagicTable): void {
   const result = t.hand.result!;
   for (const entry of result.showdown) gain(t, entry.seat, AETHER.showdownRegen, 'showdown');
 
   for (const mark of t.magic.cinder) {
-    const resp = responses(t, mark.seat, mark.logIndex);
-    const callers = [...resp].filter(([, type]) => type === 'call').map(([s]) => s);
-    if (result.showdown.length > 0 && callers.length > 0) {
-      const wonAgainstCaller = result.pots.some(
-        (pot) => pot.winners.length === 1 && pot.winners[0] === mark.seat && callers.some((c) => pot.eligible.includes(c)),
+    const matchers = mark.responses.filter((r) => r.kind === 'match').map((r) => r.seat);
+    if (result.showdown.length > 0 && matchers.length > 0) {
+      // Once per cast: the caster must be the sole winner of a contested pot a matcher is eligible for.
+      const wonAgainstMatcher = result.pots.some(
+        (pot) => pot.winners.length === 1 && pot.winners[0] === mark.seat && matchers.some((c) => pot.eligible.includes(c)),
       );
-      if (wonAgainstCaller) gain(t, mark.seat, CINDER_REWARD.calledAndWon, 'cinder_called');
+      if (wonAgainstMatcher) gain(t, mark.seat, CINDER_REWARD.calledAndWon, 'cinder_called');
     } else if (
       result.showdown.length === 0 &&
       !t.hand.seats[mark.seat].folded &&
-      resp.size > 0 &&
-      [...resp.values()].every((type) => type === 'fold')
+      mark.responses.length > 0 &&
+      mark.responses.every((r) => r.kind === 'fold')
     ) {
       gain(t, mark.seat, CINDER_REWARD.allFolded, 'cinder_folded');
     }

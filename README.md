@@ -3,7 +3,7 @@
 A mobile-first, single-player, dark-fantasy poker roguelike built on real
 three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth and life.
 
-- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v0.4), art: [`docs/art-bible.md`](docs/art-bible.md)
+- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v0.5), art: [`docs/art-bible.md`](docs/art-bible.md)
 - Rule departures: [`docs/poker-rules-exceptions.md`](docs/poker-rules-exceptions.md)
 - History: [`docs/change-log.md`](docs/change-log.md)
 
@@ -16,6 +16,9 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
 - **P2 — Magic kernel:** done. Spellbooks, Aether, the four spells with legal
   windows and public tells, rivals that cast, real card art, portraits, sounds
   (`src/game/magic/`, `src/game/ai/magic.ts`).
+- **P3 — Life and consequences:** done. Last Claim after every bankruptcy
+  (yours or a rival's), funded covenants, negotiation with one counteroffer, the
+  Fallen state and the Ledger's world accounting (`src/game/world/`).
 
 ```sh
 npm install
@@ -66,7 +69,8 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P3
+## Next: P4
 
-Life and consequences: the zero-chip interrupt, the Last Claim scene, funded
-covenants, and the Fallen state. It waits on ChatGPT's answers in `docs/briefs/002`.
+The roguelike slice: a compact path with several tables and a boss, the Cinder
+Warrens recovery for a Fallen character, spell evolutions, relics, a Covenant, shops
+and the 8-hand Contract Table. It waits on ChatGPT's answers in `docs/briefs/003`.

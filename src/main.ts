@@ -8,6 +8,7 @@ import { getMagicView } from './game/magic/table';
 import { SPELLS } from './game/magic/spells';
 import { getPublicView } from './game/rules/engine';
 import {
+  applyClaim,
   applyHumanCommand,
   createDefaultSession,
   humanSeat,
@@ -18,14 +19,20 @@ import {
   sessionStatus,
   startNextHand,
   stepAi,
+  tableStacks,
   type TableSession,
 } from './game/table/session';
+import { type ClaimCommand, roles } from './game/world';
+import { ClaimScreen } from './ui/claimScreen';
+import { claimantName, pactNoun } from './ui/claimText';
 import { Controls } from './ui/controls';
 import { describeAction } from './ui/format';
 import { Sound } from './ui/sound';
 import { RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
 const PREFS_KEY = 'lastWager.prefs.v1';
+/** A Fallen character is archived here when a new run starts, for the Cinder Warrens (P4). */
+const FALLEN_KEY = 'lastWager.fallen.v1';
 const PORTRAITS: Record<string, string> = { you: 'wagerer', vesper: 'vesper', oracle: 'oracle', corvin: 'corvin' };
 
 /** localStorage can throw (private mode, blocked storage): fall back to memory. */
@@ -73,6 +80,7 @@ class Game {
   private readonly ticker = document.getElementById('ticker')!;
   private readonly handInfo = document.getElementById('hand-info')!;
   private readonly overlay = document.getElementById('overlay')!;
+  private readonly claimScreen = new ClaimScreen((cmd) => this.claim(cmd));
   private timer: number | undefined;
   private prefs: Prefs = { fast: false, muted: false };
   private animatedEvents = 0;
@@ -155,6 +163,8 @@ class Game {
       humanSeat: me,
       handNumber: s.handNumber,
       freshEvents,
+      seatStatus: s.world.characters.map((c) => c.status),
+      stacks: tableStacks(s),
     });
     this.handInfo.textContent = `Hand ${s.handNumber} · Blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
 
@@ -162,7 +172,10 @@ class Game {
     const lastText = last ? describeAction(last, names[last.seat]) : '';
     const lastSpell = t.magic.events.at(-1);
     const spellText = freshEvents.length && lastSpell ? `${names[lastSpell.seat]}: “${SPELLS[lastSpell.spell].tell}”` : '';
-    switch (sessionStatus(s)) {
+    const status = sessionStatus(s);
+    if (status === 'humanClaim' || status === 'claimResolved') this.claimScreen.show(s);
+    else this.claimScreen.hide();
+    switch (status) {
       case 'humanWindow':
         this.ticker.textContent = `${spellText ? spellText + ' ' : ''}The ${t.hand.street} opens. Cast an opening spell?`;
         this.controls.showWindow(view, magic, names);
@@ -183,19 +196,75 @@ class Game {
         this.controls.showHandComplete('Deal next hand', magic);
         if (this.prefs.fast) this.timer = window.setTimeout(() => this.nextHand(), 1800);
         break;
-      case 'humanBusted':
-        this.ticker.textContent = this.summaryText();
-        this.controls.showHandComplete('Face the Ledger', null);
-        this.showEnd(
-          'Your last Lifechip is gone',
-          'The Ledger of Souls marks your claim as expired. The Last Claim bargaining scene arrives in milestone P3. For now, this run ends here.',
-        );
+      case 'humanClaim':
+        this.ticker.textContent = 'The Ledger of Souls convenes a Last Claim.';
+        this.controls.showHandComplete('Last Claim in progress', null);
+        break;
+      case 'claimResolved': {
+        this.ticker.textContent = 'The Ledger records its judgement.';
+        this.controls.showHandComplete('Last Claim in progress', null);
+        const npcOnly = !roles(s.world, s.claims!.claims[s.claims!.current]).humanInvolved;
+        if (this.prefs.fast && npcOnly) this.timer = window.setTimeout(() => this.claim({ kind: 'acknowledge' }), 2600);
+        break;
+      }
+      case 'fallen':
+        this.ticker.textContent = 'You have left the table, Fallen.';
+        this.controls.showHandComplete('Begin a new run', null);
+        this.showEnd('The Cinder Warrens — to be continued', this.fallenLines(), 'Begin a new run');
+        break;
+      case 'dead':
+        this.ticker.textContent = 'Your run has ended.';
+        this.controls.showHandComplete('Begin a new run', null);
+        this.showEnd('The run has ended', this.deathLines(), 'Begin a new run');
         break;
       case 'tableWon':
         this.ticker.textContent = this.summaryText();
         this.controls.showHandComplete('Table cleared', null);
-        this.showEnd('The table is yours', 'Every rival’s Lifechips now sit in your stack. Their fates await the Last Claim rules of P3.');
+        this.showEnd('The table is yours', [
+          'Every rival at this table has been claimed or has departed.',
+          `You hold ${tableStacks(s)[me]} Lifechips.`,
+          this.reputationLine(),
+        ]);
         break;
+    }
+  }
+
+  private reputationLine(): string {
+    const r = this.session.world.characters[humanSeat(this.session)].reputation;
+    return `Reputation — Honor ${r.honor} · Dread ${r.dread} · Favor ${r.favor}`;
+  }
+
+  private fallenLines(): string[] {
+    const s = this.session;
+    const you = s.world.characters[humanSeat(s)];
+    const claim = s.claims?.claims.find((c) => c.debtor === humanSeat(s) && c.outcome?.kind === 'survival');
+    const contract = s.world.contracts.find((k) => k.debtor === you.id);
+    const lines = [
+      claim ? `You survived the Last Claim through ${pactNoun(contract!.pact)} with ${claimantName(s.world, claim)}.` : 'You survived the Last Claim.',
+      `You carry ${you.offTable} Lifechips into the Cinder Warrens, stripped of rank.`,
+    ];
+    if (contract?.pact === 'debt') lines.push(`You owe ${contract.obligation} Lifechips, repaid from future winnings.`);
+    if (contract?.pact === 'service') lines.push(`You owe ${contract.servicesOwed} sworn duties.`);
+    lines.push(this.reputationLine(), 'Your Fallen character is saved. The Cinder Warrens open in the next milestone.');
+    return lines;
+  }
+
+  private deathLines(): string[] {
+    const s = this.session;
+    return [
+      `Hands played: ${s.handNumber}.`,
+      'The Ledger closed your account. Death concludes this character’s story; a new Wagerer may take up the cards.',
+      this.reputationLine(),
+    ];
+  }
+
+  private claim(cmd: ClaimCommand): void {
+    this.sound.unlock();
+    try {
+      this.set(applyClaim(this.session, cmd));
+    } catch (e) {
+      this.flash((e as Error).message);
+      this.refresh();
     }
   }
 
@@ -223,27 +292,32 @@ class Game {
   private nextHand(): void {
     const status = sessionStatus(this.session);
     if (status === 'handComplete') this.set(startNextHand(this.session));
-    else if (status === 'humanBusted' || status === 'tableWon') this.newTable();
+    else if (status === 'dead' || status === 'fallen' || status === 'tableWon') this.newTable();
   }
 
   private newTable(): void {
     this.overlay.hidden = true;
+    if (sessionStatus(this.session) === 'fallen') this.store.setItem(FALLEN_KEY, JSON.stringify(this.session));
     const next = createDefaultSession(randomSeed());
     this.animatedEvents = 0;
     this.set(next);
   }
 
-  private showEnd(title: string, body: string): void {
+  private showEnd(title: string, body: string[], action = 'Begin a new table'): void {
     this.overlay.replaceChildren();
     const card = document.createElement('div');
     card.className = 'modal';
     const h = document.createElement('h2');
     h.textContent = title;
-    const p = document.createElement('p');
-    p.textContent = body;
+    const p = document.createElement('div');
+    for (const line of body) {
+      const para = document.createElement('p');
+      para.textContent = line;
+      p.append(para);
+    }
     const btn = document.createElement('button');
     btn.className = 'primary';
-    btn.textContent = 'Begin a new table';
+    btn.textContent = action;
     btn.addEventListener('click', () => this.newTable());
     const close = document.createElement('button');
     close.textContent = 'Look at the table';

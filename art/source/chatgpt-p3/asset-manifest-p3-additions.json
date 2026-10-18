@@ -1,0 +1,11 @@
+{
+  "version": 3,
+  "purpose": "P3 additive manifest patch; retain all entries from v2 and merge by id",
+  "assets": [
+    {"id":"card.back","source":"art/incoming/p3/back.png","runtime":"public/assets/cards.webp frame 52","deliverable":"public/assets/cards/back.png","width":300,"height":420,"alpha":true,"status":"delivered","origin":"project original vector-based illustration; exact 180-degree symmetry","license":"project original","requirements":"same corner radius and bounding box as 300x420 face cards; verify device screenshot"},
+    {"id":"ui.last-claim-contract","source":"art/incoming/p3/last-claim-contract.png","runtime":"public/assets/ui/last-claim-contract.png","width":960,"height":1200,"alpha":true,"status":"delivered","origin":"project original procedural illustration","license":"project original","requirements":"blank inner text region (approx x100..860, y180..1040). Render text and tappable controls in engine; nine-slice cautious"},
+    {"id":"ui.ledger-seal","source":"art/incoming/p3/ledger-seal.png","runtime":"public/assets/ui/ledger-seal.png","width":256,"height":256,"alpha":true,"status":"delivered","origin":"project original procedural illustration","license":"project original","requirements":"decorative wax seal with eclipse icon; never encode mandatory status solely by color"},
+    {"id":"ui.ledger-title-card","source":"art/incoming/p3/ledger-title-card.png","runtime":"public/assets/ui/ledger-title-card.png","width":1200,"height":630,"alpha":true,"status":"delivered","origin":"project original procedural illustration","license":"project original","requirements":"decorative empty center; render THE LEDGER OF SOULS / LAST CLAIM text via engine"},
+    {"id":"portrait.adjudicator","source":"art/incoming/p3/adjudicator.png","runtime":"public/assets/portraits/adjudicator.webp (256x256)","deliverable":"public/assets/portraits/adjudicator.png","width":512,"height":512,"alpha":true,"status":"delivered","origin":"project original stylized illustration, PROVISIONAL","license":"project original","requirements":"separate porcelain-masked neutral Ledger adjudicator, readable in 64px circle, painterly final rework pending"}
+  ]
+}

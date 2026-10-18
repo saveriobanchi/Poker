@@ -281,3 +281,74 @@ describe('determinism, conservation and fairness under random play', () => {
     expect(casts).toBeGreaterThan(500);
   });
 });
+
+describe('Cinder Challenge matching (design v0.5)', () => {
+  const finish = (t: MagicTable, order: number[]) => {
+    while (t.hand.phase === 'betting') {
+      const seat = t.hand.toAct!;
+      if (!order.includes(seat)) throw new Error('unexpected actor');
+      t = act(t, seat, getLegalActions(t.hand)!.canCheck ? { type: 'check' } : { type: 'call' });
+    }
+    return t;
+  };
+
+  it('a legal re-raise that commits at least the enchanted amount counts as matching', () => {
+    const hand = riggedHand(setup([100, 100, 100]), ['Ah Ad', '7c 2d', '8c 3h'], 'Kc Qd 9h 4s 5c');
+    let t = table(hand, { 0: ['cinder_challenge'] });
+    t = castSpell(t, 0, uidOf(t, 0, 'cinder_challenge'), { spell: 'cinder_challenge', raiseTo: 6 });
+    t = act(t, 1, { type: 'raise', to: 20 });
+    t = act(t, 2, { type: 'fold' });
+    t = act(t, 0, { type: 'call' });
+    expect(t.magic.cinder[0].responses).toEqual([
+      { seat: 1, kind: 'match' },
+      { seat: 2, kind: 'fold' },
+    ]);
+    t = finish(t, [0, 1]);
+    expect(t.magic.gains.some((g) => g.seat === 0 && g.reason === 'cinder_called')).toBe(true);
+  });
+
+  it('a short all-in call does not match the enchanted wager', () => {
+    const hand = riggedHand(setup([100, 4, 100]), ['Ah Ad', '7c 2d', '8c 3h'], 'Kc Qd 9h 4s 5c');
+    let t = table(hand, { 0: ['cinder_challenge'] });
+    t = castSpell(t, 0, uidOf(t, 0, 'cinder_challenge'), { spell: 'cinder_challenge', raiseTo: 6 });
+    t = act(t, 1, { type: 'call' }); // all-in for 4 total
+    t = act(t, 2, { type: 'fold' });
+    expect(t.hand.phase).toBe('complete');
+    expect(t.magic.cinder[0].responses).toEqual([
+      { seat: 1, kind: 'short' },
+      { seat: 2, kind: 'fold' },
+    ]);
+    expect(t.magic.gains.filter((g) => g.reason.startsWith('cinder'))).toEqual([]);
+  });
+
+  it('rewards winning a side pot the matcher is eligible for, even when the main pot is lost', () => {
+    const hand = riggedHand(setup([100, 4, 100]), ['Ah Ad', 'Qh Qd', '7c 2d'], 'Qc 9s 5h 3c 8d');
+    let t = table(hand, { 0: ['cinder_challenge'] });
+    t = castSpell(t, 0, uidOf(t, 0, 'cinder_challenge'), { spell: 'cinder_challenge', raiseTo: 6 });
+    t = act(t, 1, { type: 'call' }); // short all-in, wins the main pot with trips
+    t = act(t, 2, { type: 'call' }); // matches 6
+    t = finish(t, [0, 2]);
+    const pots = t.hand.result!.pots;
+    expect(pots[0].winners).toEqual([1]);
+    expect(pots[1]).toMatchObject({ eligible: [0, 2], winners: [0] });
+    expect(t.magic.gains.some((g) => g.seat === 0 && g.reason === 'cinder_called')).toBe(true);
+  });
+
+  it('gives nothing when the caster loses every pot a matcher is eligible for', () => {
+    const hand = riggedHand(setup([100, 4, 100]), ['Ah Ad', 'Qh Qd', '9c 9d'], 'Qc 9s 5h 3c 8d');
+    let t = table(hand, { 0: ['cinder_challenge'] });
+    t = castSpell(t, 0, uidOf(t, 0, 'cinder_challenge'), { spell: 'cinder_challenge', raiseTo: 6 });
+    t = act(t, 1, { type: 'call' });
+    t = act(t, 2, { type: 'call' });
+    t = finish(t, [0, 2]);
+    expect(t.magic.gains.filter((g) => g.reason.startsWith('cinder'))).toEqual([]);
+  });
+
+  it('uncontested pots give no showdown regeneration', () => {
+    let t = table(startHand(setup([100, 100, 100])), {});
+    t = act(t, 0, { type: 'raise', to: 6 });
+    t = act(t, 1, { type: 'fold' });
+    t = act(t, 2, { type: 'fold' });
+    expect(t.magic.gains).toEqual([]);
+  });
+});

@@ -19,8 +19,22 @@ import {
   windowSeat,
 } from '../magic';
 import { SPELLS } from '../magic/spells';
-import { getPublicView, HandState, nextHandSetup, startHand } from '../rules/engine';
+import { getPublicView, HandSetup, HandState, startHand } from '../rules/engine';
 import { Rng } from '../rules/rng';
+import {
+  applyClaimCommand,
+  assertWorldInvariants,
+  autoAdvance,
+  batchDone,
+  type ClaimBatch,
+  type ClaimCommand,
+  createCharacter,
+  createWorld,
+  currentClaim,
+  openClaims,
+  roles,
+  type WorldState,
+} from '../world';
 
 export interface SeatConfig {
   id: string;
@@ -40,24 +54,36 @@ export interface HandSummary {
 }
 
 export interface TableSession {
-  version: 2;
+  version: 3;
   seed: number;
   handNumber: number;
   seats: SeatConfig[];
   table: MagicTable;
   history: HandSummary[];
+  /** Characters, reputations, covenants, Ledger treasury and transfer journal. */
+  world: WorldState;
+  /** Last Claims raised by the latest settled hand (null when nobody reached zero). */
+  claims: ClaimBatch | null;
 }
 
 export type SessionStatus =
   | 'humanWindow'
   | 'humanToAct'
   | 'aiToAct'
+  /** A Last Claim needs the player's decision (as debtor or claimant). */
+  | 'humanClaim'
+  /** A Last Claim has been resolved and is shown until the player continues. */
+  | 'claimResolved'
   | 'handComplete'
-  | 'humanBusted'
+  /** The player survived a Last Claim and left the table as one of the Fallen. */
+  | 'fallen'
+  /** The player's run has ended. */
+  | 'dead'
   | 'tableWon';
 
 const HISTORY_LIMIT = 20;
 const MAGIC_SALT = 0x6d61;
+const CLAIM_SALT = 0x636c;
 
 /** Deterministic per-hand / per-decision seeds derived from the session seed. */
 export function deriveSeed(...parts: number[]): number {
@@ -91,7 +117,11 @@ export function createSession(opts: NewSessionOptions): TableSession {
     return createSeatMagic(createSpellbook(s.id, counts, deriveSeed(opts.seed, MAGIC_SALT, i)));
   });
   const table = beginHand(hand, magic, deriveSeed(opts.seed, MAGIC_SALT, 1));
-  return { version: 2, seed: opts.seed, handNumber: 1, seats: opts.seats, table, history: [] };
+  const characters = opts.seats.map((s) =>
+    createCharacter(s.id, s.name, s.kind, s.kind === 'human' ? 'player' : ((s.profileId ?? 'other') as 'vesper' | 'oracle' | 'corvin')),
+  );
+  const world = createWorld(characters, opts.stacks.reduce((a, b) => a + b, 0));
+  return { version: 3, seed: opts.seed, handNumber: 1, seats: opts.seats, table, history: [], world, claims: null };
 }
 
 /** The default Act I table: the Wagerer against three named rivals at 1/2. */
@@ -122,6 +152,11 @@ export function currentActor(session: TableSession): number | null {
   return windowSeat(t) ?? t.hand.toAct;
 }
 
+/** Table stacks after settlement and any Last Claim transfers. */
+export function tableStacks(session: TableSession): number[] {
+  return session.claims?.stacks ?? session.table.hand.seats.map((p) => p.stack);
+}
+
 export function sessionStatus(session: TableSession): SessionStatus {
   const { hand } = session.table;
   const me = humanSeat(session);
@@ -130,8 +165,12 @@ export function sessionStatus(session: TableSession): SessionStatus {
     if (actor !== me) return 'aiToAct';
     return windowSeat(session.table) === me ? 'humanWindow' : 'humanToAct';
   }
-  if (hand.seats[me].stack === 0) return 'humanBusted';
-  if (hand.seats.filter((p) => p.stack > 0).length < 2) return 'tableWon';
+  const claim = session.claims ? currentClaim(session.claims) : null;
+  if (claim) return claim.stage === 'resolved' ? 'claimResolved' : 'humanClaim';
+  const you = session.world.characters[me];
+  if (!you.alive) return 'dead';
+  if (you.status === 'exited') return 'fallen';
+  if (tableStacks(session).filter((s) => s > 0).length < 2) return 'tableWon';
   return 'handComplete';
 }
 
@@ -171,8 +210,25 @@ function withTable(session: TableSession, table: MagicTable): TableSession {
   const next: TableSession = { ...session, table };
   if (table.hand.phase === 'complete' && session.table.hand.phase !== 'complete') {
     next.history = [...session.history, summarize(session, table)].slice(-HISTORY_LIMIT);
+    // Zero-chip check only after pot awards, refunds and bookkeeping (design v0.5 §03).
+    if (table.hand.result!.zeroChipSeats.length > 0) {
+      const opened = openClaims(table.hand, session.world, session.handNumber, deriveSeed(session.seed, CLAIM_SALT, session.handNumber));
+      const { batch, world } = autoAdvance(opened, session.world);
+      next.claims = batch;
+      next.world = world;
+    }
   }
   return next;
+}
+
+/** Applies the player's decision in the current Last Claim, then lets NPCs act until the player is needed again. */
+export function applyClaim(session: TableSession, command: ClaimCommand): TableSession {
+  const claim = session.claims ? currentClaim(session.claims) : null;
+  if (!claim) throw new Error('No Last Claim pending');
+  if (command.kind !== 'acknowledge' && !roles(session.world, claim).humanProposes) throw new Error('This claim is not yours to decide');
+  const step = applyClaimCommand(session.claims!, session.world, command);
+  const { batch, world } = autoAdvance(step.batch, step.world);
+  return { ...session, claims: batch, world };
 }
 
 /** A command without its seat (the session fills in the human's seat). */
@@ -208,12 +264,24 @@ export function stepAi(session: TableSession): TableSession {
   return withTable(session, apply(session.table, chooseAiCommand(session)));
 }
 
+/** Next hand at this table: stacks after claims; dead or departed characters have no seat stack. */
+function nextSetup(session: TableSession, seed: number): HandSetup {
+  const prev = session.table.hand;
+  const stacks = tableStacks(session).map((s, i) => (session.world.characters[i].status === 'seated' ? s : 0));
+  const players = prev.seats.map((p, i) => ({ id: p.id, stack: stacks[i] }));
+  const n = players.length;
+  let button = -1;
+  for (let i = 1; i <= n && button < 0; i++) if (players[(prev.button + i) % n].stack > 0) button = (prev.button + i) % n;
+  return { seed, players, button, smallBlind: prev.setup.smallBlind, bigBlind: prev.setup.bigBlind };
+}
+
 export function startNextHand(session: TableSession): TableSession {
   if (sessionStatus(session) !== 'handComplete') throw new Error('Cannot start the next hand now');
+  if (session.claims && !batchDone(session.claims)) throw new Error('Last Claims are still pending');
   const handNumber = session.handNumber + 1;
-  const hand = startHand(nextHandSetup(session.table.hand, deriveSeed(session.seed, handNumber)));
+  const hand = startHand(nextSetup(session, deriveSeed(session.seed, handNumber)));
   const table = beginHand(hand, session.table.seats, deriveSeed(session.seed, MAGIC_SALT, handNumber));
-  return { ...session, handNumber, table };
+  return { ...session, handNumber, table, claims: null };
 }
 
 // ───────────────────────────── persistence ─────────────────────────────
@@ -224,7 +292,7 @@ export interface KeyValueStore {
   removeItem(key: string): void;
 }
 
-export const SAVE_KEY = 'lastWager.table.v2';
+export const SAVE_KEY = 'lastWager.table.v3';
 
 export function saveSession(store: KeyValueStore, session: TableSession): void {
   store.setItem(SAVE_KEY, JSON.stringify(session));
@@ -236,9 +304,11 @@ export function loadSession(store: KeyValueStore): TableSession | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as TableSession;
-    if (parsed.version !== 2) return null;
+    if (parsed.version !== 3) return null;
     if (parsed.table.hand.version !== 1 || parsed.table.hand.seats.length !== parsed.seats.length) return null;
     assertMagicInvariants(parsed.table);
+    const chips = parsed.table.hand.phase === 'betting' ? [parsed.table.hand.chipTotal] : tableStacks(parsed);
+    assertWorldInvariants(parsed.world, chips);
     return parsed;
   } catch {
     return null;

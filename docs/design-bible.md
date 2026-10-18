@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.4**
+**Canonical World, Gameplay & Production Blueprint — v0.5**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4 and v0.5 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -13,6 +13,14 @@ Status: Working design baseline, dated 18 October 2026 (v0.4 amendments below). 
 > (07) rival Spellbooks; (08) Briar Lock is street-opening only and never retroactive;
 > (09) eight-hand Contract Table and its setback. Machine-readable spell data:
 > `src/game/magic/spells.json`. Visual rules: [`art-bible.md`](art-bible.md).
+>
+> **v0.5 amendments (18 October 2026).** [`design-decisions-v0.5.md`](design-decisions-v0.5.md)
+> adds: 300×420 cards with an exactly symmetric back; Cinder Challenge "matching"
+> (a call or legal re-raise committing at least the enchanted amount); the Last Claim
+> state machine and negotiation flow; endowments and rival temperaments; debt and
+> default rules; the Fallen placeholder; and the P3 art specification
+> ([`art-bible-v0.2-addendum.md`](art-bible-v0.2-addendum.md)). Numbers live in
+> `src/game/world/rules.ts`.
 
 ---
 

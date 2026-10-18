@@ -33,6 +33,10 @@ export interface TableModel {
   handNumber: number;
   /** Spell events not yet animated. */
   freshEvents: MagicEvent[];
+  /** Per seat: still seated, departed (survived a Last Claim) or dead. */
+  seatStatus: ('seated' | 'exited' | 'dead')[];
+  /** Table stacks after settlement and any Last Claim transfers. */
+  stacks: number[];
 }
 
 interface SeatLayout {
@@ -162,7 +166,9 @@ export class TableScene extends Phaser.Scene {
   private drawSeat(model: TableModel, seat: number, L: SeatLayout, isHuman: boolean): void {
     const { view, magic } = model;
     const p = view.seats[seat];
-    const busted = !p.inHand && p.stack === 0;
+    const status = model.seatStatus[seat];
+    const stack = view.phase === 'complete' ? model.stacks[seat] : p.stack;
+    const busted = status !== 'seated' || (stack === 0 && (view.phase === 'complete' || !p.allIn));
     const active =
       view.phase === 'betting' && (magic.windowSeat !== null ? magic.windowSeat === seat : view.toAct === seat);
     const r = this.root!;
@@ -199,11 +205,12 @@ export class TableScene extends Phaser.Scene {
     if (name.width > room) name.setScale(room / name.width);
     r.add(name);
     if (busted) {
-      r.add(this.txt(textX, py + 9, 'Claimed', { fontFamily: UI, fontSize: '12px', color: '#a35050' }).setOrigin(0, 0.5));
+      const gone = status === 'exited' ? 'Departed · Fallen' : status === 'dead' ? 'Claimed' : 'Last Claim';
+      r.add(this.txt(textX, py + 9, gone, { fontFamily: UI, fontSize: '12px', color: status === 'exited' ? '#B8AE99' : '#c06060' }).setOrigin(0, 0.5));
     } else {
       r.add(this.add.image(textX + 6, py + 9, 'chip').setDisplaySize(12, 12));
       r.add(
-        this.txt(textX + 15, py + 9, String(p.stack), { fontFamily: UI, fontSize: '13px', color: '#F3D27A', fontStyle: '600' }).setOrigin(0, 0.5),
+        this.txt(textX + 15, py + 9, String(stack), { fontFamily: UI, fontSize: '13px', color: '#F3D27A', fontStyle: '600' }).setOrigin(0, 0.5),
       );
       // Aether pips (public).
       const pipX = left + w - 12;

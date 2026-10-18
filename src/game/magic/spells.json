@@ -48,7 +48,7 @@
       "timing_window": "Own poker action, immediately before a legal raise; cast+raise atomic",
       "target": "Self; chosen legal raise",
       "public_tell_text": "The wager burns with cinderlight.",
-      "effect": "On successful legal raise, mark that raise once. If at least one opponent calls that raise and caster later wins a contested pot including that caller at showdown, grant +2 Aether. If instead all opponents immediately fold to the raise, grant +1 Aether. No reward on tie, later uncontested win, caster fold or caster loss. Normal showdown regeneration resolves first; all capped at 3.",
+      "effect": "On successful legal raise, mark that raise once. If at least one opponent matches it (a call or legal re-raise committing at least the enchanted amount) and the caster later wins, as sole winner, a contested pot at showdown that the matcher is eligible for, grant +2 Aether. If instead all opponents immediately fold to the raise, grant +1 Aether. No reward on tie, later uncontested win, caster fold or caster loss. Normal showdown regeneration resolves first; all capped at 3.",
       "exhaust_or_discard": "Discard at hand end; marker expires after hand; exactly one resolution",
       "conflict_priority": 40
     },
@@ -82,8 +82,8 @@
       "discipline": "Mirror",
       "aether_cost": 2,
       "timing_window": "Preflop opening magic window, after hole cards dealt and blinds posted, before first voluntary bet",
-      "target": "Exactly one of caster\u2019s hole cards",
-      "public_tell_text": "A mirrored card turns face-down in the Wagerer\u2019s hand.",
+      "target": "Exactly one of caster’s hole cards",
+      "public_tell_text": "A mirrored card turns face-down.",
       "effect": "Choose 1 own hole card. Draw a uniformly random replacement from undealt poker deck; only after drawing, return discarded card to undealt pool and shuffle. Never touch board, burn or other hole cards. The identity of old/new card is private to caster.",
       "exhaust_or_discard": "Discard at hand end",
       "conflict_priority": 10
