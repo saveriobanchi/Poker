@@ -1,0 +1,92 @@
+{
+  "schema_version": "p2-v1",
+  "aether": {
+    "initial": 2,
+    "maximum": 3,
+    "showdown_regeneration": 1,
+    "max_spells_cast_per_hand": 1
+  },
+  "phase_priorities": {
+    "preflop_exchange": 10,
+    "street_opening_limit": 20,
+    "decision_information": 30,
+    "atomic_raise_enchantment": 40,
+    "settlement_regeneration": 90
+  },
+  "beginner_spellbook": {
+    "cinder_challenge": 2,
+    "unmask": 2,
+    "briar_lock": 2,
+    "fate_exchange": 2
+  },
+  "rival_spellbooks": {
+    "vesper": {
+      "cinder_challenge": 3,
+      "unmask": 1,
+      "briar_lock": 2,
+      "fate_exchange": 2
+    },
+    "oracle": {
+      "cinder_challenge": 1,
+      "unmask": 3,
+      "briar_lock": 1,
+      "fate_exchange": 3
+    },
+    "corvin": {
+      "cinder_challenge": 1,
+      "unmask": 2,
+      "briar_lock": 3,
+      "fate_exchange": 2
+    }
+  },
+  "spells": [
+    {
+      "id": "cinder_challenge",
+      "name": "Cinder Challenge",
+      "discipline": "Ember",
+      "aether_cost": 1,
+      "timing_window": "Own poker action, immediately before a legal raise; cast+raise atomic",
+      "target": "Self; chosen legal raise",
+      "public_tell_text": "The wager burns with cinderlight.",
+      "effect": "On successful legal raise, mark that raise once. If at least one opponent calls that raise and caster later wins a contested pot including that caller at showdown, grant +2 Aether. If instead all opponents immediately fold to the raise, grant +1 Aether. No reward on tie, later uncontested win, caster fold or caster loss. Normal showdown regeneration resolves first; all capped at 3.",
+      "exhaust_or_discard": "Discard at hand end; marker expires after hand; exactly one resolution",
+      "conflict_priority": 40
+    },
+    {
+      "id": "unmask",
+      "name": "Unmask",
+      "discipline": "Veil",
+      "aether_cost": 2,
+      "timing_window": "Own decision, any street after hole cards dealt and before own poker action",
+      "target": "One active opposing seat with two hole cards",
+      "public_tell_text": "A violet eye opens above the chosen rival.",
+      "effect": "Uniformly choose one of target two hole cards and reveal its identity privately only to caster; public observers see target and cast but not card. Hidden info persists to caster for this hand only.",
+      "exhaust_or_discard": "Discard at hand end",
+      "conflict_priority": 30
+    },
+    {
+      "id": "briar_lock",
+      "name": "Briar Lock",
+      "discipline": "Thorn",
+      "aether_cost": 1,
+      "timing_window": "Street opening magic window (preflop after blinds / postflop before first betting action)",
+      "target": "Whole table for current street",
+      "public_tell_text": "Thorns bind the stakes. Pot-limit this street.",
+      "effect": "For the current street only, every legal bet/raise, including all-in attempts, is restricted by standard pot-limit maximum computed from current pot, outstanding bet and call amount. Existing contributions, including blinds, are unchanged. Rejected if street already locked or terminal with no betting.",
+      "exhaust_or_discard": "Discard at hand end; modifier expires at street end",
+      "conflict_priority": 20
+    },
+    {
+      "id": "fate_exchange",
+      "name": "Fate Exchange",
+      "discipline": "Mirror",
+      "aether_cost": 2,
+      "timing_window": "Preflop opening magic window, after hole cards dealt and blinds posted, before first voluntary bet",
+      "target": "Exactly one of caster\u2019s hole cards",
+      "public_tell_text": "A mirrored card turns face-down in the Wagerer\u2019s hand.",
+      "effect": "Choose 1 own hole card. Draw a uniformly random replacement from undealt poker deck; only after drawing, return discarded card to undealt pool and shuffle. Never touch board, burn or other hole cards. The identity of old/new card is private to caster.",
+      "exhaust_or_discard": "Discard at hand end",
+      "conflict_priority": 10
+    }
+  ]
+}

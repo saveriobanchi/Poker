@@ -77,6 +77,17 @@ export interface ZeroChipSeat {
   claimants: number[];
 }
 
+export type BetLimit = 'no-limit' | 'pot-limit';
+
+/**
+ * Rule-level effects applied by the magic layer. Recorded with the log position
+ * they happened at, so replayHand reproduces them exactly. They carry no card
+ * identities (those stay private).
+ */
+export type EngineEffect =
+  | { kind: 'streetLimit'; atLog: number; limit: BetLimit }
+  | { kind: 'exchange'; atLog: number; seat: number; holeIndex: number };
+
 export interface HandResult {
   /** Final per-seat contribution after any uncalled bet was returned. */
   contributions: number[];
@@ -111,6 +122,9 @@ export interface HandState {
   /** Chips in play at the start of the hand; conserved at every transition. */
   chipTotal: number;
   log: LoggedAction[];
+  /** Betting structure of the current street (pot-limit only under Briar Lock). Missing means no-limit. */
+  streetLimit?: BetLimit;
+  effects?: EngineEffect[];
   result: HandResult | null;
 }
 
@@ -263,7 +277,12 @@ function findNextToAct(s: HandState, fromExclusive: number): number | null {
 function computeLegal(s: HandState, seat: number): LegalActions {
   const p = s.seats[seat];
   const toCall = Math.max(0, s.currentBet - p.streetCommitted);
-  const maxTo = p.streetCommitted + p.stack;
+  let maxTo = p.streetCommitted + p.stack;
+  if (s.streetLimit === 'pot-limit') {
+    // Pot-limit: raise by at most the pot after calling (all committed chips + the call).
+    const pot = s.seats.reduce((sum, q) => sum + q.totalCommitted, 0);
+    maxTo = Math.min(maxTo, s.currentBet + pot + toCall);
+  }
   let raise: LegalActions['raise'] = null;
   // A seat that already acted may raise again only when facing at least a full
   // raise since then (cumulative short all-ins count, TDA). A seat that checked
@@ -387,6 +406,7 @@ function advance(s: HandState): void {
     s.street = next.street;
     s.currentBet = 0;
     s.lastRaiseSize = s.setup.bigBlind;
+    s.streetLimit = 'no-limit';
     for (const p of s.seats) {
       p.streetCommitted = 0;
       p.hasActed = false;
@@ -396,6 +416,57 @@ function advance(s: HandState): void {
     s.toAct = findNextToAct(s, s.button);
     if (s.toAct !== null) return;
   }
+}
+
+// ───────────────────────── magic primitives ─────────────────────────
+
+/** True before anyone has taken a voluntary action on the current street (blinds are not actions). */
+export function isStreetOpening(state: HandState): boolean {
+  return state.phase === 'betting' && state.toAct !== null && !state.log.some((e) => e.street === state.street);
+}
+
+function recordEffect(s: HandState, effect: EngineEffect): void {
+  (s.effects ??= []).push(effect);
+}
+
+/** Sets the betting structure for the rest of the current street. Only legal at street opening. */
+export function setStreetLimit(state: HandState, limit: BetLimit): HandState {
+  if (!isStreetOpening(state)) throw new RulesError('The betting limit can only change before the street\'s first action');
+  if ((state.streetLimit ?? 'no-limit') === limit) throw new RulesError(`This street is already ${limit}`);
+  const s = structuredClone(state);
+  s.streetLimit = limit;
+  recordEffect(s, { kind: 'streetLimit', atLog: s.log.length, limit });
+  assertInvariants(s);
+  return s;
+}
+
+/**
+ * Replaces one of `seat`'s hole cards with a uniformly random undealt card,
+ * then returns the old card to the undealt stub and reshuffles it with the
+ * hand's deck RNG. Only legal preflop before any voluntary action.
+ */
+export function exchangeHoleCard(state: HandState, seat: number, holeIndex: number): HandState {
+  if (state.street !== 'preflop' || !isStreetOpening(state)) {
+    throw new RulesError('Hole cards can only be exchanged before preflop betting');
+  }
+  const p = state.seats[seat];
+  if (!p || !p.inHand || p.folded) throw new RulesError('Seat has no live hand');
+  if (holeIndex !== 0 && holeIndex !== 1) throw new RulesError('Invalid hole card');
+  const s = structuredClone(state);
+  const rng = new Rng(s.rngState);
+  const [drawn] = s.deck.splice(rng.nextInt(s.deck.length), 1);
+  const old = s.seats[seat].hole[holeIndex];
+  s.seats[seat].hole[holeIndex] = drawn;
+  s.deck.push(old);
+  rng.shuffle(s.deck);
+  s.rngState = rng.state;
+  recordEffect(s, { kind: 'exchange', atLog: s.log.length, seat, holeIndex });
+  assertInvariants(s);
+  return s;
+}
+
+function applyEffect(s: HandState, e: EngineEffect): HandState {
+  return e.kind === 'streetLimit' ? setStreetLimit(s, e.limit) : exchangeHoleCard(s, e.seat, e.holeIndex);
 }
 
 // ─────────────────────────── settlement ───────────────────────────
@@ -497,10 +568,23 @@ export function assertInvariants(s: HandState): void {
 
 // ──────────────────────── replay, save, rotation ────────────────────────
 
-/** Rebuilds a hand from its setup and action log; identical inputs give identical states. */
-export function replayHand(setup: HandSetup, log: Pick<LoggedAction, 'seat' | 'action'>[]): HandState {
+/** Rebuilds a hand from its setup, action log and effects; identical inputs give identical states. */
+export function replayHand(
+  setup: HandSetup,
+  log: Pick<LoggedAction, 'seat' | 'action'>[],
+  effects: EngineEffect[] = [],
+): HandState {
   let s = startHand(setup);
-  for (const entry of log) s = applyAction(s, entry.seat, entry.action);
+  const pending = [...effects];
+  const flush = (at: number) => {
+    while (pending.length && pending[0].atLog === at) s = applyEffect(s, pending.shift()!);
+  };
+  log.forEach((entry, i) => {
+    flush(i);
+    s = applyAction(s, entry.seat, entry.action);
+  });
+  flush(log.length);
+  if (pending.length) throw new RulesError('Unapplied effects in replay');
   return s;
 }
 

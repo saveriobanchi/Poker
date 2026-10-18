@@ -1,0 +1,76 @@
+{
+  "sprites": [
+    {
+      "path": "public/assets/cards/7h.png",
+      "size": [
+        150,
+        210
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "6a29e71245d9b96f952a7e9b4f096ed2095b19688891c151a836e93db39de071"
+    },
+    {
+      "path": "public/assets/cards/As.png",
+      "size": [
+        150,
+        210
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "e12240e7ce5b6715f28872fd4e414329293ff65504c8920664c5e29d6fe2875b"
+    },
+    {
+      "path": "public/assets/cards/back.png",
+      "size": [
+        150,
+        210
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "1914677b87bdb85f023fe008dd4daff5acf2c0bd4a1a1150ceca2c00a25c55e4"
+    },
+    {
+      "path": "public/assets/portraits/corvin.png",
+      "size": [
+        512,
+        512
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "1e8324bb890f5105da26b9a5531d3a04d75084ef1c6cd73f92fe448aec181ab7"
+    },
+    {
+      "path": "public/assets/portraits/oracle.png",
+      "size": [
+        512,
+        512
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "ab4fb23f978e10975dc307ee9b1a78e5d40d3b673f4b005b4b5fd118845b2f51"
+    },
+    {
+      "path": "public/assets/portraits/vesper.png",
+      "size": [
+        512,
+        512
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "a4cb28ebd72764db427884da48d212bd5d9df96e8dc5af2f875b721060d238bc"
+    },
+    {
+      "path": "public/assets/portraits/wagerer.png",
+      "size": [
+        512,
+        512
+      ],
+      "rgba": true,
+      "transparent_top_left": true,
+      "sha256": "0e84d987b514406d129bb81a0f7ea5fb58e190cf127bd0b05fc2c4ba89409266"
+    }
+  ],
+  "back_rotation_180_exact": true,
+  "all_passed": true
+}

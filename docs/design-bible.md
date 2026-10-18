@@ -1,8 +1,18 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.3**
+**Canonical World, Gameplay & Production Blueprint — v0.4**
 
-Status: Working design baseline, dated 18 October 2026. Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+
+> **v0.4 amendments (18 October 2026).** The decisions in
+> [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
+> override any conflicting text below:
+> (01) moving button; (02) all live hands revealed at showdown, folded hands never;
+> (03) no antes; (04) a checker may raise a short opening all-in;
+> (05) spell windows, priorities and Aether rules; (06) beginner Spellbook 2/2/2/2;
+> (07) rival Spellbooks; (08) Briar Lock is street-opening only and never retroactive;
+> (09) eight-hand Contract Table and its setback. Machine-readable spell data:
+> `src/game/magic/spells.json`. Visual rules: [`art-bible.md`](art-bible.md).
 
 ---
 

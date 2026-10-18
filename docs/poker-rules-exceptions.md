@@ -22,9 +22,9 @@ what the code does.
 | Odd chips | Split pots are divided equally. Leftover chips go one at a time to the tied winners in clockwise order, starting from the first seat left of the button. | `pots.test.ts` |
 | Showing hands | An uncontested winner never shows. At a contested showdown, every live hand is revealed (see the simplification below). | — |
 
-## Temporary engine simplifications (P0)
+## Approved engine policies (bible v0.4, decisions 01–04)
 
-To be revisited before P4. Each one changes table behavior only in rare cases.
+Items 1–4 below were approved by design in v0.4. They are no longer temporary.
 
 1. **Moving button, not dead button.** When seats are eliminated, the button moves
    to the next seat that still has chips, and the blinds follow it. TDA's dead-button
@@ -38,10 +38,11 @@ To be revisited before P4. Each one changes table behavior only in rare cases.
    does not change.
 4. **No antes.** Antes are not supported yet.
 
-## Fantasy deviations (magic)
+## Fantasy deviations (magic, P2)
 
-None are implemented yet (P2). The first one planned:
-
-- **Briar Lock** (Thorn): sets the current street's betting ceiling to pot-limit
-  for everyone. All-in raises stay legal only within that ceiling. Chips already
-  committed are unaffected.
+| Spell | Deviation from Hold'em | Engine rule |
+|---|---|---|
+| **Briar Lock** (Thorn) | The current street becomes **pot-limit** for everyone. | It may only be cast in a street-opening window, before any voluntary bet. The maximum raise is `currentBet + pot + amount to call`, where the pot includes every chip committed so far. "All-in" means "raise to the maximum" when the stack exceeds the ceiling. Committed chips, blinds included, are unchanged. No-limit returns on the next street. It cannot be cast twice on the same street. |
+| **Fate Exchange** (Mirror) | One hole card is replaced before preflop betting. | It may only be cast in the preflop opening window. A uniformly random card is drawn from the undealt stub, then the old card goes back into the stub, which is reshuffled with the hand's deterministic deck RNG. The 52-card invariant still holds. Burns, the board and other players' cards are never touched. |
+| **Unmask** (Veil) | One opponent card becomes known to the caster. | It is not a rules change. The information goes only to the caster's view (the AI or the human UI). Everyone sees that it was cast and who was targeted. |
+| **Cinder Challenge** (Ember) | None. | It only marks a raise and may refund Aether. Aether is not chips. |

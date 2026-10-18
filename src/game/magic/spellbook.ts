@@ -1,0 +1,57 @@
+/**
+ * A character's private Spellbook: a separate deck of spell card instances
+ * with its own seeded RNG. Instances move draw -> hand -> discard -> (reshuffle)
+ * draw and are never copied or destroyed.
+ */
+import { Rng } from '../rules/rng';
+import { SpellCounts, SpellId } from './spells';
+
+export interface SpellCard {
+  /** Unique instance id, e.g. "vesper:3". */
+  uid: string;
+  spell: SpellId;
+}
+
+export interface Spellbook {
+  owner: string;
+  draw: SpellCard[];
+  discard: SpellCard[];
+  rngState: number;
+}
+
+export const SPELLBOOK_MIN = 8;
+export const SPELLBOOK_MAX = 12;
+
+export function createSpellbook(owner: string, counts: SpellCounts, seed: number): Spellbook {
+  const cards: SpellCard[] = [];
+  for (const [spell, n] of Object.entries(counts) as [SpellId, number][]) {
+    for (let i = 0; i < n; i++) cards.push({ uid: `${owner}:${cards.length}`, spell });
+  }
+  if (cards.length < SPELLBOOK_MIN || cards.length > SPELLBOOK_MAX) {
+    throw new Error(`A Spellbook holds ${SPELLBOOK_MIN}-${SPELLBOOK_MAX} spells, got ${cards.length}`);
+  }
+  const rng = new Rng(seed);
+  rng.shuffle(cards);
+  return { owner, draw: cards, discard: [], rngState: rng.state };
+}
+
+/** Draws up to `n` spells, reshuffling the discard pile into the draw pile only when needed. */
+export function drawSpells(book: Spellbook, n: number): { book: Spellbook; drawn: SpellCard[] } {
+  const b = structuredClone(book);
+  const drawn: SpellCard[] = [];
+  const rng = new Rng(b.rngState);
+  while (drawn.length < n) {
+    if (b.draw.length === 0) {
+      if (b.discard.length === 0) break;
+      b.draw = rng.shuffle(b.discard);
+      b.discard = [];
+    }
+    drawn.push(b.draw.shift()!);
+  }
+  b.rngState = rng.state;
+  return { book: b, drawn };
+}
+
+export function discardSpells(book: Spellbook, cards: SpellCard[]): Spellbook {
+  return { ...book, discard: [...book.discard, ...structuredClone(cards)] };
+}
