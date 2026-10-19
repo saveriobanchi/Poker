@@ -253,10 +253,21 @@ export class Controls {
         this.setRaise(this.raiseTo);
         return;
       case 'unmask':
-        if (spell === 'twin_oracle' && targets.length > 1) {
-          return this.cb.onCast(uid, { spell, targets: targets.slice(0, 2) });
+        // Twin Oracle (design v0.7 §08): one or exactly two eligible are targeted automatically; with three or more, choose two.
+        if (spell === 'twin_oracle' && targets.length <= 2) return this.cb.onCast(uid, { spell, targets });
+        if (spell === 'twin_oracle') {
+          return this.showChoice(
+            'Twin Oracle: first opponent?',
+            targets.map((a) => [
+              names[a],
+              () =>
+                this.showChoice(
+                  'Twin Oracle: second opponent?',
+                  targets.filter((b) => b !== a).map((b) => [names[b], () => this.cb.onCast(uid, { spell: 'twin_oracle', targets: [a, b] })]),
+                ),
+            ]),
+          );
         }
-        if (spell === 'twin_oracle') return this.cb.onCast(uid, { spell, targets });
         return this.showChoice(
           `${SPELLS[spell].name}: whom?`,
           targets.map((t) => [names[t], () => this.cb.onCast(uid, { spell: spell as 'unmask', target: t })]),

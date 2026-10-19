@@ -62,6 +62,8 @@ export interface Contract {
   servicesDone: number;
   tablesCompleted: number;
   status: ContractStatus;
+  /** Act boundaries at which this NPC debtor already offered a voluntary payment (design v0.7 §07). */
+  voluntaryActs?: string[];
 }
 
 export interface Transfer {

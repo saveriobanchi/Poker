@@ -7,12 +7,13 @@ import { decideChoice, decideOpening, decideTurn } from '../ai/magic';
 import { preflopPercentile } from '../ai/preflop';
 import { shovePrior, shoveRate } from '../ai/reads';
 import { type AiProfile, PROFILES } from '../ai/profiles';
-import { getMagicView, isBaseSpell } from '../magic';
+import { getMagicView, isBaseSpell, SLOT_LIMITS } from '../magic';
 import { getLegalActions, getPublicView, type PlayerAction } from '../rules/engine';
 import { Rng } from '../rules/rng';
 import { humanSeat, sessionStatus } from '../table/session';
 import { currentClaim, pactOptions, roles } from '../world';
 import {
+  attuneOptions,
   ENDINGS,
   evolutionOffers,
   playerChips,
@@ -92,6 +93,8 @@ export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | nu
       case 'claimResolved':
         return runClaim(run, { kind: 'acknowledge' });
       case 'handComplete': {
+        const att = attuneOptions(run)[0];
+        if (att) return runCommand(run, { kind: 'attune', uid: att.uid });
         const evo = evolutionOffers(run).find((o) => !o.needsToken);
         if (evo) return runCommand(run, { kind: 'evolve', uid: evo.card.uid, branch: evo.branches[0] });
         return runNextHand(run);
@@ -119,11 +122,14 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
         const token = run.reward!.findIndex((r) => r.kind === 'evolution_token');
         if (token >= 0) return { kind: 'reward', index: token };
       }
-      return { kind: 'reward', index: 0 };
+      const full = (run.player.magic.relics ?? []).length >= SLOT_LIMITS.relics;
+      return { kind: 'reward', index: 0, replace: full && run.reward![0].kind === 'relic' ? run.player.magic.relics![0] : undefined };
     }
     case 'setback_audience':
       return { kind: 'setback', choice: 'public_record' };
     default: {
+      const att = attuneOptions(run)[0];
+      if (att) return { kind: 'attune', uid: att.uid };
       const evo = evolutionOffers(run)[0];
       if (evo && isBaseSpell(evo.card.spell)) return { kind: 'evolve', uid: evo.card.uid, branch: evo.branches[1], useToken: evo.needsToken };
       return { kind: 'advance' };

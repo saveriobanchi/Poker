@@ -326,12 +326,24 @@ function standingsOf(t: TableSession): Standing[] {
   }));
 }
 
-/** Contract and boss objectives (design v0.6 §03, route data). */
-function judge(nodeId: TableNodeId, standings: Standing[]): 'win' | 'alive_failure' {
+/** Boss tables: the minimum net profit for a top-two finish to count (design v0.7 §02). */
+export const BOSS_PROFIT_FLOOR: Partial<Record<TableNodeId, number>> = { boss_ledger: 12 };
+
+/**
+ * Contract and boss objectives (design v0.6 §03, v0.7 §02). A boss is won by
+ * tying for first, or by a top-two finish with net profit of at least
+ * max(floor, ⌈20% of the entry stack⌉). `entry` is the snapshot taken when the
+ * player sat down, so reloading cannot move it.
+ */
+export function judge(nodeId: TableNodeId, standings: Standing[], net: number, entry: number): 'win' | 'alive_failure' {
   const me = standings.find((s) => s.id === PLAYER_ID)!;
   if (me.stack < 1) return 'alive_failure';
   if (nodeId === 'fallen_low_table') return 'win';
-  if (nodeId === 'boss_ledger') return me.rank === 1 ? 'win' : 'alive_failure';
+  const floor = BOSS_PROFIT_FLOOR[nodeId];
+  if (floor !== undefined) {
+    if (me.rank === 1) return 'win';
+    return me.rank <= 2 && net >= Math.max(floor, Math.ceil(0.2 * entry)) ? 'win' : 'alive_failure';
+  }
   return me.rank <= 2 ? 'win' : 'alive_failure';
 }
 
@@ -363,7 +375,7 @@ function finishTable(run: RunState): void {
   let outcome: TableOutcome;
   if (!you.alive) outcome = 'dead';
   else if (status === 'fallen') outcome = 'fallen';
-  else outcome = judge(nodeId, standings);
+  else outcome = judge(nodeId, standings, final - run.entryStack, run.entryStack);
 
   // Table-end duty events and debt repayment (P3 rules) for a living player.
   let repayment = 0;
@@ -401,6 +413,40 @@ function repayDebts(run: RunState, net: number): number {
     return r.contract;
   });
   return paid;
+}
+
+/** Voluntary NPC repayment at an act boundary: 15% of the wallet above its last chip (design v0.7 §07). */
+export const VOLUNTARY_SHARE = 0.15;
+
+/**
+ * At most once per act boundary, every living NPC debtor pays
+ * min(owed, ⌊15% × (wallet − 1)⌋) from its own wallet to its creditor. No chips
+ * are earned or created, a debtor never pays its last chip, and the payment is
+ * a visible journal entry even when the debtor never reappears.
+ */
+export function actBoundaryRepayments(run: RunState, actKey: string): void {
+  run.contracts = run.contracts.map((k) => {
+    if (k.pact !== 'debt' || k.status === 'cleared' || k.debtor === PLAYER_ID) return k;
+    if ((k.voluntaryActs ?? []).includes(actKey)) return k;
+    const debtor = run.characters[k.debtor];
+    const next = { ...k, voluntaryActs: [...(k.voluntaryActs ?? []), actKey] };
+    if (!debtor?.alive) return next;
+    const wallet = run.accounts[k.debtor] ?? 0;
+    const pay = Math.min(k.obligation - k.repaid, Math.floor(VOLUNTARY_SHARE * Math.max(0, wallet - 1)));
+    if (wallet < 2 || pay <= 0) return next;
+    if (k.creditor === 'ledger') {
+      run.accounts[k.debtor] -= pay;
+      run.treasury += pay;
+      run.journal.push({ id: run.journal.length + 1, from: k.debtor, to: 'ledger', amount: pay, reason: `voluntary debt payment (${k.id}, ${actKey})` });
+    } else transfer(run, k.debtor, k.creditor, pay, `voluntary debt payment (${k.id}, ${actKey})`);
+    next.repaid += pay;
+    run.log.push(`${debtor.name} pays ${pay} Lifechips towards a debt.`);
+    if (next.repaid >= next.obligation) {
+      next.status = 'cleared';
+      if (run.characters[k.creditor]) run.characters[k.creditor].reputation.favor += 1;
+    }
+    return next;
+  });
 }
 
 // ───────────────────────────── sworn service ─────────────────────────────
@@ -487,9 +533,12 @@ export type RunCommand =
   | { kind: 'rethread'; uid: string; spell: SpellId }
   | { kind: 'leaveShop'; to: 'optional_event' | 'contract_2' }
   | { kind: 'event'; take: boolean }
-  | { kind: 'reward'; index: number | null }
+  /** `replace`: with full relic slots, the owned relic given up for the new one (no refund). */
+  | { kind: 'reward'; index: number | null; replace?: RelicId }
   | { kind: 'setback'; choice: 'public_record' | 'break_attunement'; uid?: string }
-  | { kind: 'evolve'; uid: string; branch: SpellId; useToken?: boolean };
+  | { kind: 'evolve'; uid: string; branch: SpellId; useToken?: boolean }
+  /** Evolution token with no qualified spell: +1 Resonance to one unevolved instance (design v0.7 §04). */
+  | { kind: 'attune'; uid: string };
 
 /** Applies one route-level command. Pure: returns a new state; throws RunError when illegal. */
 export function runCommand(run0: RunState, cmd: RunCommand): RunState {
@@ -514,13 +563,16 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
       resolveEvent(run, cmd.take);
       break;
     case 'reward':
-      chooseReward(run, cmd.index);
+      chooseReward(run, cmd.index, cmd.replace);
       break;
     case 'setback':
       resolveSetback(run, cmd.choice, cmd.uid);
       break;
     case 'evolve':
       evolve(run, cmd.uid, cmd.branch, cmd.useToken ?? false);
+      break;
+    case 'attune':
+      attune(run, cmd.uid);
       break;
   }
   assertRunInvariants(run);
@@ -574,7 +626,7 @@ function afterResult(run: RunState): void {
 }
 
 /** Seeded, non-owned reward offers: C1 three common relics; C2 one relic or an evolution token. */
-function rewardOffers(run: RunState, node: TableNodeId): RewardOption[] {
+export function rewardOffers(run: RunState, node: TableNodeId): RewardOption[] {
   const owned = run.player.magic.relics ?? [];
   const full = owned.length >= SLOT_LIMITS.relics;
   const rng = new Rng(deriveSeed(run.seed, 0x7e, node.length, run.results.length));
@@ -582,19 +634,44 @@ function rewardOffers(run: RunState, node: TableNodeId): RewardOption[] {
     return full ? [] : rng.shuffle(COMMON_RELICS.filter((r) => !owned.includes(r))).slice(0, 3).map((relic) => ({ kind: 'relic', relic }));
   }
   if (node === 'contract_2') {
-    const relic = rng.shuffle(RELIC_IDS.filter((r) => !owned.includes(r)))[0];
-    return [...(relic && !full ? [{ kind: 'relic' as const, relic }] : []), { kind: 'evolution_token' }];
+    const relic = weightedRelic(rng, RELIC_IDS.filter((r) => !owned.includes(r)));
+    return [...(relic ? [{ kind: 'relic' as const, relic }] : []), { kind: 'evolution_token' }];
   }
   return [];
 }
 
-function chooseReward(run: RunState, index: number | null): void {
+/** Rarity weights for a seeded non-owned relic; empty tiers are dropped and the rest re-normalized. */
+export const RARITY_WEIGHTS: Record<string, number> = { common: 60, uncommon: 35, rare: 5 };
+
+function weightedRelic(rng: Rng, candidates: RelicId[]): RelicId | null {
+  const tiers = Object.keys(RARITY_WEIGHTS).filter((t) => candidates.some((r) => RELICS[r].rarity === t));
+  if (!tiers.length) return null;
+  const total = tiers.reduce((a, t) => a + RARITY_WEIGHTS[t], 0);
+  let roll = rng.nextFloat() * total;
+  let tier = tiers[tiers.length - 1];
+  for (const t of tiers) {
+    if ((roll -= RARITY_WEIGHTS[t]) < 0) {
+      tier = t;
+      break;
+    }
+  }
+  const pool = candidates.filter((r) => RELICS[r].rarity === tier);
+  return pool[rng.nextInt(pool.length)];
+}
+
+function chooseReward(run: RunState, index: number | null, replace?: RelicId): void {
   if (run.node !== 'reward' || !run.reward) throw new RunError('No reward to choose');
   if (index !== null) {
     const choice = run.reward[index];
     if (!choice) throw new RunError('No such reward');
     if (choice.kind === 'relic') {
-      run.player.magic.relics = [...(run.player.magic.relics ?? []), choice.relic];
+      let relics = run.player.magic.relics ?? [];
+      if (relics.length >= SLOT_LIMITS.relics) {
+        if (!replace || !relics.includes(replace)) throw new RunError('Your relic slots are full: choose one relic to give up');
+        relics = relics.filter((r) => r !== replace);
+        run.log.push(`${RELICS[replace].name} is surrendered; relics are never sold back for Lifechips.`);
+      }
+      run.player.magic.relics = [...relics, choice.relic];
       run.log.push(`Reward: ${RELICS[choice.relic].name}.`);
     } else {
       run.player.evolutionTokens += 1;
@@ -708,6 +785,26 @@ export function evolutionOffers(run: RunState): EvolutionOffer[] {
     else if (r >= 1 && run.player.evolutionTokens > 0) offers.push({ card, branches: evo.branches, needsToken: true });
   }
   return offers;
+}
+
+/** Unevolved instances a token may attune: only when no base instance has Resonance ≥ 1. */
+export function attuneOptions(run: RunState): SpellCard[] {
+  if (run.player.evolutionTokens < 1) return [];
+  if (run.table && run.table.table.hand.phase === 'betting') return [];
+  const base = allCards(playerBook(run)).filter((c) => isBaseSpell(c.spell));
+  if (base.some((c) => (c.resonance ?? 0) >= 1)) return [];
+  return base;
+}
+
+function attune(run: RunState, uid: string): void {
+  if (!attuneOptions(run).some((c) => c.uid === uid)) throw new RunError('The token can only attune when no spell is ready to evolve');
+  run.player.evolutionTokens -= 1;
+  if (run.table) {
+    const me = humanSeat(run.table);
+    run.table.table.seats[me].book = adjustResonance(run.table.table.seats[me].book, uid, 1);
+  } else run.player.magic.book = adjustResonance(run.player.magic.book, uid, 1);
+  const card = allCards(playerBook(run)).find((c) => c.uid === uid)!;
+  run.log.push(`The token attunes ${SPELLS[card.spell].name}: Resonance +1.`);
 }
 
 function evolve(run: RunState, uid: string, branch: SpellId, useToken: boolean): void {

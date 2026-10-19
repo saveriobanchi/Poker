@@ -114,3 +114,5 @@ export const RIVAL_SPELLBOOKS: Record<string, SpellCounts> = {
   night_clerk: BEGINNER_SPELLBOOK,
   dock_runner: BEGINNER_SPELLBOOK,
 };
+// Design v0.7 §08: the boss carries one legal evolution — one Briar Lock becomes Quiet Briars.
+RIVAL_SPELLBOOKS.bailiff_sable = { ...RIVAL_SPELLBOOKS.bailiff_sable, briar_lock: 2, quiet_briars: 1 };
