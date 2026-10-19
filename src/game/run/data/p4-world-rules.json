@@ -1,0 +1,102 @@
+{
+  "schema": "p4-v0.6",
+  "treasury_start": 20,
+  "reputation": {
+    "claim_life": {
+      "dread": 1
+    },
+    "funded_unbound_mercy": {
+      "honor": 1
+    },
+    "debt_or_service_imposition": {
+      "favor": 0
+    },
+    "completed_service_duty": {
+      "creditor_favor": 1
+    },
+    "completed_debt_obligation": {
+      "creditor_favor": 1,
+      "once_only": true
+    }
+  },
+  "debtor_acceptance": {
+    "single_saved_roll_per_claim": true,
+    "same_roll_reused_for_offer_and_counter": true,
+    "cases": {
+      "vesper": {
+        "mercy": 0.55,
+        "debt": 0.4,
+        "service": 0.0,
+        "service_veto": true,
+        "counter_priority": [
+          "mercy",
+          "debt"
+        ],
+        "note": "Vesper chooses death rather than personal service in P4; later exception only via explicit authored story consent"
+      },
+      "oracle": {
+        "mercy": 0.9,
+        "debt": 0.8,
+        "service": 0.35,
+        "counter_priority": [
+          "debt",
+          "mercy",
+          "service"
+        ]
+      },
+      "corvin": {
+        "mercy": 0.85,
+        "debt": 0.7,
+        "service": 0.15,
+        "counter_priority": [
+          "mercy",
+          "debt",
+          "service"
+        ]
+      },
+      "other": {
+        "mercy": 0.65,
+        "debt": 0.55,
+        "service": 0.25,
+        "counter_priority": [
+          "debt",
+          "mercy",
+          "service"
+        ]
+      }
+    },
+    "modifiers": {
+      "friendly": 0.1,
+      "betrayed": -0.2
+    },
+    "clamp": [
+      0.05,
+      0.9
+    ],
+    "hard_veto_overrides_clamp": true,
+    "funding_gate_before_roll": true,
+    "no_auto_accept_counter": true
+  },
+  "endowments": {
+    "vesper": 10,
+    "oracle": 12,
+    "corvin": 8,
+    "player": 10,
+    "adjudicator": 10,
+    "other": 10
+  },
+  "debt": {
+    "multiplier": 1.5,
+    "share_of_positive_net": 0.3,
+    "deadline_completed_tables": 4,
+    "preserve_stack_min": 1
+  },
+  "service": {
+    "duties_required": 3,
+    "active_at_once": 1,
+    "liberation_after_three": true
+  },
+  "bankruptcy_cap": {
+    "player_survival_pacts_per_run": 1
+  }
+}

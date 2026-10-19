@@ -1,0 +1,73 @@
+{
+  "schema": "p4-v0.6",
+  "slot_limits": {
+    "relics": 5,
+    "covenants": 2
+  },
+  "relics": [
+    {
+      "id": "ashen_signet",
+      "name": "Ashen Signet",
+      "rarity": "common",
+      "price": 12,
+      "effect": "Once per table, after the caster wins as sole winner of an eligible contested showdown pot following their own legal preflop raise, gain +1 Aether after regular regeneration, capped at 3. Cannot trigger more than once per table.",
+      "stacking": "unique"
+    },
+    {
+      "id": "veiled_monocle",
+      "name": "Veiled Monocle",
+      "rarity": "uncommon",
+      "price": 18,
+      "effect": "The first Unmask-family spell cast each table costs 1 less Aether, min 0. Only affects the spell instance actually cast; excludes Ravenous Eye exhaust removal rules.",
+      "stacking": "unique"
+    },
+    {
+      "id": "thorn_anchor",
+      "name": "Thorn Anchor",
+      "rarity": "common",
+      "price": 14,
+      "effect": "The first Briar-family cast each table costs 1 less Aether, min 0. The pot-limit ceiling still applies equally to every seat.",
+      "stacking": "unique"
+    },
+    {
+      "id": "lantern_reservoir",
+      "name": "Lantern Reservoir",
+      "rarity": "common",
+      "price": 10,
+      "effect": "At each new table, initialize owner's Aether at min(3, base table-entry Aether + 1). Does not provide chips or raise the 3-Aether cap.",
+      "stacking": "unique"
+    },
+    {
+      "id": "mirror_prism",
+      "name": "Mirror Prism",
+      "rarity": "uncommon",
+      "price": 22,
+      "effect": "The first Fate Exchange-family cast each table costs 1 less Aether, min 0. Does not permit an additional cast or extra exchanged cards.",
+      "stacking": "unique"
+    },
+    {
+      "id": "gambler_knot",
+      "name": "Gambler's Knot",
+      "rarity": "common",
+      "price": 16,
+      "effect": "Once per table, after owner legally folds facing a positive outstanding wager, gain +1 Aether capped at 3. Never triggers on a check or folded seat action outside legal turn.",
+      "stacking": "unique"
+    }
+  ],
+  "covenants": [
+    {
+      "id": "covenant_open_book",
+      "name": "Covenant of the Open Book",
+      "acquisition": "optional event node; transfer 22 Lifechips to named Witness escrow; item not for sale at regular shop",
+      "effect": "At the opening of each poker hand owner gains +1 Aether capped at 3. Immediately after dealing hole cards and before opening magic windows, reveal a uniformly random one of owner's two hole cards PUBLICLY to the whole table. If Fate Exchange replaces that revealed slot, update the public revealed identity immediately to the replacement; the currently publicly known card is never concealed by exchange.",
+      "limitations": "No extra casts; 3 Aether hard cap; public tell in hand history; does not modify pot or ranking",
+      "stacking": "unique; covenant slot 1 of max 2"
+    }
+  ],
+  "prohibitions": [
+    "direct chip mint/destruction by magic",
+    "trigger twice from replays",
+    "silent knowledge gain",
+    "equip duplicate unique relic"
+  ]
+}

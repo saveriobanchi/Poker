@@ -1,15 +1,26 @@
 /**
- * Last Claim and covenant numbers from design decisions v0.5 (§05, §06).
- * All values are P3 prototypes, to be measured in P4.
+ * Last Claim and covenant numbers from design decisions v0.5 (§05, §06) and
+ * v0.6 (§01, §02). Values are prototypes, to be measured.
  */
+import opponents from '../run/data/p4-opponents.json';
+import worldRules from '../run/data/p4-world-rules.json';
+
 export type Pact = 'mercy' | 'debt' | 'service';
 export const PACTS: Pact[] = ['mercy', 'debt', 'service'];
 
-/** Key used for per-character tables: rival profile id, 'player', 'adjudicator' or 'other'. */
-export type RuleKey = 'vesper' | 'oracle' | 'corvin' | 'player' | 'adjudicator' | 'other';
+/**
+ * Key used for per-character tables: a rival/profile id, 'player', 'adjudicator'
+ * or 'other'. Characters without their own entry fall back to 'other'.
+ */
+export type RuleKey = string;
+
+/** Looks up a per-character table entry, falling back to 'other'. */
+export function byKey<T>(table: Record<string, T>, key: RuleKey): T {
+  return table[key] ?? table.other;
+}
 
 /** Revival endowment each claimant funds (from their own post-pot stack, or the Ledger relief treasury). */
-export const ENDOWMENT: Record<RuleKey, number> = {
+export const ENDOWMENT: Record<string, number> = {
   vesper: 10,
   oracle: 12,
   corvin: 8,
@@ -19,7 +30,7 @@ export const ENDOWMENT: Record<RuleKey, number> = {
 };
 
 /** Claimant's base willingness to consider an otherwise valid survival bargain. */
-export const CLAIMANT_BASE: Record<RuleKey, number> = {
+export const CLAIMANT_BASE: Record<string, number> = {
   vesper: 0.25,
   oracle: 0.5,
   corvin: 0.7,
@@ -28,7 +39,7 @@ export const CLAIMANT_BASE: Record<RuleKey, number> = {
   other: 0.4,
 };
 
-export const CLAIMANT_PACT_PREFERENCE: Record<RuleKey, Partial<Record<Pact, number>>> = {
+export const CLAIMANT_PACT_PREFERENCE: Record<string, Partial<Record<Pact, number>>> = {
   vesper: { service: 0.15, debt: 0.05, mercy: -0.15 },
   oracle: { debt: 0.15, service: -0.1, mercy: -0.05 },
   corvin: { mercy: 0.1, debt: 0.05, service: -0.2 },
@@ -37,17 +48,38 @@ export const CLAIMANT_PACT_PREFERENCE: Record<RuleKey, Partial<Record<Pact, numb
   other: {},
 };
 
-/** NPC debtor's base acceptance when the player, as claimant, offers survival terms. */
-export const DEBTOR_BASE: Record<RuleKey, number> = {
-  vesper: 0.4,
-  oracle: 0.8,
-  corvin: 0.7,
-  player: 0.5,
-  adjudicator: 0.5,
-  other: 0.5,
-};
+/**
+ * NPC debtor acceptance per pact (design v0.6 §02): thresholds before relationship
+ * modifiers and the clamp; a vetoed pact is a hard zero that the clamp never lifts.
+ * `priority` is the order in which the NPC proposes or counters.
+ */
+export interface DebtorTemperament {
+  acceptance: Record<Pact, number>;
+  veto: Pact[];
+  priority: Pact[];
+}
 
-export const DEBTOR_PACT_MODIFIER: Record<Pact, number> = { mercy: 0.15, debt: 0, service: -0.2 };
+type CaseJson = { mercy: number; debt: number; service: number; service_veto?: boolean; counter_priority: string[] };
+
+export const DEBTOR_TEMPERAMENT: Record<string, DebtorTemperament> = (() => {
+  const out: Record<string, DebtorTemperament> = {};
+  for (const [key, c] of Object.entries(worldRules.debtor_acceptance.cases as Record<string, CaseJson>)) {
+    const veto: Pact[] = c.service_veto ? ['service'] : [];
+    const listed = c.counter_priority as Pact[];
+    // A vetoed pact is never proposed; unlisted acceptable pacts follow the listed ones.
+    const priority = [...listed, ...PACTS.filter((p) => !listed.includes(p))].filter((p) => !veto.includes(p));
+    out[key] = { acceptance: { mercy: c.mercy, debt: c.debt, service: c.service }, veto, priority };
+  }
+  const otherPriority = out.other.priority;
+  for (const o of opponents.opponents) {
+    out[o.id] = {
+      acceptance: { mercy: o.debtor_mercy, debt: o.debtor_debt, service: o.debtor_service },
+      veto: [],
+      priority: otherPriority,
+    };
+  }
+  return out;
+})();
 
 export const CLAIMANT_MODIFIERS = {
   friendly: 0.1,
@@ -60,7 +92,7 @@ export const CLAIMANT_MODIFIERS = {
   retainsUnder10: -0.1,
 };
 
-export const DEBTOR_MODIFIERS = { friendly: 0.1, betrayed: -0.2 };
+export const DEBTOR_MODIFIERS = worldRules.debtor_acceptance.modifiers;
 
 export const WILLINGNESS_CLAMP = [0.05, 0.9] as const;
 
@@ -79,8 +111,5 @@ export const DEBT = { multiplier: 1.5, repayShare: 0.3, overdueAfterTables: 4, p
 export const SERVICE_TASKS = 3;
 export const MAX_PLAYER_SURVIVAL_COVENANTS = 1;
 
-/**
- * PROTOTYPE (not specified in v0.5): starting balance of the Ledger relief
- * treasury that funds neutral mercy petitions. Flagged for design review.
- */
-export const LEDGER_TREASURY_INITIAL = 20;
+/** Ledger relief treasury at run start (accepted in design v0.6 §01). */
+export const LEDGER_TREASURY_INITIAL = worldRules.treasury_start;

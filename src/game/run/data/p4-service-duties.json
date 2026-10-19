@@ -1,0 +1,110 @@
+{
+  "schema": "p4-v0.6",
+  "ordering": "Each giver's three duties advance strictly in listed order; next duty activates on subsequent actionable event (no one event completes multiple duties)",
+  "world_rule": "Progress does not itself transfer chips; completion after 3 releases service and changes rank to unbound Fallen until next social promotion",
+  "duties": [
+    {
+      "id": "vesper_raise",
+      "giver": "vesper",
+      "text": "Prove your nerve: make a legal preflop raise and remain through the next betting decision.",
+      "completion_condition": {
+        "event": "own_preflop_raise_then_next_decision",
+        "once": true
+      },
+      "reward": "service_progress +1; Vesper Favor +1",
+      "failure": "no punitive chip confiscation; remains active until completed"
+    },
+    {
+      "id": "vesper_showdown",
+      "giver": "vesper",
+      "text": "Let the table see you: participate in one contested showdown.",
+      "completion_condition": {
+        "event": "contested_showdown_participant",
+        "once": true
+      },
+      "reward": "service_progress +1; Vesper Favor +1",
+      "failure": "remains active"
+    },
+    {
+      "id": "vesper_rank",
+      "giver": "vesper",
+      "text": "Bring the house honor: finish a contract table in its top two living stacks.",
+      "completion_condition": {
+        "event": "contract_finish_rank_top2_alive",
+        "once": true
+      },
+      "reward": "service_progress +1; Vesper Favor +1; all 3 duties release service pact",
+      "failure": "remains active"
+    },
+    {
+      "id": "oracle_witness",
+      "giver": "oracle",
+      "text": "Witness the truth: observe one contested showdown, whether or not you remain in the hand.",
+      "completion_condition": {
+        "event": "observed_any_contested_showdown",
+        "once": true
+      },
+      "reward": "service_progress +1; Oracle Favor +1",
+      "failure": "remains active"
+    },
+    {
+      "id": "oracle_spell",
+      "giver": "oracle",
+      "text": "Record one Veil or Mirror spell cast legally while you remain at the table.",
+      "completion_condition": {
+        "event": "owner_cast_spell",
+        "disciplines": [
+          "Veil",
+          "Mirror"
+        ],
+        "once": true
+      },
+      "reward": "service_progress +1; Oracle Favor +1",
+      "failure": "remains active"
+    },
+    {
+      "id": "oracle_reveal",
+      "giver": "oracle",
+      "text": "Complete a showdown in which at least one opponent reveals a poker hand.",
+      "completion_condition": {
+        "event": "contested_showdown_participant_with_opponent_reveal",
+        "once": true
+      },
+      "reward": "service_progress +1; Oracle Favor +1; all 3 duties release service pact",
+      "failure": "remains active"
+    },
+    {
+      "id": "corvin_check",
+      "giver": "corvin",
+      "text": "Show restraint: take a legal check action in a hand.",
+      "completion_condition": {
+        "event": "owner_checked",
+        "once": true
+      },
+      "reward": "service_progress +1; Corvin Favor +1",
+      "failure": "remains active"
+    },
+    {
+      "id": "corvin_fold",
+      "giver": "corvin",
+      "text": "Know when to yield: fold once to a bet or raise of at least the current big blind.",
+      "completion_condition": {
+        "event": "owner_fold_facing_wager_gte_bb",
+        "once": true
+      },
+      "reward": "service_progress +1; Corvin Favor +1",
+      "failure": "remains active"
+    },
+    {
+      "id": "corvin_finish",
+      "giver": "corvin",
+      "text": "Survive honestly: finish a full contract table with one or more Lifechips.",
+      "completion_condition": {
+        "event": "contract_finish_player_alive",
+        "once": true
+      },
+      "reward": "service_progress +1; Corvin Favor +1; all 3 duties release service pact",
+      "failure": "remains active"
+    }
+  ]
+}

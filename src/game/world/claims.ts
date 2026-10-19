@@ -19,9 +19,9 @@ import {
   CLAIMANT_MODIFIERS,
   CLAIMANT_PACT_PREFERENCE,
   DEBT,
-  DEBTOR_BASE,
+  byKey,
   DEBTOR_MODIFIERS,
-  DEBTOR_PACT_MODIFIER,
+  DEBTOR_TEMPERAMENT,
   ENDOWMENT,
   MAX_PLAYER_SURVIVAL_COVENANTS,
   type Outlook,
@@ -179,7 +179,7 @@ export function claimantWillingness(batch: ClaimBatch, world: WorldState, claim:
   const key = claimantKey(world, claim);
   const debtor = world.characters[claim.debtor];
   const m = CLAIMANT_MODIFIERS;
-  let p = CLAIMANT_BASE[key] + (CLAIMANT_PACT_PREFERENCE[key][pact] ?? 0);
+  let p = byKey(CLAIMANT_BASE, key) + (byKey(CLAIMANT_PACT_PREFERENCE, key)[pact] ?? 0);
   if (claim.claimant.kind === 'seat') {
     const rel = relation(world, world.characters[claim.claimant.seat].id, debtor.id);
     if (rel.friendly) p += m.friendly;
@@ -196,16 +196,26 @@ export function claimantWillingness(batch: ClaimBatch, world: WorldState, claim:
   return clamp(p);
 }
 
-/** Probability that an NPC debtor accepts survival terms offered by the claimant (decider = debtor). */
+/**
+ * Probability that an NPC debtor accepts survival terms (decider = debtor), from
+ * its v0.6 temperament. A vetoed pact is a hard zero, never lifted by the clamp.
+ */
 export function debtorAcceptance(world: WorldState, claim: Claim, pact: Pact): number {
   const debtor = world.characters[claim.debtor];
-  let p = DEBTOR_BASE[debtor.ruleKey] + DEBTOR_PACT_MODIFIER[pact];
+  const temper = byKey(DEBTOR_TEMPERAMENT, debtor.ruleKey);
+  if (temper.veto.includes(pact)) return 0;
+  let p = temper.acceptance[pact];
   if (claim.claimant.kind === 'seat') {
     const rel = relation(world, debtor.id, world.characters[claim.claimant.seat].id);
     if (rel.friendly) p += DEBTOR_MODIFIERS.friendly;
     if (rel.betrayedMe) p += DEBTOR_MODIFIERS.betrayed;
   }
   return clamp(p);
+}
+
+/** The NPC debtor's own order of preference among pacts (vetoed pacts excluded). */
+export function debtorPriority(world: WorldState, claim: Claim): Pact[] {
+  return byKey(DEBTOR_TEMPERAMENT, world.characters[claim.debtor].ruleKey).priority;
 }
 
 /** Who proposes in this claim, and whether that party is the human. */
@@ -296,10 +306,13 @@ export function applyClaimCommand(
       }
       claim.accepted = false;
       const decider = proposer === 'debtor' ? 'claimant' : 'debtor';
-      const counter = PACTS.filter((p) => p !== cmd.pact && !pactBlocker(batch, world, claim, p))
-        .map((p) => ({ p, w: willingness(batch, world, claim, p) }))
-        .sort((a, b) => b.w - a.w)
-        .find((x) => claim.roll < x.w);
+      // A claimant counters with the pact it is most willing to grant; an NPC debtor
+      // counters in its own order of preference (design v0.6 §02). Same saved roll.
+      const candidates =
+        decider === 'claimant'
+          ? PACTS.map((p) => ({ p, w: willingness(batch, world, claim, p) })).sort((a, b) => b.w - a.w)
+          : debtorPriority(world, claim).map((p) => ({ p, w: debtorAcceptance(world, claim, p) }));
+      const counter = candidates.find((x) => x.p !== cmd.pact && !pactBlocker(batch, world, claim, x.p) && claim.roll < x.w);
       if (counter) {
         claim.counter = { pact: counter.p, proposedBy: decider, endowment: f.endowment, funder: f.funder };
         claim.stage = 'counter';
@@ -322,9 +335,10 @@ export function applyClaimCommand(
 
 /**
  * Plays every NPC-only decision until the human must act or acknowledge.
- * NPC debtors plead for the pact their claimant is most willing to grant and
- * always accept a counteroffer; NPC-vs-NPC outcomes still stop at `resolved`
- * so the table can show them.
+ * An NPC debtor pleads for the first funded pact in its own order of preference
+ * and judges any counteroffer with its own acceptance against the same saved
+ * roll; it may prefer death (design v0.6 §02). NPC-vs-NPC outcomes still stop
+ * at `resolved` so the table can show them.
  */
 export function autoAdvance(batch0: ClaimBatch, world0: WorldState): { batch: ClaimBatch; world: WorldState } {
   let batch = batch0;
@@ -335,12 +349,12 @@ export function autoAdvance(batch0: ClaimBatch, world0: WorldState): { batch: Cl
     const { humanProposes } = roles(world, claim);
     if (humanProposes) return { batch, world };
     let cmd: ClaimCommand;
-    if (claim.stage === 'counter') cmd = { kind: 'answerCounter', accept: true };
-    else {
-      const best = pactOptions(batch, world)
-        .filter((o) => !o.blocker)
-        .map((o) => ({ pact: o.pact, w: willingness(batch, world, claim, o.pact) }))
-        .sort((a, b) => b.w - a.w)[0];
+    if (claim.stage === 'counter') {
+      cmd = { kind: 'answerCounter', accept: claim.roll < debtorAcceptance(world, claim, claim.counter!.pact) };
+    } else {
+      const open = new Set(pactOptions(batch, world).filter((o) => !o.blocker).map((o) => o.pact));
+      const choice = debtorPriority(world, claim).find((p) => open.has(p));
+      const best = choice ? { pact: choice } : null;
       if (!best) {
         const w = structuredClone(world);
         const b = structuredClone(batch);
@@ -412,10 +426,9 @@ function resolveSurvival(batch: ClaimBatch, world: WorldState, claim: Claim, off
     const c = character(world, claim.claimant.seat);
     relation(world, debtor.id, c.id).sparedMe = true;
     relation(world, c.id, debtor.id).iSpared = true;
-    if (c.kind === 'human') {
-      if (offer.pact === 'mercy') c.reputation.honor += 1;
-      else c.reputation.favor += 1;
-    }
+    // v0.6 §01: funded unbound mercy earns Honor; imposing debt or service earns
+    // nothing now (Favor comes when duties are fulfilled or the debt is discharged).
+    if (c.kind === 'human' && offer.pact === 'mercy') c.reputation.honor += 1;
   }
   claim.outcome = { kind: 'survival', pact: offer.pact, endowment: amount, funder: offer.funder, contractId: contract.id };
   claim.stage = 'resolved';

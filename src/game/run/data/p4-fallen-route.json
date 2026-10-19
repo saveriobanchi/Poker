@@ -1,0 +1,48 @@
+{
+  "schema": "p4-v0.6",
+  "entry": "fallen_registry",
+  "only_from": "P3 successful funded Last Claim; never start P4 Fallen with a new untracked endowment",
+  "nodes": [
+    {
+      "id": "fallen_registry",
+      "kind": "story",
+      "title": "The Registry Below",
+      "effect": "Show saved contract/endowment/giver/favor; no Lifechip transfer; rebind rank FALLEN",
+      "next": "fallen_low_table"
+    },
+    {
+      "id": "fallen_low_table",
+      "kind": "four_hand_contract",
+      "title": "The Coal Table",
+      "seats": [
+        {
+          "id": "player",
+          "stack": "saved endowment remaining"
+        },
+        {
+          "id": "night_clerk",
+          "initial": 16
+        },
+        {
+          "id": "dock_runner",
+          "initial": 18
+        }
+      ],
+      "small_blind": 1,
+      "big_blind": 1,
+      "max_hands": 4,
+      "success": "survive with >=1 Lifechip; table rankings optional",
+      "next_alive": "fallen_audience",
+      "next_zero": "last_claim_permanent_death"
+    },
+    {
+      "id": "fallen_audience",
+      "kind": "story",
+      "title": "Audience of the Bound",
+      "effect": "Review debt status/service duty; if service duty fulfilled, commit progress exactly once; if debt, show next repayment and due table count; unlock Cinder recovery route placeholder",
+      "next": "fallen_route_unlocked"
+    }
+  ],
+  "rules": "All chip transfers real; no free salary; debtor share repayments occur only after positive-net completed tables under P3; low-table opponents funded as real named wallets",
+  "temporary_screen": "Fallen route unlocked: P4 slice complete"
+}

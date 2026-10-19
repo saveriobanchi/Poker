@@ -1,0 +1,200 @@
+{
+  "schema": "p4-v0.6",
+  "entry": "start",
+  "world_seed_model": "all initial NPC stacks, treasury and merchant wallet are funded from named accounts at world initialization; do not clone or reset NPC wallets",
+  "nodes": [
+    {
+      "id": "start",
+      "kind": "start",
+      "label": "Wagerer's Arrival",
+      "choices": [
+        "contract_1"
+      ],
+      "chip_delta": 0
+    },
+    {
+      "id": "contract_1",
+      "kind": "contract_table",
+      "label": "The Ash Table",
+      "seats": [
+        {
+          "id": "player",
+          "stack": "carry"
+        },
+        {
+          "id": "vesper",
+          "initial": 120
+        },
+        {
+          "id": "oracle",
+          "initial": 100
+        },
+        {
+          "id": "corvin",
+          "initial": 90
+        }
+      ],
+      "small_blind": 1,
+      "big_blind": 2,
+      "max_hands": 8,
+      "success": "player stack >= 1 AND player tied-or-above rank 2 among all original entrants; bankrupted entrants rank below surviving entrants",
+      "reward": {
+        "choice": "one of three seeded common relics; inventory cap 5; no chip mint"
+      },
+      "edges": {
+        "win": "lantern_shop",
+        "alive_failure": "setback_audience",
+        "zero": "last_claim"
+      }
+    },
+    {
+      "id": "lantern_shop",
+      "kind": "shop",
+      "label": "Selene's Lantern",
+      "shop_id": "selene",
+      "choices": [
+        "optional_event",
+        "contract_2"
+      ],
+      "no_poker_stakes": true
+    },
+    {
+      "id": "optional_event",
+      "kind": "optional_event",
+      "label": "Mirror's Petition",
+      "entries": [
+        {
+          "id": "take_covenant",
+          "cost_chips": 22,
+          "to": "patron_witness_escrow",
+          "reward": "covenant_open_book",
+          "requirements": "player would retain >=1 Lifechip and has available covenant slot"
+        },
+        {
+          "id": "decline",
+          "cost_chips": 0,
+          "reward": "no change"
+        }
+      ],
+      "choices": [
+        "contract_2"
+      ],
+      "consumable_once": true
+    },
+    {
+      "id": "contract_2",
+      "kind": "contract_table",
+      "label": "The Lantern Circuit",
+      "seats": [
+        {
+          "id": "player",
+          "stack": "carry"
+        },
+        {
+          "id": "mara_quill",
+          "initial": 110
+        },
+        {
+          "id": "eldric_vale",
+          "initial": 95
+        }
+      ],
+      "small_blind": 1,
+      "big_blind": 2,
+      "max_hands": 8,
+      "success": "player stack >=1 and rank <=2 among original entrants",
+      "reward": {
+        "choice": "one seeded non-owned relic or one spell evolution token; cannot evolve unqualified spell; no chip mint"
+      },
+      "edges": {
+        "win": "boss_ledger",
+        "alive_failure": "setback_audience",
+        "zero": "last_claim"
+      }
+    },
+    {
+      "id": "boss_ledger",
+      "kind": "boss_table",
+      "label": "The Bailiff's Ledger",
+      "seats": [
+        {
+          "id": "player",
+          "stack": "carry"
+        },
+        {
+          "id": "bailiff_sable",
+          "initial": 145
+        },
+        {
+          "id": "sister_rill",
+          "initial": 115
+        }
+      ],
+      "small_blind": 2,
+      "big_blind": 4,
+      "hand_cap": 12,
+      "blind_schedule": [
+        {
+          "hands": "1-6",
+          "sb": 2,
+          "bb": 4
+        },
+        {
+          "hands": "7-12",
+          "sb": 3,
+          "bb": 6
+        }
+      ],
+      "boss": "bailiff_sable",
+      "boss_magic": "legal spellbook only, no hidden deck peeks; public tell on every cast",
+      "success": "player stack >=1 AND player tied for highest positive stack among original entrants",
+      "edges": {
+        "win": "slice_victory",
+        "alive_failure": "slice_exile",
+        "zero": "last_claim"
+      }
+    },
+    {
+      "id": "setback_audience",
+      "kind": "setback_event",
+      "label": "A Keeper's Audit",
+      "once_per_failed_table": true,
+      "cost": {
+        "favor": -1
+      },
+      "required_choice": [
+        {
+          "id": "public_record",
+          "effect": {
+            "notoriety": 1
+          }
+        },
+        {
+          "id": "break_attunement",
+          "effect": "remove 1 Resonance from a chosen owned spell with Resonance >0; if none, use public_record"
+        }
+      ],
+      "return": "next main route node; never replay the failed table",
+      "no_lifechip_transfer": true
+    },
+    {
+      "id": "slice_victory",
+      "kind": "ending",
+      "label": "The Ledger Opens",
+      "result": "act_one_cleared; unlock next act placeholder; keep survivor chips"
+    },
+    {
+      "id": "slice_exile",
+      "kind": "ending",
+      "label": "Exiled from the Circuit",
+      "result": "act_one_failed_alive; character survives with existing chips; no artificial chip loss"
+    },
+    {
+      "id": "last_claim",
+      "kind": "interrupt",
+      "label": "Last Claim",
+      "result": "run P3 claim resolver; if rescued enter fallen_registry else death"
+    }
+  ],
+  "graph_notes": "Start -> contract_1 -> shop -> [optional_event or skip] -> contract_2 -> boss. Fail alive -> Keeper's Audit once then forward. Never replay exhausted contract nodes."
+}

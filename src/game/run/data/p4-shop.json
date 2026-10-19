@@ -1,0 +1,23 @@
+{
+  "schema": "p4-v0.6",
+  "merchant": {
+    "id": "selene",
+    "name": "Selene of the Lantern Market",
+    "initial_actual_lifechips": 80,
+    "source": "registered NPC merchant wallet; must be included in initial world ledger totals"
+  },
+  "offer_generation": "From six unique relics, seed three distinct offers at shop-node creation and persist inventory/price; cannot reroll via save/reload",
+  "price_source": "p4-relics-and-covenants.json",
+  "other_offers": [
+    {
+      "id": "spell_rethread",
+      "price": 11,
+      "stock": 1,
+      "effect": "Replace exactly one currently owned base spell instance with a different starter base spell, preserving Spellbook length; its Resonance resets to zero."
+    }
+  ],
+  "checkout": "player.Lifechips - price >=1, inventory space available, item present, transfer atomic to merchant wallet",
+  "cannot_buy_message": "The Ledger forbids a purchase that would surrender your final Lifechip.",
+  "sold_out_message": "That relic has already passed into another hand.",
+  "wallet_accounting": "purchase debit player and credit merchant exact same amount; merchant cannot invent refunds; refunds are transfers from actual merchant balance"
+}

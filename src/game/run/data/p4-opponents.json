@@ -1,0 +1,91 @@
+{
+  "schema": "p4-v0.6",
+  "ai_knowledge_rule": "Only public information plus own cards and paid legal reveals",
+  "style_measurement": "VPIP/PFR targets are tendencies, not forced action frequencies; calibrate over >=10000 AI opportunities and report errors",
+  "opponents": [
+    {
+      "id": "mara_quill",
+      "name": "Mara Quill",
+      "table": "contract_2",
+      "stack": 110,
+      "vpip_target": 0.42,
+      "pfr_target": 0.14,
+      "aggression": "loose-passive",
+      "bluff_rate": "low",
+      "magic_style": "Mirror/Veil",
+      "spellbook": {
+        "cinder_challenge": 1,
+        "unmask": 3,
+        "briar_lock": 1,
+        "fate_exchange": 3
+      },
+      "debtor_mercy": 0.6,
+      "debtor_debt": 0.65,
+      "debtor_service": 0.2,
+      "notes": "Merchant-agent who calls too wide, infrequently overbluffs; use position and drawing odds"
+    },
+    {
+      "id": "eldric_vale",
+      "name": "Eldric Vale",
+      "table": "contract_2",
+      "stack": 95,
+      "vpip_target": 0.33,
+      "pfr_target": 0.24,
+      "aggression": "loose-aggressive",
+      "bluff_rate": "above-average",
+      "magic_style": "Ember/Veil",
+      "spellbook": {
+        "cinder_challenge": 3,
+        "unmask": 3,
+        "briar_lock": 1,
+        "fate_exchange": 1
+      },
+      "debtor_mercy": 0.55,
+      "debtor_debt": 0.55,
+      "debtor_service": 0.2,
+      "notes": "Bluffs more often in position, with visible spell behavior"
+    },
+    {
+      "id": "bailiff_sable",
+      "name": "Bailiff Sable",
+      "table": "boss_ledger",
+      "stack": 145,
+      "vpip_target": 0.25,
+      "pfr_target": 0.2,
+      "aggression": "tight-aggressive",
+      "bluff_rate": "selective",
+      "magic_style": "Thorn/Veil",
+      "spellbook": {
+        "cinder_challenge": 1,
+        "unmask": 3,
+        "briar_lock": 3,
+        "fate_exchange": 1
+      },
+      "debtor_mercy": 0.5,
+      "debtor_debt": 0.75,
+      "debtor_service": 0.1,
+      "notes": "Boss; better range adaptation, no peek at hidden cards, no illegal rule override"
+    },
+    {
+      "id": "sister_rill",
+      "name": "Sister Rill",
+      "table": "boss_ledger",
+      "stack": 115,
+      "vpip_target": 0.3,
+      "pfr_target": 0.12,
+      "aggression": "cautious-calling",
+      "bluff_rate": "very-low",
+      "magic_style": "Thorn/Mirror",
+      "spellbook": {
+        "cinder_challenge": 1,
+        "unmask": 2,
+        "briar_lock": 3,
+        "fate_exchange": 2
+      },
+      "debtor_mercy": 0.75,
+      "debtor_debt": 0.55,
+      "debtor_service": 0.05,
+      "notes": "Small-bluff defensive opponent; cashes value but rarely makes thin raises"
+    }
+  ]
+}

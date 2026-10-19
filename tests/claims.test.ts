@@ -275,8 +275,94 @@ describe('player as claimant and NPC-vs-NPC claims', () => {
     const r = autoAdvance(openClaims(hand, w, 1, 3), w);
     const claim = currentClaim(r.batch)!;
     expect(claim.stage).toBe('resolved');
-    expect(claim.offer?.pact).toBe('debt'); // the Oracle's favourite pact
+    expect(claim.offer?.pact).toBe('mercy'); // v0.6: Vesper pleads in her own order (mercy, then debt)
     assertWorldInvariants(r.world, r.batch.stacks);
+  });
+});
+
+describe('NPC debtor temperament (design v0.6 §02)', () => {
+  /** `who` (seat 1) busts to the player (seat 0). */
+  function bustsToYou(who: 'vesper' | 'oracle' | 'corvin'): { batch: ClaimBatch; w: WorldState } {
+    const stacks = [100, 10, 100, 100];
+    const hand = play(stacks, ['Ah Ad', '7c 2d', '8c 3h', '9c 4h'], 'Kc Qd 9h 4s 5c', 0, [
+      [3, fold],
+      [0, { type: 'raise', to: 10 }],
+      [1, allIn],
+      [2, fold],
+    ]);
+    const w = world(stacks);
+    const roster = { vesper: ['vesper', 'Lady Vesper'], oracle: ['oracle', 'The Sightless Oracle'], corvin: ['corvin', 'Sir Corvin'] }[who];
+    w.characters[1] = createCharacter(roster[0], roster[1], 'ai', who);
+    return { batch: openClaims(hand, w, 1, 9), w };
+  }
+
+  it('Vesper refuses service whatever the roll; the veto is not lifted by the clamp', () => {
+    const { batch, w } = bustsToYou('vesper');
+    expect(debtorAcceptance(w, batch.claims[0], 'service')).toBe(0);
+    const r = applyClaimCommand(withRoll(batch, 0), w, { kind: 'propose', pact: 'service' });
+    expect(currentClaim(r.batch)).toMatchObject({ stage: 'counter', accepted: false, counter: { pact: 'mercy', proposedBy: 'debtor' } });
+  });
+
+  it('Oracle counters with debt first; Corvin with mercy first', () => {
+    const o = bustsToYou('oracle');
+    const ro = applyClaimCommand(withRoll(o.batch, 0.5), o.w, { kind: 'propose', pact: 'service' });
+    expect(currentClaim(ro.batch)!.counter!.pact).toBe('debt');
+    const c = bustsToYou('corvin');
+    const rc = applyClaimCommand(withRoll(c.batch, 0.5), c.w, { kind: 'propose', pact: 'service' });
+    expect(currentClaim(rc.batch)!.counter!.pact).toBe('mercy');
+  });
+
+  it('imposing debt or service earns no Favor; funded mercy earns Honor', () => {
+    const { batch, w } = bustsToYou('oracle');
+    const debt = applyClaimCommand(withRoll(batch, 0), w, { kind: 'propose', pact: 'debt' });
+    expect(debt.world.characters[0].reputation).toMatchObject({ favor: 0, honor: 0 });
+    const mercy = applyClaimCommand(withRoll(batch, 0), w, { kind: 'propose', pact: 'mercy' });
+    expect(mercy.world.characters[0].reputation.honor).toBe(1);
+  });
+
+  it('an NPC debtor can refuse a counteroffer and die', () => {
+    // Vesper (seat 1) busts to the Oracle (seat 2).
+    const stacks = [100, 10, 100, 100];
+    const hand = play(stacks, ['8c 3h', '7c 2d', 'Ah Ad', '9c 4h'], 'Kc Qd 9h 4s 5c', 0, [
+      [3, fold],
+      [0, fold],
+      [1, allIn],
+      [2, call],
+    ]);
+    const w = world(stacks);
+    const open = openClaims(hand, w, 1, 3);
+    const claim = open.claims[0];
+    // Vesper pleads mercy (Oracle grants it at 0.50); at roll 0.6 the Oracle counters
+    // with debt (0.70), which Vesper accepts only below 0.40: she refuses and dies.
+    expect(claimantWillingness(open, w, claim, 'mercy')).toBeCloseTo(0.5);
+    expect(claimantWillingness(open, w, claim, 'debt')).toBeCloseTo(0.7);
+    const r = autoAdvance(withRoll(open, 0.6), w);
+    const resolved = currentClaim(r.batch)!;
+    expect(resolved.offer?.pact).toBe('mercy');
+    expect(resolved.counter?.pact).toBe('debt');
+    expect(resolved.outcome).toEqual({ kind: 'death', reason: 'declinedCounter' });
+    expect(r.batch.stacks).toEqual(open.stacks);
+    assertWorldInvariants(r.world, r.batch.stacks);
+  });
+
+  it('the 20-chip relief treasury funds exactly two neutral petitions', () => {
+    const stacks = [10, 100, 100];
+    const hand = play(stacks, ['7c 8d', 'Jh Td', 'Js Tc'], 'Ah Kd Qc 2s 3h', 0, [
+      [0, allIn],
+      [1, call],
+      [2, call],
+      ...([1, 2, 1, 2, 1, 2] as const).map((s) => [s, { type: 'check' }] as [number, PlayerAction]),
+    ]);
+    let w = world(stacks);
+    expect(w.treasury).toBe(20);
+    for (let i = 0; i < 2; i++) {
+      const b = withRoll(openClaims(hand, w, 1, 1), 0);
+      w = applyClaimCommand(b, w, { kind: 'propose', pact: 'mercy' }).world;
+      w.characters[0].survivalCovenantsUsed = 0; // isolate the treasury rule
+    }
+    expect(w.treasury).toBe(0);
+    const third = openClaims(hand, w, 1, 1);
+    expect(pactBlocker(third, w, third.claims[0], 'mercy')).toMatch(/treasury/);
   });
 });
 

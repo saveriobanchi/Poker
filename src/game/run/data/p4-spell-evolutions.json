@@ -1,0 +1,139 @@
+{
+  "schema": "p4-v0.6",
+  "rules": {
+    "gain": "Only recorded qualifying event, at most 1 resonance per owned spell instance per poker hand",
+    "branch_offer": "At threshold after settlement; deterministic choice persists; replaces one specific spell instance 1-to-1",
+    "evolved_ability": "Inherit existing one-cast-per-hand ceiling; max aether 3; evolving not allowed during hand; target legality enforced",
+    "tracking": "Resonance on instance-id not spell-id, so duplicated spells do not level together"
+  },
+  "evolutions": [
+    {
+      "parent": "unmask",
+      "resonance_event": "Cast legally and target remains eligible through next completed betting action",
+      "threshold": 2,
+      "per_hand_cap": 1,
+      "branches": [
+        {
+          "id": "twin_oracle",
+          "name": "Twin Oracle",
+          "discipline": "Veil",
+          "aether_cost": 3,
+          "timing_window": "Own decision on any betting street",
+          "target": "1 or 2 distinct nonfolded opponents with concealed hole cards",
+          "public_tell_text": "Two violet eyes turn toward the wagerers.",
+          "effect": "Reveal exactly one random hole card from each chosen opponent privately to caster; if only one eligible target, reveal one from that target. Publicly disclose identities of targeted seats only.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 30
+        },
+        {
+          "id": "ravenous_eye",
+          "name": "Ravenous Eye",
+          "discipline": "Veil",
+          "aether_cost": 3,
+          "timing_window": "Own decision on any betting street",
+          "target": "One nonfolded opponent with concealed hole cards",
+          "public_tell_text": "The eye opens fully and consumes its sigil.",
+          "effect": "Reveal both target hole cards privately to caster; after cast this spell instance exhausts until the table ends. No shared disclosure.",
+          "exhaust_or_discard": "Exhaust until next table",
+          "conflict_priority": 30
+        }
+      ]
+    },
+    {
+      "parent": "cinder_challenge",
+      "resonance_event": "The enchanted raise is legally matched or exceeded by another seat after cast",
+      "threshold": 2,
+      "per_hand_cap": 1,
+      "branches": [
+        {
+          "id": "ember_echo",
+          "name": "Ember Echo",
+          "discipline": "Ember",
+          "aether_cost": 1,
+          "timing_window": "Own poker action immediately before legal raise; atomic cast+raise",
+          "target": "Self and accompanying legal raise",
+          "public_tell_text": "The raised wager echoes like a struck bell.",
+          "effect": "Use base Cinder qualifying rules, plus on a sole contested showdown win with a qualifying matcher, draw one additional magic card at the start of the next poker hand (max 4 drawn). The Aether gain stays +2, capped at 3. All fold remains +1. Exactly one next-hand draw marker.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 40
+        },
+        {
+          "id": "red_oath",
+          "name": "Red Oath",
+          "discipline": "Ember",
+          "aether_cost": 0,
+          "timing_window": "Own poker action immediately before legal raise; atomic cast+raise",
+          "target": "Self and accompanying legal raise",
+          "public_tell_text": "The caster stakes a visible sigil on the raise.",
+          "effect": "Publicly reveal one randomly selected current hole card of the caster on cast; matched sole contested showdown victory grants +1 Aether instead of +2; all fold grants +1; base Cinder eligibility rules otherwise apply. Reveal remains current if any subsequent legal hole-card exchange occurs.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 40
+        }
+      ]
+    },
+    {
+      "parent": "briar_lock",
+      "resonance_event": "After legal cast, at least one voluntary betting action occurs under its pot-limit restriction",
+      "threshold": 2,
+      "per_hand_cap": 1,
+      "branches": [
+        {
+          "id": "thorn_lattice",
+          "name": "Thorn Lattice",
+          "discipline": "Thorn",
+          "aether_cost": 2,
+          "timing_window": "Street-opening window only",
+          "target": "All live seats, current and next street (if next street exists)",
+          "public_tell_text": "Thorns spread toward the next street.",
+          "effect": "Apply pot-limit this street and automatically at start of next street before any voluntary action, unless hand ends. Identical caps for all seats. If cast on river, current street only.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 20
+        },
+        {
+          "id": "quiet_briars",
+          "name": "Quiet Briars",
+          "discipline": "Thorn",
+          "aether_cost": 1,
+          "timing_window": "Street-opening window only",
+          "target": "Whole table for current street",
+          "public_tell_text": "The thorns drink the sound of wagers.",
+          "effect": "Apply base Briar Lock. If no voluntary raise or bet occurs during the locked street, refund 1 Aether at street end (capped at 3, once per cast). Checks do not count as bets; earlier blinds do not count.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 20
+        }
+      ]
+    },
+    {
+      "parent": "fate_exchange",
+      "resonance_event": "Legal exchange is completed and caster survives to flop or hand ends by all-fold preflop",
+      "threshold": 2,
+      "per_hand_cap": 1,
+      "branches": [
+        {
+          "id": "second_reflection",
+          "name": "Second Reflection",
+          "discipline": "Mirror",
+          "aether_cost": 3,
+          "timing_window": "Preflop opening magic window before voluntary bet",
+          "target": "One caster hole card",
+          "public_tell_text": "Two reflections hover above a face-down card.",
+          "effect": "Draw two distinct random candidates without replacement from undealt stub, choose one as replacement; return other candidate and original removed card to stub only after selection, then reshuffle. No other hole/board/burn card modified. Choice private.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 10
+        },
+        {
+          "id": "marked_fate",
+          "name": "Marked Fate",
+          "discipline": "Mirror",
+          "aether_cost": 1,
+          "timing_window": "Preflop opening magic window before voluntary bet",
+          "target": "One caster hole card",
+          "public_tell_text": "The discarded rank is inscribed on the Ledger.",
+          "effect": "Execute base Fate Exchange, but publicly announce the rank (not suit) of the discarded card after replacement. Current replacement remains private. No duplicate cards.",
+          "exhaust_or_discard": "Discard at hand end",
+          "conflict_priority": 10
+        }
+      ]
+    }
+  ]
+}
