@@ -1,0 +1,243 @@
+{
+  "runs": 1000,
+  "seed": 1,
+  "policies": {
+    "skilled": {
+      "runs": 250,
+      "endings": {
+        "slice_exile": 156,
+        "death": 53,
+        "fallen_unlocked": 27,
+        "slice_victory": 14
+      },
+      "survival": 0.788,
+      "tableReached": {
+        "contract_1": 250,
+        "contract_2": 242,
+        "boss_ledger": 218,
+        "fallen_low_table": 32
+      },
+      "tableOutcomes": {
+        "contract_1": {
+          "alive_failure": 120,
+          "win": 122,
+          "fallen": 6,
+          "dead": 2
+        },
+        "contract_2": {
+          "alive_failure": 162,
+          "win": 56,
+          "fallen": 10,
+          "dead": 14
+        },
+        "boss_ledger": {
+          "alive_failure": 156,
+          "dead": 32,
+          "win": 14,
+          "fallen": 16
+        },
+        "fallen_low_table": {
+          "win": 27,
+          "dead": 5
+        }
+      },
+      "bankruptcies": 80,
+      "avgHands": 25.1,
+      "avgFinalChips": 50.6,
+      "avgMs": 56.4
+    },
+    "passive": {
+      "runs": 250,
+      "endings": {
+        "death": 197,
+        "fallen_unlocked": 45,
+        "slice_victory": 2,
+        "slice_exile": 6
+      },
+      "survival": 0.212,
+      "tableReached": {
+        "contract_1": 250,
+        "contract_2": 87,
+        "fallen_low_table": 123,
+        "boss_ledger": 39
+      },
+      "tableOutcomes": {
+        "contract_1": {
+          "alive_failure": 51,
+          "dead": 74,
+          "win": 36,
+          "fallen": 89
+        },
+        "contract_2": {
+          "dead": 26,
+          "fallen": 22,
+          "alive_failure": 17,
+          "win": 22
+        },
+        "fallen_low_table": {
+          "win": 45,
+          "dead": 78
+        },
+        "boss_ledger": {
+          "dead": 19,
+          "win": 2,
+          "fallen": 12,
+          "alive_failure": 6
+        }
+      },
+      "bankruptcies": 242,
+      "avgHands": 9.9,
+      "avgFinalChips": 6.7,
+      "avgMs": 48.6
+    },
+    "maniac": {
+      "runs": 250,
+      "endings": {
+        "fallen_unlocked": 49,
+        "death": 79,
+        "slice_victory": 97,
+        "slice_exile": 25
+      },
+      "survival": 0.684,
+      "tableReached": {
+        "contract_1": 250,
+        "fallen_low_table": 65,
+        "contract_2": 168,
+        "boss_ledger": 152
+      },
+      "tableOutcomes": {
+        "contract_1": {
+          "fallen": 49,
+          "dead": 33,
+          "win": 140,
+          "alive_failure": 28
+        },
+        "fallen_low_table": {
+          "win": 49,
+          "dead": 16
+        },
+        "contract_2": {
+          "alive_failure": 26,
+          "win": 126,
+          "fallen": 5,
+          "dead": 11
+        },
+        "boss_ledger": {
+          "dead": 19,
+          "win": 97,
+          "fallen": 11,
+          "alive_failure": 25
+        }
+      },
+      "bankruptcies": 128,
+      "avgHands": 19,
+      "avgFinalChips": 126.3,
+      "avgMs": 26.8
+    },
+    "tight": {
+      "runs": 250,
+      "endings": {
+        "slice_exile": 153,
+        "slice_victory": 26,
+        "death": 44,
+        "fallen_unlocked": 27
+      },
+      "survival": 0.824,
+      "tableReached": {
+        "contract_1": 250,
+        "contract_2": 233,
+        "boss_ledger": 224,
+        "fallen_low_table": 29
+      },
+      "tableOutcomes": {
+        "contract_1": {
+          "alive_failure": 123,
+          "win": 110,
+          "dead": 11,
+          "fallen": 6
+        },
+        "contract_2": {
+          "win": 138,
+          "alive_failure": 86,
+          "fallen": 6,
+          "dead": 3
+        },
+        "boss_ledger": {
+          "alive_failure": 153,
+          "win": 26,
+          "dead": 28,
+          "fallen": 17
+        },
+        "fallen_low_table": {
+          "win": 27,
+          "dead": 2
+        }
+      },
+      "bankruptcies": 71,
+      "avgHands": 25.3,
+      "avgFinalChips": 67.9,
+      "avgMs": 60
+    }
+  },
+  "claims": {
+    "total": 933,
+    "byRole": {
+      "playerDebtor": 622,
+      "playerClaimant": 161,
+      "npcOnly": 150
+    },
+    "outcomes": {
+      "death:refused": 351,
+      "survival:debt": 156,
+      "survival:mercy": 152,
+      "death:claimedLife": 148,
+      "death:acceptedFate": 101,
+      "death:declinedCounter": 9,
+      "survival:service": 16
+    },
+    "firstOfferAccepted": 306,
+    "firstOfferAnswered": 684,
+    "counters": 27,
+    "countersAccepted": 18
+  },
+  "contracts": {
+    "debt": {
+      "active": 156
+    },
+    "mercy": {
+      "cleared": 152
+    },
+    "service": {
+      "active": 16
+    }
+  },
+  "aiCasts": {
+    "fate_exchange": 1258,
+    "unmask": 3911,
+    "briar_lock": 2899,
+    "cinder_challenge": 2206
+  },
+  "aiCastsPer100Hands": 22,
+  "playerCasts": {
+    "unmask": 568,
+    "briar_lock": 893,
+    "cinder_challenge": 162,
+    "fate_exchange": 235,
+    "thorn_lattice": 90,
+    "twin_oracle": 65,
+    "quiet_briars": 13,
+    "ravenous_eye": 2,
+    "second_reflection": 1
+  },
+  "evolutions": {
+    "Unmask evolves into Twin Oracle": 183,
+    "Briar Lock evolves into Thorn Lattice": 158,
+    "Briar Lock evolves into Quiet Briars": 29,
+    "Cinder Challenge evolves into Ember Echo": 9,
+    "Fate Exchange evolves into Marked Fate": 2,
+    "Unmask evolves into Ravenous Eye": 15,
+    "Fate Exchange evolves into Second Reflection": 7,
+    "Cinder Challenge evolves into Red Oath": 3
+  },
+  "invariantChecks": 182355
+}
