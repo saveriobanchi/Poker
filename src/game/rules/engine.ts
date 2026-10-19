@@ -86,7 +86,8 @@ export type BetLimit = 'no-limit' | 'pot-limit';
  */
 export type EngineEffect =
   | { kind: 'streetLimit'; atLog: number; limit: BetLimit }
-  | { kind: 'exchange'; atLog: number; seat: number; holeIndex: number };
+  | { kind: 'exchange'; atLog: number; seat: number; holeIndex: number }
+  | { kind: 'exchangeFor'; atLog: number; seat: number; holeIndex: number; card: Card };
 
 export interface HandResult {
   /** Final per-seat contribution after any uncalled bet was returned. */
@@ -465,8 +466,37 @@ export function exchangeHoleCard(state: HandState, seat: number, holeIndex: numb
   return s;
 }
 
+/**
+ * Replaces one of `seat`'s hole cards with a specific undealt card (chosen
+ * privately from candidates the magic layer drew from the stub), returns the old
+ * card to the stub and reshuffles it. Preflop, before any voluntary action only.
+ */
+export function exchangeHoleCardFor(state: HandState, seat: number, holeIndex: number, card: Card): HandState {
+  if (state.street !== 'preflop' || !isStreetOpening(state)) {
+    throw new RulesError('Hole cards can only be exchanged before preflop betting');
+  }
+  const p = state.seats[seat];
+  if (!p || !p.inHand || p.folded) throw new RulesError('Seat has no live hand');
+  if (holeIndex !== 0 && holeIndex !== 1) throw new RulesError('Invalid hole card');
+  const at = state.deck.indexOf(card);
+  if (at < 0) throw new RulesError('That card is not in the undealt stub');
+  const s = structuredClone(state);
+  const rng = new Rng(s.rngState);
+  s.deck.splice(at, 1);
+  const old = s.seats[seat].hole[holeIndex];
+  s.seats[seat].hole[holeIndex] = card;
+  s.deck.push(old);
+  rng.shuffle(s.deck);
+  s.rngState = rng.state;
+  recordEffect(s, { kind: 'exchangeFor', atLog: s.log.length, seat, holeIndex, card });
+  assertInvariants(s);
+  return s;
+}
+
 function applyEffect(s: HandState, e: EngineEffect): HandState {
-  return e.kind === 'streetLimit' ? setStreetLimit(s, e.limit) : exchangeHoleCard(s, e.seat, e.holeIndex);
+  if (e.kind === 'streetLimit') return setStreetLimit(s, e.limit);
+  if (e.kind === 'exchangeFor') return exchangeHoleCardFor(s, e.seat, e.holeIndex, e.card);
+  return exchangeHoleCard(s, e.seat, e.holeIndex);
 }
 
 // ─────────────────────────── settlement ───────────────────────────

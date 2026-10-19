@@ -3,7 +3,7 @@
  * seat's persistent magic (Spellbook + Aether), and the persistence needed for
  * immediate save/resume. Plain JSON throughout.
  */
-import { decideOpening, decideTurn } from '../ai/magic';
+import { decideChoice, decideOpening, decideTurn } from '../ai/magic';
 import { PROFILES } from '../ai/profiles';
 import {
   apply,
@@ -16,10 +16,12 @@ import {
   MagicCommand,
   MagicTable,
   RIVAL_SPELLBOOKS,
+  choiceSeat,
+  type SeatMagic,
   windowSeat,
 } from '../magic';
 import { SPELLS } from '../magic/spells';
-import { getPublicView, HandSetup, HandState, startHand } from '../rules/engine';
+import { getLegalActions, getPublicView, HandSetup, HandState, startHand } from '../rules/engine';
 import { Rng } from '../rules/rng';
 import {
   applyClaimCommand,
@@ -28,6 +30,7 @@ import {
   batchDone,
   type ClaimBatch,
   type ClaimCommand,
+  type Character,
   createCharacter,
   createWorld,
   currentClaim,
@@ -53,8 +56,28 @@ export interface HandSummary {
   magic: string[];
 }
 
+/** Blind level starting at a given hand number (1-based). */
+export interface BlindLevel {
+  fromHand: number;
+  smallBlind: number;
+  bigBlind: number;
+}
+
+export interface TableConfig {
+  label: string;
+  /** Hand cap; null plays until one seat holds every chip. */
+  maxHands: number | null;
+  blinds: BlindLevel[];
+}
+
 export interface TableSession {
-  version: 3;
+  version: 4;
+  config: TableConfig;
+  /**
+   * Things the player did or witnessed this hand, for sworn-service duties
+   * (design v0.6 §06). Reset at each new hand.
+   */
+  humanEvents: string[];
   seed: number;
   handNumber: number;
   seats: SeatConfig[];
@@ -68,6 +91,8 @@ export interface TableSession {
 
 export type SessionStatus =
   | 'humanWindow'
+  /** The player must pick a Second Reflection candidate. */
+  | 'humanChoice'
   | 'humanToAct'
   | 'aiToAct'
   /** A Last Claim needs the player's decision (as debtor or claimant). */
@@ -79,6 +104,8 @@ export type SessionStatus =
   | 'fallen'
   /** The player's run has ended. */
   | 'dead'
+  /** The hand cap was reached with the player still seated. */
+  | 'tableDone'
   | 'tableWon';
 
 const HISTORY_LIMIT = 20;
@@ -99,37 +126,64 @@ export interface NewSessionOptions {
   seed: number;
   seats: SeatConfig[];
   stacks: number[];
-  smallBlind: number;
-  bigBlind: number;
+  /** Blinds and hand cap; defaults to a free table at 1/2 with no cap. */
+  config?: TableConfig;
+  /** Characters for the seats (persistent world state); created fresh when omitted. */
+  characters?: Character[];
+  /** Ledger relief treasury brought to this table (defaults to the starting treasury). */
+  treasury?: number;
+  /** Persistent magic per seat (e.g. the player's Spellbook and relics); null builds a starter book. */
+  seatMagic?: (SeatMagic | null)[];
+}
+
+export const FREE_TABLE: TableConfig = { label: 'Free table', maxHands: null, blinds: [{ fromHand: 1, smallBlind: 1, bigBlind: 2 }] };
+
+export function blindsFor(config: TableConfig, handNumber: number): BlindLevel {
+  return [...config.blinds].reverse().find((b) => handNumber >= b.fromHand) ?? config.blinds[0];
+}
+
+/** Starter Spellbook counts for a seat: the beginner book for the player, the rival's own otherwise. */
+export function starterBook(seat: SeatConfig): Record<string, number> {
+  return seat.kind === 'human' ? BEGINNER_SPELLBOOK : (RIVAL_SPELLBOOKS[seat.profileId!] ?? BEGINNER_SPELLBOOK);
 }
 
 export function createSession(opts: NewSessionOptions): TableSession {
   if (opts.seats.filter((s) => s.kind === 'human').length !== 1) throw new Error('Exactly one human seat');
+  const config = opts.config ?? FREE_TABLE;
+  const level = blindsFor(config, 1);
   const hand = startHand({
     seed: deriveSeed(opts.seed, 1),
     players: opts.seats.map((s, i) => ({ id: s.id, stack: opts.stacks[i] })),
     button: deriveSeed(opts.seed, 0) % opts.seats.length,
-    smallBlind: opts.smallBlind,
-    bigBlind: opts.bigBlind,
+    smallBlind: level.smallBlind,
+    bigBlind: level.bigBlind,
   });
-  const magic = opts.seats.map((s, i) => {
-    const counts = s.kind === 'human' ? BEGINNER_SPELLBOOK : RIVAL_SPELLBOOKS[s.profileId!];
-    return createSeatMagic(createSpellbook(s.id, counts, deriveSeed(opts.seed, MAGIC_SALT, i)));
-  });
-  const table = beginHand(hand, magic, deriveSeed(opts.seed, MAGIC_SALT, 1));
-  const characters = opts.seats.map((s) =>
-    createCharacter(s.id, s.name, s.kind, s.kind === 'human' ? 'player' : ((s.profileId ?? 'other') as 'vesper' | 'oracle' | 'corvin')),
+  const magic = opts.seats.map(
+    (s, i) => opts.seatMagic?.[i] ?? createSeatMagic(createSpellbook(s.id, starterBook(s), deriveSeed(opts.seed, MAGIC_SALT, i))),
   );
-  const world = createWorld(characters, opts.stacks.reduce((a, b) => a + b, 0));
-  return { version: 3, seed: opts.seed, handNumber: 1, seats: opts.seats, table, history: [], world, claims: null };
+  const table = beginHand(hand, magic, deriveSeed(opts.seed, MAGIC_SALT, 1));
+  const characters =
+    opts.characters ??
+    opts.seats.map((s) => createCharacter(s.id, s.name, s.kind, s.kind === 'human' ? 'player' : (s.profileId ?? 'other')));
+  const world = createWorld(characters, opts.stacks.reduce((a, b) => a + b, 0), opts.treasury);
+  return {
+    version: 4,
+    config,
+    humanEvents: [],
+    seed: opts.seed,
+    handNumber: 1,
+    seats: opts.seats,
+    table,
+    history: [],
+    world,
+    claims: null,
+  };
 }
 
 /** The default Act I table: the Wagerer against three named rivals at 1/2. */
 export function createDefaultSession(seed: number): TableSession {
   return createSession({
     seed,
-    smallBlind: 1,
-    bigBlind: 2,
     seats: [
       { id: 'you', name: 'You', kind: 'human' },
       { id: 'vesper', name: PROFILES.vesper.name, kind: 'ai', profileId: 'vesper' },
@@ -145,11 +199,11 @@ export function humanSeat(session: TableSession): number {
   return session.seats.findIndex((s) => s.kind === 'human');
 }
 
-/** The seat whose decision the table is waiting for (magic window first, then poker). */
+/** The seat whose decision the table is waiting for (private choice, then magic window, then poker). */
 export function currentActor(session: TableSession): number | null {
   const t = session.table;
   if (t.hand.phase !== 'betting') return null;
-  return windowSeat(t) ?? t.hand.toAct;
+  return choiceSeat(t) ?? windowSeat(t) ?? t.hand.toAct;
 }
 
 /** Table stacks after settlement and any Last Claim transfers. */
@@ -163,6 +217,7 @@ export function sessionStatus(session: TableSession): SessionStatus {
   if (hand.phase === 'betting') {
     const actor = currentActor(session);
     if (actor !== me) return 'aiToAct';
+    if (choiceSeat(session.table) === me) return 'humanChoice';
     return windowSeat(session.table) === me ? 'humanWindow' : 'humanToAct';
   }
   const claim = session.claims ? currentClaim(session.claims) : null;
@@ -171,6 +226,7 @@ export function sessionStatus(session: TableSession): SessionStatus {
   if (!you.alive) return 'dead';
   if (you.status === 'exited') return 'fallen';
   if (tableStacks(session).filter((s) => s > 0).length < 2) return 'tableWon';
+  if (session.config.maxHands !== null && session.handNumber >= session.config.maxHands) return 'tableDone';
   return 'handComplete';
 }
 
@@ -206,9 +262,30 @@ function summarize(session: TableSession, t: MagicTable): HandSummary {
   return { handNumber: session.handNumber, netChange: r.netChange, lines, magic };
 }
 
+/** Duty-relevant events the player witnessed in a settled hand. */
+function handEvents(session: TableSession, table: MagicTable): string[] {
+  const me = humanSeat(session);
+  const r = table.hand.result!;
+  const events: string[] = [];
+  if (r.showdown.length > 0) events.push('observed_any_contested_showdown');
+  if (r.showdown.some((e) => e.seat === me)) {
+    events.push('contested_showdown_participant');
+    if (r.showdown.some((e) => e.seat !== me)) events.push('contested_showdown_participant_with_opponent_reveal');
+  }
+  const mine = table.hand.log.map((e, i) => ({ ...e, i })).filter((e) => e.seat === me);
+  const raise = mine.find((e) => e.street === 'preflop' && (e.action.type === 'raise' || e.action.type === 'bet'));
+  if (raise && mine.some((e) => e.i > raise.i)) events.push('own_preflop_raise_then_next_decision');
+  if (mine.some((e) => e.action.type === 'check')) events.push('owner_checked');
+  for (const e of table.magic.events) {
+    if (e.seat === me) events.push(`owner_cast_spell:${SPELLS[e.spell].discipline}`);
+  }
+  return events;
+}
+
 function withTable(session: TableSession, table: MagicTable): TableSession {
   const next: TableSession = { ...session, table };
   if (table.hand.phase === 'complete' && session.table.hand.phase !== 'complete') {
+    next.humanEvents = [...new Set([...session.humanEvents, ...handEvents(session, table)])];
     next.history = [...session.history, summarize(session, table)].slice(-HISTORY_LIMIT);
     // Zero-chip check only after pot awards, refunds and bookkeeping (design v0.5 §03).
     if (table.hand.result!.zeroChipSeats.length > 0) {
@@ -238,7 +315,13 @@ export type HumanCommand = MagicCommand extends infer C ? (C extends MagicComman
 export function applyHumanCommand(session: TableSession, command: HumanCommand): TableSession {
   const me = humanSeat(session);
   if (currentActor(session) !== me) throw new Error('Not your turn');
-  return withTable(session, apply(session.table, { ...command, seat: me } as MagicCommand));
+  let s = session;
+  // A fold facing at least one big blind is a duty event that the log alone cannot show.
+  if (command.kind === 'act' && command.action.type === 'fold') {
+    const facing = getLegalActions(session.table.hand)?.callAmount ?? 0;
+    if (facing >= session.table.hand.setup.bigBlind) s = { ...s, humanEvents: [...new Set([...s.humanEvents, 'owner_fold_facing_wager_gte_bb'])] };
+  }
+  return withTable(s, apply(session.table, { ...command, seat: me } as MagicCommand));
 }
 
 /** The AI to decide uses only its own public and magic views, with a deterministic per-decision seed. */
@@ -250,6 +333,7 @@ export function chooseAiCommand(session: TableSession): MagicCommand {
   const rng = new Rng(deriveSeed(session.seed, session.handNumber, t.magic.commands.length, seat));
   const view = getPublicView(t.hand, seat);
   const magic = getMagicView(t, seat);
+  if (choiceSeat(t) === seat) return { kind: 'choose', seat, pick: decideChoice(view, magic) };
   if (windowSeat(t) === seat) {
     const choice = decideOpening(view, magic, profile, rng);
     return choice.kind === 'pass' ? { kind: 'pass', seat } : { kind: 'cast', seat, uid: choice.uid, params: choice.params };
@@ -272,7 +356,8 @@ function nextSetup(session: TableSession, seed: number): HandSetup {
   const n = players.length;
   let button = -1;
   for (let i = 1; i <= n && button < 0; i++) if (players[(prev.button + i) % n].stack > 0) button = (prev.button + i) % n;
-  return { seed, players, button, smallBlind: prev.setup.smallBlind, bigBlind: prev.setup.bigBlind };
+  const level = blindsFor(session.config, session.handNumber + 1);
+  return { seed, players, button, smallBlind: level.smallBlind, bigBlind: level.bigBlind };
 }
 
 export function startNextHand(session: TableSession): TableSession {
@@ -281,7 +366,7 @@ export function startNextHand(session: TableSession): TableSession {
   const handNumber = session.handNumber + 1;
   const hand = startHand(nextSetup(session, deriveSeed(session.seed, handNumber)));
   const table = beginHand(hand, session.table.seats, deriveSeed(session.seed, MAGIC_SALT, handNumber));
-  return { ...session, handNumber, table, claims: null };
+  return { ...session, handNumber, table, claims: null, humanEvents: [] };
 }
 
 // ───────────────────────────── persistence ─────────────────────────────
@@ -292,7 +377,7 @@ export interface KeyValueStore {
   removeItem(key: string): void;
 }
 
-export const SAVE_KEY = 'lastWager.table.v3';
+export const SAVE_KEY = 'lastWager.table.v4';
 
 export function saveSession(store: KeyValueStore, session: TableSession): void {
   store.setItem(SAVE_KEY, JSON.stringify(session));
@@ -304,7 +389,7 @@ export function loadSession(store: KeyValueStore): TableSession | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as TableSession;
-    if (parsed.version !== 3) return null;
+    if (parsed.version !== 4) return null;
     if (parsed.table.hand.version !== 1 || parsed.table.hand.seats.length !== parsed.seats.length) return null;
     assertMagicInvariants(parsed.table);
     const chips = parsed.table.hand.phase === 'betting' ? [parsed.table.hand.chipTotal] : tableStacks(parsed);
