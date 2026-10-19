@@ -149,7 +149,7 @@ export interface Funding {
 
 /** Survival is always funded by the claimant (or the Ledger treasury for the adjudicator). */
 export function fundingFor(batch: ClaimBatch, world: WorldState, claim: Claim): Funding {
-  const endowment = ENDOWMENT[claimantKey(world, claim)];
+  const endowment = byKey(ENDOWMENT, claimantKey(world, claim));
   return claim.claimant.kind === 'adjudicator'
     ? { endowment, funder: 'ledger', balance: world.treasury }
     : { endowment, funder: claim.claimant.seat, balance: batch.stacks[claim.claimant.seat] };
