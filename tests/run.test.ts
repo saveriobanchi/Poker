@@ -16,7 +16,7 @@ import {
 } from '../src/game/run/run';
 import { Rng } from '../src/game/rules';
 import { blindsFor, createDefaultSession, sessionStatus, type TableSession } from '../src/game/table/session';
-import { replaceInstance } from '../src/game/magic';
+import { allCards, isBaseSpell, replaceInstance } from '../src/game/magic';
 import { applyClaim, applyHumanCommand, startNextHand, stepAi } from '../src/game/table/session';
 import { currentClaim, pactOptions } from '../src/game/world';
 
@@ -141,13 +141,14 @@ describe('shop, event and rewards', () => {
 
   it('Spell Rethread swaps one base instance for another starter spell, once', () => {
     const shop = atShop();
-    const card = playerBook(shop).draw.find((c) => c.spell === 'unmask')!;
+    const card = allCards(playerBook(shop)).find((c) => isBaseSpell(c.spell))!;
+    const other = card.spell === 'briar_lock' ? 'unmask' : 'briar_lock';
     const rich = structuredClone(shop);
     rich.accounts.you += 50;
     rich.accounts.vesper -= 50;
-    const r = runCommand(rich, { kind: 'rethread', uid: card.uid, spell: 'briar_lock' });
-    expect(r.player.magic.book.draw.find((c) => c.uid === card.uid)!.spell).toBe('briar_lock');
-    expect(() => runCommand(r, { kind: 'rethread', uid: card.uid, spell: 'unmask' })).toThrow(SOLD_OUT);
+    const r = runCommand(rich, { kind: 'rethread', uid: card.uid, spell: other });
+    expect(allCards(r.player.magic.book).find((c) => c.uid === card.uid)!.spell).toBe(other);
+    expect(() => runCommand(r, { kind: 'rethread', uid: card.uid, spell: card.spell })).toThrow(SOLD_OUT);
   });
 
   it('the Open Book fee goes to the Witness escrow and the petition is heard once', () => {
