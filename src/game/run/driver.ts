@@ -16,6 +16,7 @@ import {
   attuneOptions,
   ENDINGS,
   mirrorCandidates,
+  mirrorChoice,
   evolutionOffers,
   playerChips,
   runAi,
@@ -122,6 +123,7 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
       return { kind: 'leaveShop', to: policy === 'skilled' ? 'mirror_audience' : 'secret_bargain' };
     }
     case 'mirror_audience': {
+      if (mirrorChoice(run)) return { kind: 'advance' };
       const rival = mirrorCandidates(run)[0];
       return rival ? { kind: 'event', take: true, rival } : { kind: 'event', take: false };
     }

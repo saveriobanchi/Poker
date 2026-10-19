@@ -10,6 +10,7 @@ import { outlook } from '../game/world/rules';
 import { claimantWillingness, debtorAcceptance } from '../game/world/claims';
 import {
   ADJUDICATOR_NAME,
+  claimFactors,
   claimantName,
   counterLine,
   outcomeLines,
@@ -102,9 +103,17 @@ export class ClaimScreen {
     const otherName = claimantIsYou ? debtor.name : claimant;
     const profile = PROFILES[otherId];
     const audience = h('div', 'audience');
-    const img = h('img');
-    img.src = `assets/portraits/${PORTRAIT[otherId] ?? 'adjudicator'}.webp`;
-    img.alt = otherName;
+    let img: HTMLElement;
+    if (PORTRAIT[otherId] || otherId === 'ledger') {
+      const pic = h('img');
+      pic.src = `assets/portraits/${PORTRAIT[otherId] ?? 'adjudicator'}.webp`;
+      pic.alt = otherName;
+      img = pic;
+    } else {
+      // Provisional monogram until the painted portrait exists (asset manifest: "needed").
+      img = h('span', 'monogram', otherName.split(/\s+/).filter((w) => /^[A-Z]/.test(w) && w !== 'The').map((w) => w[0]).join('').slice(0, 2));
+      img.setAttribute('aria-label', otherName);
+    }
     const who = h('div');
     who.append(
       h('strong', '', otherName),
@@ -203,7 +212,13 @@ export class ClaimScreen {
       ? outlook(Math.max(...best.map((o) => (side === 'debtor' ? claimantWillingness(session.claims!, w, claim, o.pact) : debtorAcceptance(w, claim, o.pact)))))
       : null;
     const head = h('p', 'outlook', overall ? `Outlook: ${outlookLine(overall)}` : adjudicator ? `${ADJUDICATOR_NAME} can offer nothing more.` : 'No funded bargain is possible.');
-    return [head, ...list];
+    const sway = h('details', 'sway');
+    sway.append(h('summary', '', 'What sways them'));
+    const ul = h('ul', 'terms');
+    for (const l of claimFactors(session.claims!, w, claim)) ul.append(h('li', '', l));
+    sway.append(ul);
+    sway.open = true;
+    return [head, sway, ...list];
   }
 
   private terms(lines: string[]): HTMLElement {

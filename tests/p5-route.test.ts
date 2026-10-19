@@ -131,8 +131,10 @@ describe('Act II, the Gilded Circuit', () => {
     expect(watched).not.toContain('margrave_noct'); // not yet seen at any table
     const court = runCommand(run!, { kind: 'leaveShop', to: 'mirror_audience' });
     expect(() => runCommand(court, { kind: 'event', take: true, rival: 'margrave_noct' })).toThrow();
-    const seen = runCommand(court, { kind: 'event', take: true, rival: 'vesa_kael' });
-    expect(seen.flags).toContain('mirror:vesa_kael');
+    const studied = runCommand(court, { kind: 'event', take: true, rival: 'vesa_kael' });
+    expect(studied.flags).toContain('mirror:vesa_kael');
+    expect(() => runCommand(studied, { kind: 'event', take: true, rival: 'isolde_morn' })).toThrow(/one rival/);
+    const seen = runCommand(studied, { kind: 'advance' });
     expect(seen.node).toBe('velvet_arena');
     expect(playerChips(seen)).toBe(run!.accounts.you); // now seated at the Arena with the same chips
 

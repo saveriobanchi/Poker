@@ -1045,3 +1045,29 @@ button.branch {
 #hud button {
   white-space: nowrap;
 }
+
+.audience .monogram {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: #3a2a24;
+  color: var(--gold-light);
+  font-family: var(--display);
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.sway {
+  text-align: left;
+  font-size: 14px;
+}
+
+.sway summary {
+  cursor: pointer;
+  font-family: var(--display);
+  color: var(--crimson);
+  padding: 4px 0;
+}

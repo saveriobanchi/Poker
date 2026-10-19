@@ -2,9 +2,9 @@
  * Player-facing wording for Last Claims (design v0.5 §04). Serious and
  * non-graphic; raw odds are never shown, only the banded outlook labels.
  */
-import type { Claim, ClaimOutcome, Offer, Pact, PactOption } from '../game/world';
-import { DEBT, OUTLOOK_TEXT, SERVICE_TASKS, type Outlook } from '../game/world/rules';
-import type { WorldState } from '../game/world/world';
+import { type Claim, type ClaimBatch, type ClaimOutcome, fundingFor, type Offer, type Pact, type PactOption } from '../game/world';
+import { CLAIMANT_PACT_PREFERENCE, DEBT, DEBTOR_TEMPERAMENT, OUTLOOK_TEXT, SERVICE_TASKS, type Outlook } from '../game/world/rules';
+import { relation, type WorldState } from '../game/world/world';
 
 export const ADJUDICATOR_NAME = 'The Ledger Adjudicator';
 
@@ -97,3 +97,48 @@ export function outcomeLines(world: WorldState, claim: Claim, outcome: ClaimOutc
     lines: [reasons[outcome.reason], you ? 'Your run ends here. The Ledger keeps its records.' : `${debtor.name} is gone from the table.`],
   };
 }
+
+/**
+ * What sways the other party (design v0.7 §03): the recorded relationship, the
+ * cost to the funder, reputation, and their known leanings — in words only,
+ * never a probability. Nothing here changes any outcome.
+ */
+export function claimFactors(batch: ClaimBatch, world: WorldState, claim: Claim): string[] {
+  const debtor = world.characters[claim.debtor];
+  const youAreDebtor = debtor.kind === 'human';
+  const lines: string[] = [];
+  if (claim.claimant.kind === 'adjudicator') {
+    lines.push('The Adjudicator has no history with anyone; it can only offer Mercy from the relief treasury, while the treasury lasts.');
+    if (debtor.reputation.honor >= 2) lines.push('Your Honor is on the record and counts in your favor.');
+    return lines;
+  }
+  const claimant = world.characters[claim.claimant.seat];
+  const other = youAreDebtor ? claimant : debtor;
+  // Relationship as the deciding party remembers it.
+  const rel = youAreDebtor ? relation(world, claimant.id, debtor.id) : relation(world, debtor.id, claimant.id);
+  const history: string[] = [];
+  if (rel.sparedMe) history.push(youAreDebtor ? 'you once spared them' : 'they once spared you');
+  if (rel.betrayedMe) history.push(youAreDebtor ? 'you betrayed them' : 'they believe you betrayed them');
+  if (rel.friendly) history.push('there is goodwill between you');
+  if (rel.hostile) history.push('there is open hostility between you');
+  lines.push(`History with ${other.name}: ${history.length ? history.join('; ') : 'nothing recorded yet'}.`);
+  if (youAreDebtor) {
+    const f = fundingFor(batch, world, claim);
+    const retained = f.balance - f.endowment;
+    if (retained >= 30) lines.push(`Funding you would leave ${claimant.name} comfortably stocked, which helps.`);
+    else if (retained >= 1 && retained < 10) lines.push(`Funding you would leave ${claimant.name} nearly empty, which weighs against you.`);
+    if (debtor.reputation.honor >= 2) lines.push('Your Honor is on the record and counts in your favor.');
+    if (debtor.reputation.dread >= 2 && claimant.ruleKey === 'corvin') lines.push('Your Dread troubles Sir Corvin.');
+    const pref = CLAIMANT_PACT_PREFERENCE[claimant.ruleKey] ?? {};
+    const ranked = (Object.keys(pref) as Pact[]).sort((a, b) => (pref[b] ?? 0) - (pref[a] ?? 0));
+    if (ranked.length) lines.push(`${claimant.name} leans towards ${ranked.map((p) => PACT_WORD[p]).join(', then ')}.`);
+  } else {
+    const temper = DEBTOR_TEMPERAMENT[debtor.ruleKey] ?? DEBTOR_TEMPERAMENT.other;
+    lines.push(`${debtor.name} would rather owe ${temper.priority.map((p) => PACT_WORD[p]).join(', then ')}.`);
+    for (const p of temper.veto) lines.push(`${debtor.name} will never accept ${PACT_WORD[p]}, whatever the odds.`);
+  }
+  lines.push('Each side answers once; a refusal may come with one counteroffer.');
+  return lines;
+}
+
+const PACT_WORD: Record<Pact, string> = { mercy: 'Mercy', debt: 'Debt', service: 'Service' };

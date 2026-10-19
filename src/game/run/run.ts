@@ -835,6 +835,9 @@ function advance(run: RunState): void {
       return goTo(run, 'cinder_low_table');
     case 'oath_hearing':
       return leaveHearing(run);
+    case 'mirror_audience':
+      if (!mirrorChoice(run)) throw new RunError('Consult the Court or decline first');
+      return goTo(run, 'velvet_arena');
     default:
       throw new RunError(`Nothing to advance at ${run.node}`);
   }
@@ -1016,6 +1019,11 @@ function resolveEvent(run: RunState, take: boolean, rival?: string): void {
   goTo(run, 'contract_2');
 }
 
+/** The rival the Court of Mirrors showed, if any. */
+export function mirrorChoice(run: RunState): string | null {
+  return run.flags.find((f) => f.startsWith('mirror:'))?.slice('mirror:'.length) ?? null;
+}
+
 /** Rivals whose public play the player has watched at a table (Court of Mirrors candidates). */
 export function mirrorCandidates(run: RunState): string[] {
   return Object.keys(run.observed).filter((id) => id !== PLAYER_ID && run.observed[id].hands > 0 && run.characters[id]);
@@ -1024,11 +1032,14 @@ export function mirrorCandidates(run: RunState): string[] {
 function resolveAct2Event(run: RunState, take: boolean, rival?: string): void {
   if (run.node === 'mirror_audience') {
     // Design v0.7 §09: study one rival's public pattern; no hidden cards, no Lifechips.
+    if (mirrorChoice(run)) throw new RunError('The Court shows one rival only');
     if (take) {
       if (!rival || !mirrorCandidates(run).includes(rival)) throw new RunError('Choose a rival you have watched at a table');
       run.flags.push(`mirror:${rival}`);
       run.log.push(`The Court of Mirrors replays ${run.characters[rival].name}'s public play.`);
-    } else run.log.push('You leave the Court of Mirrors unconsulted.');
+      return; // stay to study the reflection; `advance` leaves for the Arena
+    }
+    run.log.push('You leave the Court of Mirrors unconsulted.');
   } else {
     // The Whispered Contract: +1 Notoriety and a public tell in the first hand of the next table.
     if (take) {

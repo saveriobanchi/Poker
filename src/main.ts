@@ -10,8 +10,11 @@ import { RELICS } from './game/magic/relics';
 import { getPublicView } from './game/rules/engine';
 import {
   createRun,
+  ENDINGS,
+  attuneOptions,
   evolutionOffers,
   fallenFromSave,
+  mirrorChoice,
   loadRun,
   runAi,
   runClaim,
@@ -27,7 +30,7 @@ import { type ClaimCommand, roles } from './game/world';
 import { ClaimScreen } from './ui/claimScreen';
 import { Controls } from './ui/controls';
 import { describeAction } from './ui/format';
-import { evolutionPanel, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
+import { attunePanel, evolutionPanel, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
 import { Sound } from './ui/sound';
 import { RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
@@ -184,7 +187,7 @@ class Game {
       return;
     }
     if (this.evolveOpen) {
-      const panel = evolutionPanel(run, this.screens);
+      const panel = evolutionPanel(run, this.screens) ?? attunePanel(run, this.screens);
       if (panel) {
         this.showScreen();
         const back = document.createElement('button');
@@ -238,8 +241,10 @@ class Game {
     this.handInfo.title = `${s.config.label}, hand ${s.handNumber}${cap}, blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
     const relics = run.player.magic.relics ?? [];
     const covenants = run.player.magic.covenants ?? [];
-    this.relicStrip.textContent = [...relics.map((r) => `◈ ${RELICS[r].name}`), ...covenants.map(() => '✠ Open Book')].join('  ');
-    this.relicStrip.hidden = !relics.length && !covenants.length;
+    const mirror = mirrorChoice(run);
+    const read = mirror && run.observed[mirror] ? `👁 ${run.characters[mirror].name}: plays ${Math.round((100 * run.observed[mirror].vpip) / Math.max(1, run.observed[mirror].hands))}%` : null;
+    this.relicStrip.textContent = [...relics.map((r) => `◈ ${RELICS[r].name}`), ...covenants.map(() => '✠ Open Book'), ...(read ? [read] : [])].join('  ');
+    this.relicStrip.hidden = !relics.length && !covenants.length && !read;
 
     const last = t.hand.log.at(-1);
     const lastText = last ? describeAction(last, names[last.seat]) : '';
@@ -249,7 +254,7 @@ class Game {
     const status = sessionStatus(s);
     if (status === 'humanClaim' || status === 'claimResolved') this.claimScreen.show(s);
     else this.claimScreen.hide();
-    const evolvable = status === 'handComplete' && evolutionOffers(run).length > 0;
+    const evolvable = status === 'handComplete' && (evolutionOffers(run).length > 0 || attuneOptions(run).length > 0);
     this.evolveButton.hidden = !evolvable;
     switch (status) {
       case 'humanWindow':
@@ -374,7 +379,7 @@ class Game {
   }
 
   private confirmNewRun(): void {
-    if (!this.run || ['slice_victory', 'slice_exile', 'fallen_unlocked', 'death'].includes(this.run.node)) return this.newRun();
+    if (!this.run || ENDINGS.includes(this.run.node)) return this.newRun();
     if (window.confirm('Abandon this run and begin a new one?')) this.newRun();
   }
 
