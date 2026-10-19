@@ -5,6 +5,7 @@
  */
 import { decideChoice, decideOpening, decideTurn } from '../ai/magic';
 import { preflopPercentile } from '../ai/preflop';
+import { shovePrior, shoveRate } from '../ai/reads';
 import { type AiProfile, PROFILES } from '../ai/profiles';
 import { getMagicView, isBaseSpell } from '../magic';
 import { getLegalActions, getPublicView, type PlayerAction } from '../rules/engine';
@@ -71,7 +72,9 @@ export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | nu
       }
       case 'humanToAct': {
         if (policy !== 'skilled') return runHuman(run, { kind: 'act', action: pokerAction(run, policy, rng) });
-        const c = decideTurn(getPublicView(t.table.hand, me), getMagicView(t.table, me), SKILLED, rng);
+        const reads = t.reads ?? {};
+        const rates = t.seats.map((s) => shoveRate(reads[s.id], shovePrior(s.profileId ? PROFILES[s.profileId] : undefined)));
+        const c = decideTurn(getPublicView(t.table.hand, me), getMagicView(t.table, me), SKILLED, rng, rates);
         return runHuman(run, c.kind === 'act' ? { kind: 'act', action: c.action } : { kind: 'cast', uid: c.uid, params: c.params });
       }
       case 'humanClaim': {

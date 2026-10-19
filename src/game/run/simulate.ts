@@ -69,11 +69,13 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
   let aiHands = 0;
   let aiCastTotal = 0;
   for (let i = 0; i < runs; i++) {
+    // Shared seeds: every policy plays the same worlds (k-th run of each policy uses world k).
     const policy: PolicyName = POLICIES[i % POLICIES.length];
+    const k = Math.floor(i / POLICIES.length);
     const pr = (report.policies[policy] ??= { runs: 0, endings: {}, survival: 0, tableReached: {}, tableOutcomes: {}, bankruptcies: 0, avgHands: 0, avgFinalChips: 0, avgMs: 0 });
     const t0 = performance.now();
-    let run: RunState = createRun(seed * 100_003 + i);
-    const rng = new Rng(seed * 7_919 + i);
+    let run: RunState = createRun(seed * 100_003 + k);
+    const rng = new Rng(seed * 7_919 + k);
     const seenClaims = new Set<string>();
     const seenCasts = new Set<string>();
     let bankrupt = false;

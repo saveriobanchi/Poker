@@ -1,0 +1,63 @@
+{
+  "schema": "p5-v0.7-art-brief",
+  "palette_reference": "docs/art-bible.md v0.1 Gilded Eclipse",
+  "source_format": {
+    "size": [
+      512,
+      512
+    ],
+    "color": "sRGB",
+    "channels": "RGBA",
+    "background": "transparent",
+    "crop": "bust chest-up, eyes upper third, 64px circular mask readability",
+    "lighting": "warm candle key upper-left; cool rim upper-right",
+    "finish": "hand-painted dark fantasy illustration, nuanced matte brushwork, restrained gold, no letterforms or UI labels",
+    "restriction": "do not use existing screenshot as a template for copying; stylistically coordinate with canonical portraits"
+  },
+  "assets": [
+    {
+      "id": "portrait.adjudicator.paint",
+      "file": "art/incoming/p4/adjudicator.png",
+      "visual": "adult androgynous Ledger adjudicator, matte obsidian half-mask without eyes, aged cream ceremonial robes and restrained gold notary chains, impersonal and uncanny, front-facing silhouette"
+    },
+    {
+      "id": "portrait.mara_quill",
+      "file": "art/incoming/p4/mara-quill.png",
+      "visual": "adult street-smart bookmaker, russet short layered hair, worn burgundy vest over muted plum coat, ink-stained finger raised near chest, clever observant expression"
+    },
+    {
+      "id": "portrait.eldric_vale",
+      "file": "art/incoming/p4/eldric-vale.png",
+      "visual": "adult flamboyant challenger, dark tousled hair, sharply cut oxblood cloak with asymmetrical gilded fastening, sly rakish look, Ember emberlight subtle"
+    },
+    {
+      "id": "portrait.bailiff_sable",
+      "file": "art/incoming/p4/bailiff-sable.png",
+      "visual": "adult implacable court bailiff with severe lined face, bone-colored stiff collar, tarnished brass badge, charcoal ceremonial armor, subtle thorn filigree, unmistakably imposing boss silhouette"
+    },
+    {
+      "id": "portrait.sister_rill",
+      "file": "art/incoming/p4/sister-rill.png",
+      "visual": "adult ascetic healer-lawkeeper, close-cropped silver hair, moss-green cloak and veiled linen collar, warm compassionate but steady gaze, no halo"
+    },
+    {
+      "id": "portrait.night_clerk",
+      "file": "art/incoming/p5/night-clerk.png",
+      "visual": "adult exhausted nocturnal records keeper in charcoal coat, soot under eyes, little crooked copper abacus pendant, elegant narrow silhouette and muted teal scarf"
+    },
+    {
+      "id": "portrait.dock_runner",
+      "file": "art/incoming/p5/dock-runner.png",
+      "visual": "adult wiry harbor courier, weatherbeaten skin, short dark hair, rough canvas coat, simple brass token tied at neck, alert wary face and confident posture"
+    }
+  ],
+  "required_tests": [
+    "Each 512x512 RGBA exact",
+    "outside silhouette alpha=0",
+    "eyes and costume distinct when circle-cropped at 64x64",
+    "seven unique faces with consistent palette and brushwork",
+    "same player-facing proportions as Vesper/Oracle/Corvin",
+    "no baked text",
+    "manifest status stays needed until PNG delivery and in-engine mobile verification"
+  ]
+}

@@ -4,6 +4,7 @@
  * immediate save/resume. Plain JSON throughout.
  */
 import { decideChoice, decideOpening, decideTurn } from '../ai/magic';
+import { type PublicReads, recordReads, shovePrior, shoveRate } from '../ai/reads';
 import { PROFILES } from '../ai/profiles';
 import {
   apply,
@@ -83,6 +84,8 @@ export interface TableSession {
   seats: SeatConfig[];
   table: MagicTable;
   history: HandSummary[];
+  /** Public preflop shove reads per character id (design v0.7 §01); absent in older saves. */
+  reads?: PublicReads;
   /** Characters, reputations, covenants, Ledger treasury and transfer journal. */
   world: WorldState;
   /** Last Claims raised by the latest settled hand (null when nobody reached zero). */
@@ -287,6 +290,7 @@ function withTable(session: TableSession, table: MagicTable): TableSession {
   if (table.hand.phase === 'complete' && session.table.hand.phase !== 'complete') {
     next.humanEvents = [...new Set([...session.humanEvents, ...handEvents(session, table)])];
     next.history = [...session.history, summarize(session, table)].slice(-HISTORY_LIMIT);
+    next.reads = recordReads(session.reads ?? {}, table.hand);
     // Zero-chip check only after pot awards, refunds and bookkeeping (design v0.5 §03).
     if (table.hand.result!.zeroChipSeats.length > 0) {
       const opened = openClaims(table.hand, session.world, session.handNumber, deriveSeed(session.seed, CLAIM_SALT, session.handNumber));
@@ -338,7 +342,9 @@ export function chooseAiCommand(session: TableSession): MagicCommand {
     const choice = decideOpening(view, magic, profile, rng);
     return choice.kind === 'pass' ? { kind: 'pass', seat } : { kind: 'cast', seat, uid: choice.uid, params: choice.params };
   }
-  const choice = decideTurn(view, magic, profile, rng);
+  const reads = session.reads ?? {};
+  const shoveRates = session.seats.map((s) => shoveRate(reads[s.id], shovePrior(s.profileId ? PROFILES[s.profileId] : undefined)));
+  const choice = decideTurn(view, magic, profile, rng, shoveRates);
   return choice.kind === 'act'
     ? { kind: 'act', seat, action: choice.action }
     : { kind: 'cast', seat, uid: choice.uid, params: choice.params };

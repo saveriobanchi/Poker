@@ -58,7 +58,7 @@ export function decideChoice(view: PublicView, magic: MagicView): 0 | 1 {
 export type AiTurnChoice = { kind: 'cast'; uid: string; params: CastParams } | { kind: 'act'; action: PlayerAction };
 
 /** Decision on the AI's own turn: maybe an Unmask-family spell first, maybe enchant a raise, else play poker. */
-export function decideTurn(view: PublicView, magic: MagicView, p: AiProfile, rng: Rng): AiTurnChoice {
+export function decideTurn(view: PublicView, magic: MagicView, p: AiProfile, rng: Rng, shoveRates?: number[]): AiTurnChoice {
   const legal = view.legal!;
   const veil = magic.options.find((o) => family(o) === 'unmask');
   if (veil && magic.known.length === 0) {
@@ -77,7 +77,7 @@ export function decideTurn(view: PublicView, magic: MagicView, p: AiProfile, rng
     }
   }
 
-  let action = decide(view, p, rng, knownCards(view, magic));
+  let action = decide(view, p, rng, knownCards(view, magic), shoveRates);
   if (action.type === 'allIn' && legal.raise) action = { type: legal.raise.isBet ? 'bet' : 'raise', to: legal.raise.maxTo };
   const ember = magic.options.find((o) => family(o) === 'cinder_challenge');
   if (ember && (action.type === 'bet' || action.type === 'raise') && rng.nextFloat() < p.magic.cinder) {

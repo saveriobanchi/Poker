@@ -1,0 +1,81 @@
+{
+  "schema": "p5-v0.7-design-contract",
+  "entry": "fallen_audience from v0.6",
+  "carry": "All Lifechips, debts, relics, duties, rank and save RNG preserved; no second funded revival",
+  "external_origin_account": "p5_external_ledger_cinder",
+  "external_origin_initial": 96,
+  "funding_note": "60 held for Broker Osric; remaining 36 held until needed for two 18-chip replacement NPCs; all debits logged once",
+  "nodes": [
+    {
+      "id": "cinder_broker",
+      "kind": "shop_story",
+      "title": "The Broker Understairs",
+      "choices": [
+        "skip",
+        "sell_one_owned_relic_to_broker"
+      ],
+      "merchant_wallet": "broker_osric",
+      "merchant_opening_wallet": 60,
+      "merchant_funding": "audited external ingress at first appearance; not mint",
+      "relic_sale": "price floor(original_shop_price * 0.5), pay from merchant wallet only if available, preserve relic rarity/identity",
+      "next": "cinder_low_table"
+    },
+    {
+      "id": "cinder_low_table",
+      "kind": "contract_table",
+      "title": "The Ember Steps",
+      "small_blind": 1,
+      "big_blind": 2,
+      "max_hands": 6,
+      "seats": [
+        "player",
+        "night_clerk_if_alive_else_ash_porter",
+        "dock_runner_if_alive_else_cinder_mason"
+      ],
+      "success": "survive with >=1 and finish top two for a social route advantage; lower ranking alive still continues with -1 Favor",
+      "zero": "last_claim_permanent_death",
+      "qualifies_for_debt_repayment": true,
+      "qualifies_for_service_duties": true,
+      "alternative_rival_external_opening_wallets": {
+        "ash_porter": 18,
+        "cinder_mason": 18
+      },
+      "next": "oath_hearing"
+    },
+    {
+      "id": "oath_hearing",
+      "kind": "story",
+      "title": "The Oathbreaker Hearing",
+      "actions": [
+        "review_funding_and_debt",
+        "resolve_one_eligible_service_event_if already earned",
+        "challenge_release_if service complete or debt fully repaid",
+        "continue_bound_underneath"
+      ],
+      "rule": "No automatic debt forgiveness. If still bound, player can progress via Underground Route, with patron effects intact; if free, regain UNBOUND_FALLEN rank and access Gate via authored reputation path.",
+      "next": "cinder_exit"
+    },
+    {
+      "id": "cinder_exit",
+      "kind": "exit",
+      "title": "The Stairs Above",
+      "edges": {
+        "free": "gilded_gate",
+        "bound": "undercircuit_entry"
+      }
+    },
+    {
+      "id": "undercircuit_entry",
+      "kind": "story",
+      "title": "The Undercircuit",
+      "rule": "Keep active obligations; low-tier legal poker route in next expansion; no free Lifechips, no automatic restored prestige"
+    }
+  ],
+  "social_guarantees": [
+    "No story resets the same endowment",
+    "Service completes exactly 3 ordered duties with event IDs",
+    "NPC creditors cannot take final Lifechip via automatic repayments",
+    "Debt default creates overdue consequence, not immediate death",
+    "Fallen contract retains prior claimant ownership and saved roll"
+  ]
+}

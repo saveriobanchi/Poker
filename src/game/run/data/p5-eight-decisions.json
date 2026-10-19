@@ -1,0 +1,45 @@
+{
+  "schema": "p5-v0.7-design-contract",
+  "items": [
+    {
+      "id": "evolution_token",
+      "decision": "modify",
+      "rule": "A spell with Resonance>=1 evolves immediately when the token is spent. If no instance has Resonance>=1, the token instead grants +1 Resonance to one owned unevolved instance; no evolution this time. One use only, persists across saves; cannot exceed milestone."
+    },
+    {
+      "id": "circuit_reward",
+      "decision": "modify",
+      "rule": "Offer a seeded nonowned relic (rarity distribution common 60%, uncommon 35%, rare 5% among present rarities, re-normalize unavailable tiers) or evolution token. With 5 equipped relics the player may replace exactly one; replaced item is removed, not resold for chips. If no nonowned relic remains, give token option. No free Lifechips."
+    },
+    {
+      "id": "duty_events",
+      "decision": "approve",
+      "rule": "next betting decision means the player must be able to act on a later voluntary decision in the same hand; contested showdown has >=2 non-folded hands; fold facing wager >= current BB is sampled atomically on the fold."
+    },
+    {
+      "id": "creditor_favor",
+      "decision": "approve",
+      "rule": "Creditor Favor belongs only to the creditor, +1 each unique service completion, +1 after fully paid debt; never to the player by default."
+    },
+    {
+      "id": "coal_contract",
+      "decision": "approve",
+      "rule": "Coal Table qualifies as contract for duties involving completion/top-two; debt repayments use table profit and 30% positive-net rule."
+    },
+    {
+      "id": "npc_debt",
+      "decision": "modify",
+      "rule": "NPC debts remain live after leaving a table; at most once per completed act an NPC with obligation and >=2 liquid chips may voluntarily repay from own wallet: min(debt_due, floor(0.15*max(0,wallet-1))). This is an extra optional payment, not fabricated winnings; ordinary 30% positive-net repayment still applies to qualifying simulated future tables. No obligation disappears on absence; can become overdue after four actual completed qualifying tables."
+    },
+    {
+      "id": "boss_evolved_spell",
+      "decision": "approve",
+      "rule": "Bailiff Sable replaces one Briar Lock copy with one Quiet Briars evolution (remaining Spellbook eight cards). Cost/window unchanged per P4 evolution. Public tells and Aether limits intact. This change requires balance retest."
+    },
+    {
+      "id": "twin_oracle",
+      "decision": "approve_with_clarification",
+      "rule": "1 eligible opponent: automatically that one; exactly 2: automatically both; 3+ eligible: caster chooses up to two different targets, AI picks using only legal information. No eligible target means illegal cast. Do not reveal folded or already exposed hands."
+    }
+  ]
+}

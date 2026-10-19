@@ -1,0 +1,199 @@
+{
+  "schema": "p5-v0.7-design-contract",
+  "act": "ACT_II_THE_GILDED_CIRCUIT",
+  "continuation_from": [
+    "slice_victory",
+    "slice_exile"
+  ],
+  "actor_migration": {
+    "initial_p4_local_total": 1009,
+    "rule": "All new Act II participants are funded by explicit recorded ingress from external Ledger wallets, never added as local unbacked chips. A one-time migration establishes audited external origin balances and debits them on each first entry. Accounting scope expands and exactly records local+external conservation. Do not reset or revive any P4 character; old save IDs preserve original local conservation before/after migration. External ledger is a wider jurisdiction not modeled in P4. Never award player chips at ingress.",
+    "external_origin_account": "p5_external_ledger_act2",
+    "external_origin_initial": 1150,
+    "new_wallets_total": 1150,
+    "exactly_once_key": "act2_ingress_v0.7"
+  },
+  "entry_rules": {
+    "slice_victory": "prestige entry; +1 Favor from published invitation, no chips",
+    "slice_exile": "underground entry via a non-chip Ledger petition; choose -1 Favor (floor -3) or surrender one equipped non-Covenant relic; no chips; may enter with no relic via Favor option",
+    "fallen": "Not directly eligible; use Cinder continuation re-entry route"
+  },
+  "nodes": [
+    {
+      "id": "gilded_gate",
+      "kind": "story",
+      "name": "The Gilded Gate",
+      "next": "masked_salon"
+    },
+    {
+      "id": "masked_salon",
+      "kind": "contract_table",
+      "name": "The Masked Salon",
+      "seats": [
+        "player",
+        "isolde_morn",
+        "ravel_croft",
+        "vesa_kael"
+      ],
+      "new_opponent_opening_wallets": {
+        "isolde_morn": 140,
+        "ravel_croft": 125,
+        "vesa_kael": 135
+      },
+      "small_blind": 2,
+      "big_blind": 4,
+      "max_hands": 10,
+      "success": "top two with >=1 chip; living failure Keeper Audit once",
+      "next": "velvet_exchange"
+    },
+    {
+      "id": "velvet_exchange",
+      "kind": "shop",
+      "name": "The Velvet Exchange",
+      "merchant_id": "merchant_elin",
+      "merchant_initial_external_wallet": 100,
+      "stock": "3 seeded nonowned relics from existing catalog; Spell Rethread 11; no free stock refresh",
+      "choices": [
+        "mirror_audience",
+        "secret_bargain"
+      ]
+    },
+    {
+      "id": "mirror_audience",
+      "kind": "optional_event",
+      "name": "The Court of Mirrors",
+      "rule": "Privately observe one rival pattern from prior public hand history; no hidden-card revelation and no Lifechips",
+      "next": "velvet_arena"
+    },
+    {
+      "id": "secret_bargain",
+      "kind": "optional_event",
+      "name": "The Whispered Contract",
+      "rule": "Accept +1 Notoriety and a public magical tell in first hand of next table, or decline with no effect; no Lifechips",
+      "next": "velvet_arena"
+    },
+    {
+      "id": "velvet_arena",
+      "kind": "contract_table",
+      "name": "The Velvet Arena",
+      "seats": [
+        "player",
+        "witness_arden",
+        "livia_shade"
+      ],
+      "new_opponent_opening_wallets": {
+        "witness_arden": 160,
+        "livia_shade": 145
+      },
+      "small_blind": 2,
+      "big_blind": 4,
+      "max_hands": 10,
+      "success": "top two with >=1 chip; failed alive gets one Keeper Audit",
+      "next": "crown_inquest"
+    },
+    {
+      "id": "crown_inquest",
+      "kind": "boss_table",
+      "name": "The Crown Inquest",
+      "seats": [
+        "player",
+        "margrave_noct",
+        "aurelia_ash"
+      ],
+      "new_opponent_opening_wallets": {
+        "margrave_noct": 190,
+        "aurelia_ash": 155
+      },
+      "blind_schedule": [
+        {
+          "hands": "1-6",
+          "sb": 3,
+          "bb": 6
+        },
+        {
+          "hands": "7-12",
+          "sb": 4,
+          "bb": 8
+        }
+      ],
+      "max_hands": 12,
+      "success": "sole/tied top stack or top-two with net table profit >= max(16,ceil(0.20*entry_stack)); player >=1 chip",
+      "edges": {
+        "win": "act2_victory",
+        "alive_failure": "act2_living_exile",
+        "zero": "last_claim"
+      }
+    },
+    {
+      "id": "act2_victory",
+      "kind": "ending",
+      "name": "A Crown of Brass",
+      "preserve_character": true
+    },
+    {
+      "id": "act2_living_exile",
+      "kind": "ending",
+      "name": "The Mask Falls",
+      "preserve_character": true
+    }
+  ],
+  "adversaries": [
+    {
+      "id": "isolde_morn",
+      "name": "Dame Isolde Morn",
+      "target_vpip": 0.23,
+      "target_pfr": 0.13,
+      "magic": "Thorn/Veil",
+      "outline": "calculating aristocrat, values survival over pride"
+    },
+    {
+      "id": "ravel_croft",
+      "name": "Ravel Croft",
+      "target_vpip": 0.38,
+      "target_pfr": 0.27,
+      "magic": "Ember/Mirror",
+      "outline": "deceptive court challenger"
+    },
+    {
+      "id": "vesa_kael",
+      "name": "Vesa Kael",
+      "target_vpip": 0.31,
+      "target_pfr": 0.12,
+      "magic": "Mirror/Veil",
+      "outline": "collector and cold reader"
+    },
+    {
+      "id": "witness_arden",
+      "name": "Witness Arden",
+      "target_vpip": 0.28,
+      "target_pfr": 0.19,
+      "magic": "Veil/Thorn",
+      "outline": "ledger witness who punishes bluff overuse"
+    },
+    {
+      "id": "livia_shade",
+      "name": "Livia Shade",
+      "target_vpip": 0.41,
+      "target_pfr": 0.18,
+      "magic": "Ember/Veil",
+      "outline": "reckless society outsider"
+    },
+    {
+      "id": "margrave_noct",
+      "name": "Margrave Noct",
+      "target_vpip": 0.27,
+      "target_pfr": 0.21,
+      "magic": "Thorn/Mirror",
+      "outline": "act boss, one evolved legal spell, not omniscient"
+    },
+    {
+      "id": "aurelia_ash",
+      "name": "Aurelia Ash",
+      "target_vpip": 0.32,
+      "target_pfr": 0.15,
+      "magic": "Mirror/Thorn",
+      "outline": "patient multiway player"
+    }
+  ],
+  "gating": "P5 can implement Act II after the core balance fix and Fallen continuation; art for newly added Act II opponents may remain clearly documented monograms pending dedicated illustrations."
+}

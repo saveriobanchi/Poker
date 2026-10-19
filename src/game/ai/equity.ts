@@ -45,7 +45,9 @@ export function estimateEquity(
       }
       let a = take();
       let b = take();
-      for (let tries = 0; tries < 12 && preflopPercentile(a, b) < minPct; tries++) {
+      // Very narrow ranges (a nit's shove) need more draws to be represented faithfully.
+      const maxTries = minPct > 0.9 ? 80 : 12;
+      for (let tries = 0; tries < maxTries && preflopPercentile(a, b) < minPct; tries++) {
         used -= 2; // put them back and draw again
         a = take();
         b = take();

@@ -1,0 +1,67 @@
+{
+  "schema": "p5-v0.7-design-contract",
+  "source": "Claude Report 004, 1000 seeded runs, 250 per policy",
+  "baseline": {
+    "skilled": {
+      "victory": 14,
+      "n": 250
+    },
+    "tight": {
+      "victory": 26,
+      "n": 250
+    },
+    "maniac": {
+      "victory": 97,
+      "n": 250
+    },
+    "passive": {
+      "victory": 2,
+      "n": 250
+    }
+  },
+  "policy": {
+    "shove_counter": "equity_pot_odds_range_model",
+    "mandatory_unconditional_call_rule": false,
+    "no_limit_preserved": true,
+    "anti_exploit": "estimate villain shove frequency from observed public hands only, with shrinkage to personality priors; call when modeled hand equity vs plausible ranges supports price, risk and tournament context; no omniscience or quota"
+  },
+  "ai_specs": {
+    "track_public_shoves_last_n": 24,
+    "shove_frequency_prior_strength": 12,
+    "prior_from_existing_archetype": true,
+    "initialize_per_rival": true,
+    "learn_from_AI_vs_AI_actions": true,
+    "all_in_response_model": "equity >= pot_odds + calibrated_risk_premium; multiway equity, opponent hand range, ICM-like survival pressure, and player/AI exposure biases considered",
+    "avoid_chip_based_assistance": true
+  },
+  "boss": {
+    "id": "boss_ledger",
+    "hands": 12,
+    "success_any": [
+      {
+        "rank_leq": 1,
+        "player_stack_at_least": 1
+      },
+      {
+        "rank_leq": 2,
+        "net_gain_at_least": "max(12,ceil(0.20 * entry_stack))",
+        "player_stack_at_least": 1
+      }
+    ],
+    "net_gain": "final_stack - entry_stack, snapshot at first posting of blinds; exclude unrelated shop transfers",
+    "living_failure": "slice_exile; never death",
+    "blind_schedule": "unchanged hands 1-6 2/4, 7-12 3/6"
+  },
+  "tests": {
+    "samples": "at least 1000 runs per policy using shared seeds; 10 independent seed batches",
+    "compare": "maniac success should fall materially relative to 38.8%; disciplined policies should improve relative to maniac (directional target, not fake certainty)",
+    "checks": [
+      "zero poker/card/Aether/ledger violations",
+      "observations use public actions only",
+      "no blanket call shoves outside modeled pot odds",
+      "rate uncertainty intervals and poker AI style stats",
+      "compare before/after on identical seed batches"
+    ]
+  },
+  "last_claim": "no global mercy probability change in P5; make pre-death relationship and outlook legible; reevaluate after real-player testing"
+}

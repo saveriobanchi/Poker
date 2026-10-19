@@ -61,11 +61,59 @@ export function decide(
   profile: AiProfile,
   rng: Rng,
   known: { seat: number; card: Card }[] = [],
+  /** Per seat: smoothed public shove frequency (design v0.7 §01); omitted = no reads yet. */
+  shoveRates?: number[],
 ): PlayerAction {
   const legal = view.legal;
   const me = view.seats[view.viewer];
   if (!legal || !me.hole) throw new Error('AI asked to act when it is not its turn');
+  if (shoveRates && facingPressure(view, legal)) return answerPressure(view, profile, legal, rng, known, shoveRates);
   return view.street === 'preflop' ? preflop(view, profile, legal, rng) : postflop(view, profile, legal, rng, known);
+}
+
+/** Calling would commit a large share of what this seat has left. */
+function facingPressure(view: PublicView, legal: LegalActions): boolean {
+  const me = view.seats[view.viewer];
+  return legal.callAmount > 0 && legal.callAmount >= 0.4 * me.stack && legal.callAmount >= 4 * view.bigBlind;
+}
+
+const PRESSURE_ITERATIONS = 400;
+
+/**
+ * Facing a shove or a stack-committing bet: equity against modeled ranges
+ * versus the real price, plus a survival premium (design v0.7 §01). The
+ * aggressor's range is the top `rate` share of hands, where `rate` is its
+ * smoothed public shove frequency; other committed opponents keep their
+ * action-inferred ranges. Opponents who have not voluntarily acted yet are
+ * assumed to fold. No quota and no hidden data.
+ */
+function answerPressure(
+  view: PublicView,
+  p: AiProfile,
+  legal: LegalActions,
+  rng: Rng,
+  known: { seat: number; card: Card }[],
+  shoveRates: number[],
+): PlayerAction {
+  const me = view.seats[view.viewer];
+  const acted = new Set(view.log.filter((e) => e.action.type !== 'fold').map((e) => e.seat));
+  const aggressor = [...view.log].reverse().find((e) => e.action.type === 'bet' || e.action.type === 'raise')?.seat ?? -1;
+  const live = view.seats
+    .map((_, i) => i)
+    .filter((i) => i !== view.viewer && view.seats[i].inHand && !view.seats[i].folded && (acted.has(i) || view.seats[i].allIn));
+  const ranges = live.map((i) => {
+    if (i !== aggressor || view.street !== 'preflop') return inferRange(view, i);
+    return clamp(1 - shoveRates[i], 0, 0.97);
+  });
+  const fixed = live.map((i) => known.find((k) => k.seat === i)?.card ?? null);
+  const equity = estimateEquity(me.hole!, view.board, ranges, PRESSURE_ITERATIONS, rng, fixed);
+  const pot = view.seats.reduce((sum, s) => sum + s.totalCommitted, 0);
+  const toCall = legal.callAmount;
+  const potOdds = toCall / (pot + toCall);
+  const commit = Math.min(1, toCall / (me.stack + me.totalCommitted));
+  const premium = 0.02 + 0.08 * (1 - p.stickiness) * commit;
+  if (equity >= potOdds + premium) return { type: 'call' };
+  return passive(legal);
 }
 
 function preflop(view: PublicView, p: AiProfile, legal: LegalActions, rng: Rng): PlayerAction {

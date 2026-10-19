@@ -1,0 +1,177 @@
+{
+  "label": "after-shove-model",
+  "batches": 10,
+  "perPolicyPerBatch": 100,
+  "seeds": "simulateRuns(seed = 1000 + batch); world k shared by all policies",
+  "summary": {
+    "skilled": {
+      "n": 1000,
+      "slice_victory": {
+        "k": 70,
+        "rate": 0.07,
+        "ci95": [
+          0.0558,
+          0.0875
+        ],
+        "batchSd": 0.0231
+      },
+      "slice_exile": {
+        "k": 565,
+        "rate": 0.565,
+        "ci95": [
+          0.5341,
+          0.5954
+        ],
+        "batchSd": 0.0486
+      },
+      "fallen_unlocked": {
+        "k": 141,
+        "rate": 0.141,
+        "ci95": [
+          0.1208,
+          0.1639
+        ],
+        "batchSd": 0.03
+      },
+      "death": {
+        "k": 224,
+        "rate": 0.224,
+        "ci95": [
+          0.1992,
+          0.2509
+        ],
+        "batchSd": 0.045
+      }
+    },
+    "passive": {
+      "n": 1000,
+      "slice_victory": {
+        "k": 18,
+        "rate": 0.018,
+        "ci95": [
+          0.0114,
+          0.0283
+        ],
+        "batchSd": 0.0132
+      },
+      "slice_exile": {
+        "k": 26,
+        "rate": 0.026,
+        "ci95": [
+          0.0178,
+          0.0378
+        ],
+        "batchSd": 0.0178
+      },
+      "fallen_unlocked": {
+        "k": 196,
+        "rate": 0.196,
+        "ci95": [
+          0.1726,
+          0.2217
+        ],
+        "batchSd": 0.0608
+      },
+      "death": {
+        "k": 760,
+        "rate": 0.76,
+        "ci95": [
+          0.7326,
+          0.7854
+        ],
+        "batchSd": 0.0658
+      }
+    },
+    "maniac": {
+      "n": 1000,
+      "slice_victory": {
+        "k": 89,
+        "rate": 0.089,
+        "ci95": [
+          0.0729,
+          0.1083
+        ],
+        "batchSd": 0.0173
+      },
+      "slice_exile": {
+        "k": 61,
+        "rate": 0.061,
+        "ci95": [
+          0.0478,
+          0.0776
+        ],
+        "batchSd": 0.0223
+      },
+      "fallen_unlocked": {
+        "k": 230,
+        "rate": 0.23,
+        "ci95": [
+          0.205,
+          0.2571
+        ],
+        "batchSd": 0.0323
+      },
+      "death": {
+        "k": 620,
+        "rate": 0.62,
+        "ci95": [
+          0.5895,
+          0.6496
+        ],
+        "batchSd": 0.035
+      }
+    },
+    "tight": {
+      "n": 1000,
+      "slice_victory": {
+        "k": 117,
+        "rate": 0.117,
+        "ci95": [
+          0.0985,
+          0.1384
+        ],
+        "batchSd": 0.0258
+      },
+      "slice_exile": {
+        "k": 579,
+        "rate": 0.579,
+        "ci95": [
+          0.5482,
+          0.6092
+        ],
+        "batchSd": 0.0335
+      },
+      "fallen_unlocked": {
+        "k": 127,
+        "rate": 0.127,
+        "ci95": [
+          0.1078,
+          0.1491
+        ],
+        "batchSd": 0.043
+      },
+      "death": {
+        "k": 177,
+        "rate": 0.177,
+        "ci95": [
+          0.1546,
+          0.2019
+        ],
+        "batchSd": 0.032
+      }
+    }
+  },
+  "claims": {
+    "survival:mercy": 828,
+    "death:acceptedFate": 535,
+    "death:refused": 1572,
+    "survival:debt": 705,
+    "death:claimedLife": 1165,
+    "survival:service": 61,
+    "death:declinedCounter": 31,
+    "death:noBargain": 1
+  },
+  "invariantChecks": 697233,
+  "aiCastsPer100Hands": 23.7,
+  "seconds": 65.9
+}
