@@ -761,3 +761,54 @@ export function importFallenSession(p3: TableSession, seed: number): RunState {
 }
 
 export { TABLE_NODES };
+
+// ───────────────────────────── persistence ─────────────────────────────
+
+export const RUN_SAVE_KEY = 'lastWager.run.v1';
+
+interface Store {
+  getItem(k: string): string | null;
+  setItem(k: string, v: string): void;
+  removeItem(k: string): void;
+}
+
+export function saveRun(store: Store, run: RunState): void {
+  store.setItem(RUN_SAVE_KEY, JSON.stringify(run));
+}
+
+/** Restores a saved run exactly, or null when absent or not a valid v1 run. */
+export function loadRun(store: Store): RunState | null {
+  const raw = store.getItem(RUN_SAVE_KEY);
+  if (!raw) return null;
+  try {
+    const run = JSON.parse(raw) as RunState;
+    if (run.version !== 1 || !run.accounts || !run.player) return null;
+    assertRunInvariants(run);
+    return run;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reads a P3 save (table v3 or v4) whose player left the table alive as one of
+ * the Fallen. Returns null for anything else, so a corrupt or unrelated save can
+ * never mint a rescue.
+ */
+export function fallenFromSave(raw: string | null, seed: number): RunState | null {
+  if (!raw) return null;
+  try {
+    const p3 = JSON.parse(raw) as TableSession;
+    if ((p3.version as number) !== 3 && p3.version !== 4) return null;
+    const me = humanSeat(p3);
+    const you = p3.world.characters[me];
+    if (!you || you.status !== 'exited' || !you.alive) return null;
+    if (!p3.world.contracts.some((k) => k.debtor === you.id)) return null;
+    // Older saves predate some reputation fields.
+    const blank = characterFor(PLAYER_ID).reputation;
+    for (const c of p3.world.characters) c.reputation = { ...blank, ...c.reputation };
+    return importFallenSession(p3, seed);
+  } catch {
+    return null;
+  }
+}

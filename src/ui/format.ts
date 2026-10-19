@@ -39,18 +39,20 @@ export function actionLabel(action: PlayerAction, allIn: boolean): string {
 /** Sentence for the action ticker, e.g. "Lady Vesper raises to 6." */
 export function describeAction(entry: LoggedAction, name: string): string {
   const a = entry.action;
+  const you = name === 'You';
+  const v = (third: string, second: string) => (you ? second : third);
   switch (a.type) {
     case 'fold':
-      return `${name} folds.`;
+      return `${name} ${v('folds', 'fold')}.`;
     case 'check':
-      return `${name} checks.`;
+      return `${name} ${v('checks', 'check')}.`;
     case 'call':
-      return `${name} calls.`;
+      return `${name} ${v('calls', 'call')}.`;
     case 'bet':
-      return `${name} bets ${a.to}.`;
+      return `${name} ${v('bets', 'bet')} ${a.to}.`;
     case 'raise':
-      return `${name} raises to ${a.to}.`;
+      return `${name} ${v('raises', 'raise')} to ${a.to}.`;
     case 'allIn':
-      return `${name} goes all-in.`;
+      return `${name} ${v('goes', 'go')} all-in.`;
   }
 }

@@ -7,7 +7,10 @@ import {
   createRun,
   ENDINGS,
   evolutionOffers,
+  fallenFromSave,
   importFallenSession,
+  loadRun,
+  saveRun,
   OPEN_BOOK_FEE,
   playerBook,
   runCommand,
@@ -248,4 +251,32 @@ describe('the Fallen route and sworn service', () => {
     const r = replaceInstance(book, book.draw[0].uid, 'twin_oracle');
     expect(r.draw).toHaveLength(8);
   });
+
+  it('a P3 v3 archive imports only when the player left alive, Fallen; anything else is refused', () => {
+    const p3 = p3Fallen()!;
+    const v3 = structuredClone(p3) as unknown as Record<string, unknown>;
+    v3.version = 3;
+    delete v3.config;
+    delete v3.humanEvents;
+    const run = fallenFromSave(JSON.stringify(v3), 5)!;
+    expect(run.node).toBe('fallen_registry');
+    expect(run.characters.you.socialRank).toBe('FALLEN');
+    expect(fallenFromSave(JSON.stringify(createDefaultSession(3)), 5)).toBeNull();
+    expect(fallenFromSave('{not json', 5)).toBeNull();
+    expect(fallenFromSave(null, 5)).toBeNull();
+  }, 120_000);
+});
+
+describe('run persistence', () => {
+  it('saves and restores a run exactly, and rejects a tampered one', () => {
+    const mem = new Map<string, string>();
+    const store = { getItem: (k: string) => mem.get(k) ?? null, setItem: (k: string, v: string) => void mem.set(k, v), removeItem: (k: string) => void mem.delete(k) };
+    const run = until(createRun(8), (r) => r.node === 'lantern_shop' || r.node === 'death', 'tight', 8);
+    saveRun(store, run);
+    expect(loadRun(store)).toEqual(run);
+    const forged = JSON.parse(mem.get('lastWager.run.v1')!);
+    forged.accounts.you += 50;
+    mem.set('lastWager.run.v1', JSON.stringify(forged));
+    expect(loadRun(store)).toBeNull();
+  }, 60_000);
 });

@@ -13,6 +13,8 @@ export interface ControlsCallbacks {
   onCast(uid: string, params: CastParams): void;
   onPass(): void;
   onNextHand(): void;
+  /** Second Reflection: keep candidate 0 or 1. */
+  onChoose(pick: 0 | 1): void;
 }
 
 function el<T extends HTMLElement>(id: string): T {
@@ -51,6 +53,7 @@ export class Controls {
   private view: PublicView | null = null;
   private raiseTo = 0;
   private cinderUid: string | null = null;
+  private cinderSpell: 'cinder_challenge' | 'ember_echo' | 'red_oath' = 'cinder_challenge';
   private confirming: 'call' | 'raise' | null = null;
   private confirmTimer: number | undefined;
 
@@ -69,7 +72,7 @@ export class Controls {
       const me = this.view.seats[this.view.viewer];
       const allIn = this.raiseTo === me.streetCommitted + me.stack;
       if (allIn && !this.confirm('raise', this.raise, `Tap again: all-in ${this.raiseTo}`)) return;
-      if (this.cinderUid) this.cb.onCast(this.cinderUid, { spell: 'cinder_challenge', raiseTo: this.raiseTo });
+      if (this.cinderUid) this.cb.onCast(this.cinderUid, { spell: this.cinderSpell, raiseTo: this.raiseTo });
       else this.cb.onAction({ type: r.isBet ? 'bet' : 'raise', to: this.raiseTo });
     });
     this.next.addEventListener('click', () => this.cb.onNextHand());
@@ -199,7 +202,7 @@ export class Controls {
     const me = this.view.seats[this.view.viewer];
     const allIn = this.raiseTo === me.streetCommitted + me.stack;
     const verb = allIn ? 'All-in' : r.isBet ? 'Bet' : 'Raise to';
-    this.raise.textContent = `${this.cinderUid ? 'Cinder · ' : ''}${verb} ${this.raiseTo}`;
+    this.raise.textContent = `${this.cinderUid ? `${SPELLS[this.cinderSpell].name} · ` : ''}${verb} ${this.raiseTo}`;
     this.raise.classList.toggle('enchanted', this.cinderUid !== null);
   }
 
@@ -240,27 +243,45 @@ export class Controls {
   }
 
   private onSpell(uid: string, spell: SpellId, targets: number[], names: string[]): void {
-    switch (spell) {
+    switch (SPELLS[spell].family) {
       case 'briar_lock':
-        return this.cb.onCast(uid, { spell });
+        return this.cb.onCast(uid, { spell: spell as 'briar_lock' });
       case 'cinder_challenge':
         this.cinderUid = this.cinderUid === uid ? null : uid;
+        this.cinderSpell = spell as typeof this.cinderSpell;
         this.spells.querySelectorAll<HTMLElement>('.spell').forEach((b) => b.classList.toggle('armed', b.dataset.uid === this.cinderUid));
         this.setRaise(this.raiseTo);
         return;
       case 'unmask':
+        if (spell === 'twin_oracle' && targets.length > 1) {
+          return this.cb.onCast(uid, { spell, targets: targets.slice(0, 2) });
+        }
+        if (spell === 'twin_oracle') return this.cb.onCast(uid, { spell, targets });
         return this.showChoice(
-          'Unmask whom?',
-          targets.map((t) => [names[t], () => this.cb.onCast(uid, { spell, target: t })]),
+          `${SPELLS[spell].name}: whom?`,
+          targets.map((t) => [names[t], () => this.cb.onCast(uid, { spell: spell as 'unmask', target: t })]),
         );
       case 'fate_exchange': {
         const hole = this.view!.seats[this.view!.viewer].hole!;
         return this.showChoice(
-          'Exchange which card?',
-          hole.map((c, i) => [`${rankLabel(c)}${suitGlyph(c)}`, () => this.cb.onCast(uid, { spell, holeIndex: i as 0 | 1 })]),
+          `${SPELLS[spell].name}: which card?`,
+          hole.map((c, i) => [`${rankLabel(c)}${suitGlyph(c)}`, () => this.cb.onCast(uid, { spell: spell as 'fate_exchange', holeIndex: i as 0 | 1 })]),
         );
       }
     }
+  }
+
+  /** Second Reflection's private pick: the table waits until the player chooses. */
+  showPick(view: PublicView, magic: MagicView): void {
+    this.reset();
+    this.view = view;
+    this.actionRow.hidden = true;
+    this.renderSpells(magic, null);
+    const c = magic.choice!;
+    const label = document.createElement('span');
+    label.textContent = 'Second Reflection: keep which card?';
+    this.choice.replaceChildren(label, ...c.candidates.map((card, i) => button(`${rankLabel(card)}${suitGlyph(card)}`, () => this.cb.onChoose(i as 0 | 1), 'choice')));
+    this.choice.hidden = false;
   }
 
   private showChoice(prompt: string, options: [string, () => void][]): void {

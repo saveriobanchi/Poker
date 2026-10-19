@@ -19,13 +19,14 @@
       <span id="hand-info">The Last Wager</span>
       <span class="hud-buttons">
         <button id="btn-sound" type="button" aria-pressed="true" aria-label="Sound">🔊</button>
-        <button id="btn-speed" type="button" aria-pressed="false">Normal ▶</button>
-        <button id="btn-new" type="button">New table</button>
+        <button id="btn-speed" type="button" aria-pressed="false" aria-label="Normal speed">▶</button>
+        <button id="btn-new" type="button">New run</button>
       </span>
     </header>
     <main id="game" aria-label="Poker table"></main>
     <section id="panel" aria-label="Your actions">
       <p id="ticker" aria-live="polite"></p>
+      <p id="relic-strip" hidden></p>
       <div id="spell-row" hidden>
         <span id="aether" title="Aether"></span>
         <div id="spells" aria-label="Your spells"></div>
@@ -41,8 +42,10 @@
         <button id="btn-raise" type="button" class="primary" disabled>Raise</button>
       </div>
       <button id="btn-pass" type="button" class="wide" hidden>Let the street open without magic</button>
+      <button id="btn-evolve" type="button" class="wide evolve-cta" hidden>✦ A spell can evolve</button>
       <button id="btn-next" type="button" class="primary wide" hidden>Deal next hand</button>
     </section>
+    <section id="screen" aria-live="polite" hidden></section>
     <div id="claim" role="dialog" aria-modal="true" aria-label="Last Claim" hidden></div>
     <div id="overlay" hidden></div>
     <div id="toast" role="status" hidden></div>

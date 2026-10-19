@@ -184,12 +184,22 @@ export class TableScene extends Phaser.Scene {
     if (active) this.tweens.add({ targets: plate, alpha: 0.6, duration: 650, yoyo: true, repeat: -1 });
 
     const cx = left + 24;
-    const portrait = this.add.image(cx, py, `portrait-${model.portraits[seat]}`).setDisplaySize(40, 40);
-    const mask = this.make.graphics({}, false).fillCircle(cx, py, 19);
-    this.masks.push(mask);
-    portrait.setMask(mask.createGeometryMask());
-    if (busted) portrait.setTint(0x555555);
-    r.add(portrait);
+    const key = `portrait-${model.portraits[seat]}`;
+    if (this.textures.exists(key)) {
+      const portrait = this.add.image(cx, py, key).setDisplaySize(40, 40);
+      const mask = this.make.graphics({}, false).fillCircle(cx, py, 19);
+      this.masks.push(mask);
+      portrait.setMask(mask.createGeometryMask());
+      if (busted) portrait.setTint(0x555555);
+      r.add(portrait);
+    } else {
+      // Provisional monogram until the painted portrait is delivered (asset manifest: "needed").
+      const disc = this.add.graphics();
+      disc.fillStyle(busted ? 0x2a2622 : 0x3a2a24, 1).fillCircle(cx, py, 19);
+      r.add(disc);
+      const initials = model.names[seat].split(/\s+/).filter((w) => /^[A-Z]/.test(w) && w !== 'The').map((w) => w[0]).join('').slice(0, 2);
+      r.add(this.txt(cx, py, initials, { fontFamily: DISPLAY, fontSize: '15px', color: busted ? '#6d6458' : '#F3D27A', fontStyle: '600' }).setOrigin(0.5));
+    }
     const ring = this.add.graphics();
     ring.lineStyle(2, busted ? 0x555555 : 0xc9a24a, 1).strokeCircle(cx, py, 20);
     r.add(ring);
@@ -235,20 +245,24 @@ export class TableScene extends Phaser.Scene {
       const [cx2, cy] = L.cards;
       const s = L.cardScale;
       const gap = 28 * s;
-      const known = magic.known.filter((k) => k.seat === seat).map((k) => k.card);
+      // Opponent cards this viewer may see: public reveals (gold) and its own Unmask reads (violet).
+      const shown: { card: Card; glow: number }[] = [];
+      for (const k of magic.publicKnown) if (k.seat === seat) shown.push({ card: k.card, glow: 0xf3d27a });
+      for (const k of magic.known) if (k.seat === seat && !shown.some((x) => x.card === k.card)) shown.push({ card: k.card, glow: 0x9d86c9 });
       for (let i = 0; i < 2; i++) {
         const x = cx2 + (i === 0 ? -gap / 2 : gap / 2);
         let face: Card | null = p.hole ? p.hole[i] : null;
-        const unmasked = !p.hole && i === 0 && known.length > 0;
-        if (unmasked) face = known[0];
+        const reveal = !p.hole ? shown[i] : undefined;
+        const unmasked = reveal !== undefined;
+        if (reveal) face = reveal.card;
         const obj = face !== null ? this.card(x, cy, face, s) : this.card(x, cy, CARD_BACK_FRAME, s);
         obj.setAngle(i === 0 ? -4 : 4);
         if (p.folded) obj.setAlpha(0.3);
         r.add(obj);
         if (unmasked) {
-          const glow = this.add.graphics();
-          glow.lineStyle(2, 0x9d86c9, 1).strokeRoundedRect(x - (CARD_W * s) / 2 - 2, cy - (CARD_H * s) / 2 - 2, CARD_W * s + 4, CARD_H * s + 4, 5);
-          glow.setAngle(-4);
+          const glow = this.add.graphics({ x, y: cy });
+          glow.lineStyle(2, reveal!.glow, 1).strokeRoundedRect(-(CARD_W * s) / 2 - 2, -(CARD_H * s) / 2 - 2, CARD_W * s + 4, CARD_H * s + 4, 5);
+          glow.setAngle(i === 0 ? -4 : 4);
           r.add(glow);
         }
       }
