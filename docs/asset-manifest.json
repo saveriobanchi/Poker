@@ -1,11 +1,12 @@
 {
-  "version": 4,
+  "version": 5,
   "notes": [
     "Claude lists the assets the code needs; ChatGPT produces or approves them; Claude integrates them.",
     "Source art lives in art/ (full resolution). Runtime files in public/assets/ are packed by scripts/pack-assets.py (WebP sprite sheet, 256px portraits).",
     "status: needed -> delivered (art/incoming/) -> integrated (verified in-engine on an iPhone 13 viewport).",
     "Templated ids: {rank} = 2..9,T,J,Q,K,A and {suit} = c,d,h,s.",
-    "P4 (v0.6): the adjudicator repaint and four rival portraits are 'needed'. Until they arrive, the table draws a provisional gold monogram for any character without a portrait (src/ui/TableScene.ts); the Night Clerk and Dock Runner have no brief yet."
+    "P4 (v0.6): the adjudicator repaint and four rival portraits are 'needed'. Until they arrive, the table draws a provisional gold monogram for any character without a portrait (src/ui/TableScene.ts); the Night Clerk and Dock Runner have no brief yet.",
+    "P5 (v0.7): seven portraits needed (adjudicator repaint, Mara Quill, Eldric Vale, Bailiff Sable, Sister Rill, Night Clerk, Dock Runner), briefs in docs/art-brief-p5.md. Act II rivals, the Cinder substitutes and the merchants use the provisional gold monogram by design until briefed. None are integrated."
   ],
   "assets": [
     {
@@ -190,6 +191,28 @@
       "alpha": true,
       "status": "needed",
       "license": "project original pending independent generation"
+    },
+    {
+      "id": "portrait.night_clerk",
+      "source": "art/incoming/p5/night-clerk.png",
+      "runtime": "public/assets/portraits/night-clerk.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "origin": "not yet generated",
+      "license": "project original (pending source generation)"
+    },
+    {
+      "id": "portrait.dock_runner",
+      "source": "art/incoming/p5/dock-runner.png",
+      "runtime": "public/assets/portraits/dock-runner.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "origin": "not yet generated",
+      "license": "project original (pending source generation)"
     }
   ]
 }

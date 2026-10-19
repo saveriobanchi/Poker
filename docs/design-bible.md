@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.6**
+**Canonical World, Gameplay & Production Blueprint — v0.7**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4, v0.5 and v0.6 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4–v0.7 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -32,6 +32,15 @@ Status: Working design baseline, dated 18 October 2026 (v0.4, v0.5 and v0.6 amen
 > route (Registry Below → Coal Table → Audience of the Bound) with sworn-service
 > duties. Data lives in `src/game/run/data/p4-*.json`; P4 art in
 > [`art-bible-v0.3-p4-addendum.md`](art-bible-v0.3-p4-addendum.md).
+
+> **v0.7 amendments (19 October 2026).** [`design-decisions-v0.7.md`](design-decisions-v0.7.md)
+> adds: rivals answer shoves from public reads (No-Limit kept); the boss objective
+> (tie for first, or top two with a real profit); token attunement; rarity-weighted
+> rewards with relic replacement; NPC voluntary debt payments at act boundaries;
+> Bailiff Sable's Quiet Briars; Twin Oracle targeting; Act II, the Gilded Circuit;
+> the Cinder continuation; audited external ingress for new actors; and the P5
+> portrait briefs ([`art-brief-p5.md`](art-brief-p5.md)). Data lives in
+> `src/game/run/data/p5-*.json`.
 
 ---
 

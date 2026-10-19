@@ -24,12 +24,17 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
   evolutions; relics; four new rivals; the Fallen route with sworn-service duties.
   Every character has a real wallet and the run checks that no Lifechip is ever
   created or lost (`src/game/run/`).
+- **P5 — Act II and the Cinder road:** done. Rivals no longer fold to every shove;
+  the Gilded Circuit (three tables, a merchant, two events) continues Act I; the
+  Fallen continue through the Broker, the Ember Steps and the Oathbreaker Hearing.
+  New actors are funded through audited external-ledger ingress; old saves migrate.
 
 ```sh
 npm install
 npm run dev        # play at http://localhost:5173 (also reachable from a phone on the same Wi-Fi)
 npm test           # unit tests, AI tests, 10,000-hand simulation
 npm run simulate   # 1,000 seeded whole runs → docs/reports/p4-simulation.json
+npm run balance    # 10 seed batches × 100 runs per policy, with 95% intervals → docs/reports/balance-*.json
 npm run build      # production build in dist/
 npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
@@ -75,8 +80,7 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P5
+## Next: P6
 
-To be decided with ChatGPT after `docs/briefs/004-report-for-chatgpt.md`: the
-next act after the Ledger, the Cinder recovery route for the Fallen, and the
-painted P4 portraits.
+To be decided with ChatGPT after `docs/briefs/005-report-for-chatgpt.md`: the
+Undercircuit, what follows the Crown Inquest, and the painted portraits.

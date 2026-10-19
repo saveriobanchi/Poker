@@ -1,5 +1,55 @@
 # Change log
 
+## 2026-10-19 — Design v0.7 + P5: Act II and the Cinder road
+
+**Design (ChatGPT's v0.7 hand-off):** `docs/design-decisions-v0.7.md`, the four
+`src/game/run/data/p5-*.json` files and `docs/art-brief-p5.md`. The bible is bumped
+to v0.7.
+
+**Balance first**
+- `npm run balance`: 10 seed batches × 100 runs per policy, shared seeds, Wilson
+  95% intervals (`docs/reports/balance-*.json`).
+- Rivals keep public shove reads per character (the last 24 preflop decisions,
+  smoothed towards a personality prior with weight 12). Facing a stack-committing
+  bet, they weigh equity against the aggressor's modeled range and the real pot
+  odds, plus a survival premium. There is no hidden data and no call quota.
+  On the same 4,000 runs, the shove policy's Act I victory rate fell from 37.7%
+  to 8.9%.
+
+**Rule changes:**
+- Boss tables: a tie for first wins, or a top-two finish with net profit of at
+  least max(12, 20% of entry); the Crown Inquest uses 16.
+- Evolution tokens attune a spell (+1 Resonance) when none is ready to evolve.
+- Circuit relic rewards are weighted 60/35/5 by rarity. With full slots, the
+  player gives one relic up.
+- NPC debtors make one voluntary payment (15% above their last chip) at each act
+  boundary.
+- Bailiff Sable carries Quiet Briars.
+- Twin Oracle with three or more eligible opponents asks the caster for two
+  targets.
+
+**New content**
+- **Save v2:** P4 saves migrate once, with no transfer.
+- **Audited ingress:** Act II (1,150) and the Cinder road (96) open their external
+  ledger accounts once each. Each newcomer is funded once, by name, when they
+  first appear. The P4 total stays auditable as the base.
+- **Act II, the Gilded Circuit:**
+  - Entry is by invitation after a victory (Favor +1) or by petition after an
+    exile.
+  - Route: Gilded Gate → Masked Salon → Velvet Exchange → Court of Mirrors or
+    Whispered Contract → Velvet Arena → Crown Inquest.
+  - Seven new rivals, calibrated to their VPIP/PFR targets.
+- **The Cinder road:**
+  - Broker Understairs, the Ember Steps (with substitutes for dead regulars),
+    then the Oathbreaker Hearing.
+  - From the Hearing, a free player goes up to the Gate; a bound player goes
+    down to the Undercircuit.
+- **Last Claim:** a "What sways them" box explains the history, the funder's
+  stake, reputation and the other party's known leanings, in words only.
+
+**Fix:** a hand that settles as it is dealt (every live seat all-in from the
+blinds) now opens its Last Claims. Before, a bankrupt player could stay seated.
+
 ## 2026-10-19 — Design v0.6 + P4: The roguelike slice
 
 **Design (ChatGPT's v0.6 hand-off):** `docs/design-decisions-v0.6.md`, the eight
