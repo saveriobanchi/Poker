@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.5**
+**Canonical World, Gameplay & Production Blueprint — v0.6**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4 and v0.5 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4, v0.5 and v0.6 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -21,6 +21,17 @@ Status: Working design baseline, dated 18 October 2026 (v0.4 and v0.5 amendments
 > default rules; the Fallen placeholder; and the P3 art specification
 > ([`art-bible-v0.2-addendum.md`](art-bible-v0.2-addendum.md)). Numbers live in
 > `src/game/world/rules.ts`.
+
+> **v0.6 amendments (19 October 2026).** [`design-decisions-v0.6.md`](design-decisions-v0.6.md)
+> adds: NPC debtor temperaments with priorities and Vesper's service veto; reputation
+> events (mercy Honor only, Favor to a creditor once on discharge); the P4 route
+> (Ash Table → Selene's Lantern → Mirror's Petition → Lantern Circuit → Bailiff's
+> Ledger), the Keeper's Audit, named wallets for every character, Selene and the
+> Witness escrow; per-instance Resonance and eight branch evolutions; six relics and
+> the Covenant of the Open Book; four new rivals with VPIP/PFR targets; and the Fallen
+> route (Registry Below → Coal Table → Audience of the Bound) with sworn-service
+> duties. Data lives in `src/game/run/data/p4-*.json`; P4 art in
+> [`art-bible-v0.3-p4-addendum.md`](art-bible-v0.3-p4-addendum.md).
 
 ---
 

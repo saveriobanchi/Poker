@@ -1,5 +1,48 @@
 # Change log
 
+## 2026-10-19 — Design v0.6 + P4: The roguelike slice
+
+**Design (ChatGPT's v0.6 hand-off):** `docs/design-decisions-v0.6.md`, the eight
+`src/game/run/data/p4-*.json` files and `docs/art-bible-v0.3-p4-addendum.md`. The
+bible is bumped to v0.6.
+
+**Rule changes**
+- NPC debtors use their own temperament: acceptance per pact, a priority order,
+  and Vesper's veto on service (a hard zero). A counteroffer is answered with the
+  same persisted roll; nothing is auto-accepted.
+- Only mercy earns the player Honor. A creditor gains Favor once, when a debt is
+  discharged in full or a service pact is released.
+
+**Implementation**
+- **Run engine (`src/game/run/`):**
+  - Named wallets for every character, Selene (80) and the Witness escrow. Tables
+    buy in from and cash out to these accounts.
+  - A global invariant (accounts + treasury + table) is checked after every command.
+  - Route: start → Ash Table → Selene's Lantern → optional Mirror's Petition →
+    Lantern Circuit → Bailiff's Ledger, with the four endings. A failed table is
+    never replayed; a living failure gets one Keeper's Audit.
+  - Seeded rewards and shop offers that survive a reload; Spell Rethread; the
+    Open Book fee goes to escrow; purchases can never take the final Lifechip.
+  - Fallen route: Registry Below → Coal Table (4 hands, 1/1) → Audience of the
+    Bound. Sworn-service duties advance one per hand, in order, with event ids
+    that can never count twice. Debt repayment applies after positive-net tables.
+- **Magic:** per-instance Resonance, eight branch evolutions (only between hands,
+  1:1 replacement), six relics, the Covenant of the Open Book with public reveals,
+  and Second Reflection's private pick.
+- **AI:**
+  - Mara Quill, Eldric Vale, Bailiff Sable and Sister Rill are calibrated to their
+    VPIP/PFR targets over 12,000 preflop opportunities each (all within 1.5 points).
+  - Preflop percentiles now break Chen-score ties, so ranges move smoothly.
+- **Simulation:** `npm run simulate` plays 1,000 seeded runs across four player
+  policies and writes `docs/reports/p4-simulation.json`.
+- **UI:**
+  - The run is now the main flow, with a route trail on every screen, the shop,
+    the petition, rewards, the audit, evolution choices, results, the Fallen
+    screens and the endings.
+  - The table shows hand x/cap, relics, public reveals in gold, evolved spells,
+    and provisional monograms for portraits not yet painted.
+  - A P3 Fallen save can be continued once.
+
 ## 2026-10-18 — Design bible v0.5 + P3: Life and consequences
 
 **Design (ChatGPT's v0.5 hand-off):** `docs/design-decisions-v0.5.md` and

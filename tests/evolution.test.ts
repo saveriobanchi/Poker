@@ -210,11 +210,14 @@ describe('relics and the Open Book', () => {
     t = act(t, 0, { type: 'fold' });
     expect(t.seats[0].aether).toBe(2);
     t = finish(t);
+    // Next hand at the same table: folding facing the big blind again earns nothing.
     let n = beginHand(startHand(setup([100, 100, 100], { seed: 2, button: 2 })), t.seats, 8);
-    const facing = n.hand.toAct!;
-    n = finish(n);
+    while (n.hand.toAct !== 0) n = act(n, n.hand.toAct!, { type: 'call' });
+    const before = n.seats[0].aether;
+    expect(getLegalActions(n.hand)!.callAmount).toBeGreaterThan(0);
+    n = act(n, 0, { type: 'fold' });
+    expect(n.seats[0].aether).toBe(before);
     expect(n.magic.gains.some((g) => g.reason === 'gambler_knot')).toBe(false);
-    expect(facing).toBeGreaterThanOrEqual(0);
   });
 
   it('Ashen Signet: once per table after a sole contested win following the owner’s preflop raise', () => {

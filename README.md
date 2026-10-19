@@ -19,11 +19,17 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
 - **P3 — Life and consequences:** done. Last Claim after every bankruptcy
   (yours or a rival's), funded covenants, negotiation with one counteroffer, the
   Fallen state and the Ledger's world accounting (`src/game/world/`).
+- **P4 — The roguelike slice:** done. A route of three tables with a shop, an
+  optional Covenant, rewards and a Keeper's Audit; spell Resonance and branch
+  evolutions; relics; four new rivals; the Fallen route with sworn-service duties.
+  Every character has a real wallet and the run checks that no Lifechip is ever
+  created or lost (`src/game/run/`).
 
 ```sh
 npm install
 npm run dev        # play at http://localhost:5173 (also reachable from a phone on the same Wi-Fi)
 npm test           # unit tests, AI tests, 10,000-hand simulation
+npm run simulate   # 1,000 seeded whole runs → docs/reports/p4-simulation.json
 npm run build      # production build in dist/
 npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
@@ -69,8 +75,8 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P4
+## Next: P5
 
-The roguelike slice: a compact path with several tables and a boss, the Cinder
-Warrens recovery for a Fallen character, spell evolutions, relics, a Covenant, shops
-and the 8-hand Contract Table. It waits on ChatGPT's answers in `docs/briefs/003`.
+To be decided with ChatGPT after `docs/briefs/004-report-for-chatgpt.md`: the
+next act after the Ledger, the Cinder recovery route for the Fallen, and the
+painted P4 portraits.

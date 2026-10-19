@@ -1,10 +1,11 @@
 {
-  "version": 3,
+  "version": 4,
   "notes": [
     "Claude lists the assets the code needs; ChatGPT produces or approves them; Claude integrates them.",
     "Source art lives in art/ (full resolution). Runtime files in public/assets/ are packed by scripts/pack-assets.py (WebP sprite sheet, 256px portraits).",
     "status: needed -> delivered (art/incoming/) -> integrated (verified in-engine on an iPhone 13 viewport).",
-    "Templated ids: {rank} = 2..9,T,J,Q,K,A and {suit} = c,d,h,s."
+    "Templated ids: {rank} = 2..9,T,J,Q,K,A and {suit} = c,d,h,s.",
+    "P4 (v0.6): the adjudicator repaint and four rival portraits are 'needed'. Until they arrive, the table draws a provisional gold monogram for any character without a portrait (src/ui/TableScene.ts); the Night Clerk and Dock Runner have no brief yet."
   ],
   "assets": [
     {
@@ -138,6 +139,57 @@
       "origin": "ChatGPT P3 procedural illustration",
       "license": "project original",
       "review": "Title text is rendered by the UI."
+    },
+    {
+      "id": "portrait.adjudicator.paint",
+      "source": "art/incoming/p4/adjudicator.png",
+      "runtime": "public/assets/portraits/adjudicator.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "license": "project original pending independent generation",
+      "review": "Replace provisional vector, match painted cast"
+    },
+    {
+      "id": "portrait.mara-quill",
+      "source": "art/incoming/p4/mara-quill.png",
+      "runtime": "public/assets/portraits/mara-quill.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "license": "project original pending independent generation"
+    },
+    {
+      "id": "portrait.eldric-vale",
+      "source": "art/incoming/p4/eldric-vale.png",
+      "runtime": "public/assets/portraits/eldric-vale.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "license": "project original pending independent generation"
+    },
+    {
+      "id": "portrait.bailiff-sable",
+      "source": "art/incoming/p4/bailiff-sable.png",
+      "runtime": "public/assets/portraits/bailiff-sable.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "license": "project original pending independent generation"
+    },
+    {
+      "id": "portrait.sister-rill",
+      "source": "art/incoming/p4/sister-rill.png",
+      "runtime": "public/assets/portraits/sister-rill.webp",
+      "width": 512,
+      "height": 512,
+      "alpha": true,
+      "status": "needed",
+      "license": "project original pending independent generation"
     }
   ]
 }
