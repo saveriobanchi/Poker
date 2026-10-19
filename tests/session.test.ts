@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createSession,
   applyClaim,
   applyHumanCommand,
   createDefaultSession,
@@ -227,5 +228,39 @@ describe('Last Claim in the session', () => {
       if (sessionStatus(s) === 'humanClaim') expect(roles(s.world, currentClaim(s.claims!)!).humanInvolved).toBe(true);
       s = step(s, 'shove');
     }
+  });
+});
+
+describe('a hand that settles as it is dealt', () => {
+  it('still opens the Last Claim for a seat left at zero', () => {
+    let found = false;
+    for (let seed = 1; seed < 60 && !found; seed++) {
+      let s = createSession({
+        seed,
+        seats: [
+          { id: 'you', name: 'You', kind: 'human' },
+          { id: 'vesper', name: 'Lady Vesper', kind: 'ai', profileId: 'vesper' },
+        ],
+        stacks: [40, 40],
+      });
+      while (sessionStatus(s) !== 'handComplete') {
+        const st = sessionStatus(s);
+        if (st === 'aiToAct') s = stepAi(s);
+        else if (st === 'humanWindow') s = applyHumanCommand(s, { kind: 'pass' });
+        else if (st === 'humanToAct') s = applyHumanCommand(s, { kind: 'act', action: { type: 'fold' } });
+        else break;
+      }
+      if (sessionStatus(s) !== 'handComplete') continue;
+      // Leave the player one chip: next hand, the blind puts them all-in and nobody needs to act.
+      const total = s.table.hand.seats[0].stack + s.table.hand.seats[1].stack;
+      s.table.hand.seats[0].stack = 1;
+      s.table.hand.seats[1].stack = total - 1;
+      const next = startNextHand(s);
+      if (next.table.hand.phase !== 'complete' || next.table.hand.seats[0].stack > 0) continue;
+      found = true;
+      expect(next.claims?.claims[0].debtor).toBe(0);
+      expect(['humanClaim', 'claimResolved']).toContain(sessionStatus(next));
+    }
+    expect(found).toBe(true);
   });
 });

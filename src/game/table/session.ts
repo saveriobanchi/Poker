@@ -4,7 +4,7 @@
  * immediate save/resume. Plain JSON throughout.
  */
 import { decideChoice, decideOpening, decideTurn } from '../ai/magic';
-import { type PublicReads, recordReads, shovePrior, shoveRate } from '../ai/reads';
+import { type PublicReads, type PublicTally, recordReads, recordTallies, shovePrior, shoveRate } from '../ai/reads';
 import { PROFILES } from '../ai/profiles';
 import {
   apply,
@@ -86,6 +86,8 @@ export interface TableSession {
   history: HandSummary[];
   /** Public preflop shove reads per character id (design v0.7 §01); absent in older saves. */
   reads?: PublicReads;
+  /** Public preflop tallies per character id at this table (for the Court of Mirrors). */
+  tallies?: Record<string, PublicTally>;
   /** Characters, reputations, covenants, Ledger treasury and transfer journal. */
   world: WorldState;
   /** Last Claims raised by the latest settled hand (null when nobody reached zero). */
@@ -169,7 +171,7 @@ export function createSession(opts: NewSessionOptions): TableSession {
     opts.characters ??
     opts.seats.map((s) => createCharacter(s.id, s.name, s.kind, s.kind === 'human' ? 'player' : (s.profileId ?? 'other')));
   const world = createWorld(characters, opts.stacks.reduce((a, b) => a + b, 0), opts.treasury);
-  return {
+  const session: TableSession = {
     version: 4,
     config,
     humanEvents: [],
@@ -181,6 +183,7 @@ export function createSession(opts: NewSessionOptions): TableSession {
     world,
     claims: null,
   };
+  return table.hand.phase === 'complete' ? settleHand(session, table) : session;
 }
 
 /** The default Act I table: the Wagerer against three named rivals at 1/2. */
@@ -286,18 +289,23 @@ function handEvents(session: TableSession, table: MagicTable): string[] {
 }
 
 function withTable(session: TableSession, table: MagicTable): TableSession {
+  if (table.hand.phase === 'complete' && session.table.hand.phase !== 'complete') return settleHand(session, table);
+  return { ...session, table };
+}
+
+/** Bookkeeping when a hand settles: duty events, history, public reads, and Last Claims for zero-chip seats. */
+function settleHand(session: TableSession, table: MagicTable): TableSession {
   const next: TableSession = { ...session, table };
-  if (table.hand.phase === 'complete' && session.table.hand.phase !== 'complete') {
-    next.humanEvents = [...new Set([...session.humanEvents, ...handEvents(session, table)])];
-    next.history = [...session.history, summarize(session, table)].slice(-HISTORY_LIMIT);
-    next.reads = recordReads(session.reads ?? {}, table.hand);
-    // Zero-chip check only after pot awards, refunds and bookkeeping (design v0.5 §03).
-    if (table.hand.result!.zeroChipSeats.length > 0) {
-      const opened = openClaims(table.hand, session.world, session.handNumber, deriveSeed(session.seed, CLAIM_SALT, session.handNumber));
-      const { batch, world } = autoAdvance(opened, session.world);
-      next.claims = batch;
-      next.world = world;
-    }
+  next.humanEvents = [...new Set([...session.humanEvents, ...handEvents(session, table)])];
+  next.history = [...session.history, summarize(session, table)].slice(-HISTORY_LIMIT);
+  next.reads = recordReads(session.reads ?? {}, table.hand);
+  next.tallies = recordTallies(session.tallies ?? {}, table.hand);
+  // Zero-chip check only after pot awards, refunds and bookkeeping (design v0.5 §03).
+  if (table.hand.result!.zeroChipSeats.length > 0) {
+    const opened = openClaims(table.hand, session.world, session.handNumber, deriveSeed(session.seed, CLAIM_SALT, session.handNumber));
+    const { batch, world } = autoAdvance(opened, session.world);
+    next.claims = batch;
+    next.world = world;
   }
   return next;
 }
@@ -372,7 +380,9 @@ export function startNextHand(session: TableSession): TableSession {
   const handNumber = session.handNumber + 1;
   const hand = startHand(nextSetup(session, deriveSeed(session.seed, handNumber)));
   const table = beginHand(hand, session.table.seats, deriveSeed(session.seed, MAGIC_SALT, handNumber));
-  return { ...session, handNumber, table, claims: null, humanEvents: [] };
+  const next: TableSession = { ...session, handNumber, table, claims: null, humanEvents: [] };
+  // A hand can settle as it is dealt (every live seat all-in from the blinds): settle it like any other.
+  return table.hand.phase === 'complete' ? settleHand(next, table) : next;
 }
 
 // ───────────────────────────── persistence ─────────────────────────────

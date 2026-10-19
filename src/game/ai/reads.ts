@@ -44,3 +44,28 @@ export function shoveRate(observed: boolean[] | undefined, prior: number): numbe
   const shoves = obs.filter(Boolean).length;
   return (shoves + READ_PRIOR_WEIGHT * prior) / (obs.length + READ_PRIOR_WEIGHT);
 }
+
+/** Public, table-observed preflop tendencies of one character. */
+export interface PublicTally {
+  hands: number;
+  vpip: number;
+  pfr: number;
+  shoves: number;
+}
+
+/** Adds one completed hand's public preflop behavior to each dealt-in character's tally. */
+export function recordTallies(tallies: Record<string, PublicTally>, hand: HandState): Record<string, PublicTally> {
+  const next = { ...tallies };
+  hand.seats.forEach((p, seat) => {
+    if (!p.inHand) return;
+    const mine = hand.log.filter((e) => e.seat === seat && e.street === 'preflop');
+    const t = { ...(next[p.id] ?? { hands: 0, vpip: 0, pfr: 0, shoves: 0 }) };
+    t.hands++;
+    if (mine.some((e) => e.action.type !== 'fold' && e.action.type !== 'check')) t.vpip++;
+    if (mine.some((e) => e.action.type === 'raise' || e.action.type === 'bet')) t.pfr++;
+    const start = hand.setup.players[seat].stack;
+    if (mine.some((e) => (e.action.type === 'raise' || e.action.type === 'bet') && e.action.to >= start * SHOVE_SHARE)) t.shoves++;
+    next[p.id] = t;
+  });
+  return next;
+}

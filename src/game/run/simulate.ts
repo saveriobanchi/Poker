@@ -11,7 +11,10 @@ import { assertRunInvariants, createRun, type RunState } from './run';
 
 export interface PolicyReport {
   runs: number;
+  /** Final ending of the whole run (Act II, Undercircuit or death). */
   endings: Record<string, number>;
+  /** How Act I ended: its chapter end, or death before one. */
+  act1: Record<string, number>;
   /** Share of runs that ended with the player alive (any ending but death). */
   survival: number;
   /** Runs that reached / completed each table node. */
@@ -72,7 +75,7 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
     // Shared seeds: every policy plays the same worlds (k-th run of each policy uses world k).
     const policy: PolicyName = POLICIES[i % POLICIES.length];
     const k = Math.floor(i / POLICIES.length);
-    const pr = (report.policies[policy] ??= { runs: 0, endings: {}, survival: 0, tableReached: {}, tableOutcomes: {}, bankruptcies: 0, avgHands: 0, avgFinalChips: 0, avgMs: 0 });
+    const pr = (report.policies[policy] ??= { runs: 0, endings: {}, act1: {}, survival: 0, tableReached: {}, tableOutcomes: {}, bankruptcies: 0, avgHands: 0, avgFinalChips: 0, avgMs: 0 });
     const t0 = performance.now();
     let run: RunState = createRun(seed * 100_003 + k);
     const rng = new Rng(seed * 7_919 + k);
@@ -130,6 +133,7 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
     for (const k of run.contracts) inc((report.contracts[k.pact] ??= {}), k.status);
     pr.runs++;
     inc(pr.endings, run.node);
+    inc(pr.act1, run.chapters[0] ?? run.node);
     if (run.node !== 'death') pr.survival++;
     if (bankrupt) pr.bankruptcies++;
     for (const r of run.results) {

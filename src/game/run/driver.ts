@@ -15,6 +15,7 @@ import { currentClaim, pactOptions, roles } from '../world';
 import {
   attuneOptions,
   ENDINGS,
+  mirrorCandidates,
   evolutionOffers,
   playerChips,
   runAi,
@@ -114,6 +115,20 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
       if (policy === 'skilled' && affordable >= 0) return { kind: 'buy', offer: affordable };
       return { kind: 'leaveShop', to: policy === 'skilled' && !run.eventResolved ? 'optional_event' : 'contract_2' };
     }
+    case 'velvet_exchange': {
+      const chips = playerChips(run);
+      const affordable = run.shop!.offers.findIndex((o) => !o.sold && chips - o.price >= 60 && (run.player.magic.relics ?? []).length < SLOT_LIMITS.relics);
+      if (policy === 'skilled' && affordable >= 0) return { kind: 'buy', offer: affordable };
+      return { kind: 'leaveShop', to: policy === 'skilled' ? 'mirror_audience' : 'secret_bargain' };
+    }
+    case 'mirror_audience': {
+      const rival = mirrorCandidates(run)[0];
+      return rival ? { kind: 'event', take: true, rival } : { kind: 'event', take: false };
+    }
+    case 'secret_bargain':
+      return { kind: 'event', take: policy === 'maniac' };
+    case 'act2_petition':
+      return { kind: 'petition', choice: 'favor' };
     case 'optional_event':
       return { kind: 'event', take: playerChips(run) >= 60 };
     case 'reward': {

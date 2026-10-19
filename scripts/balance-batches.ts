@@ -44,17 +44,26 @@ if (!isMainThread) {
     }),
   );
   const endings = ['slice_victory', 'slice_exile', 'fallen_unlocked', 'death'];
+  const finals = ['act2_victory', 'act2_living_exile', 'undercircuit_entry', 'death'];
   const summary: Record<string, unknown> = {};
   for (const p of POLICIES) {
     const n = results.reduce((a, r) => a + r.policies[p].runs, 0);
     const row: Record<string, unknown> = { n };
     for (const e of endings) {
-      const k = results.reduce((a, r) => a + (r.policies[p].endings[e] ?? 0), 0);
-      const perBatch = results.map((r) => (r.policies[p].endings[e] ?? 0) / r.policies[p].runs);
+      // Act I outcome (comparable with the P4 baseline, whose runs ended there).
+      const act1 = (r: SimulationReport) => r.policies[p].act1?.[e] ?? r.policies[p].endings[e] ?? 0;
+      const k = results.reduce((a, r) => a + act1(r), 0);
+      const perBatch = results.map((r) => act1(r) / r.policies[p].runs);
       const mean = perBatch.reduce((a, b) => a + b, 0) / perBatch.length;
       const sd = Math.sqrt(perBatch.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(1, perBatch.length - 1));
       row[e] = { k, rate: +(k / n).toFixed(4), ci95: wilson(k, n), batchSd: +sd.toFixed(4) };
     }
+    const fin: Record<string, unknown> = {};
+    for (const e of finals) {
+      const k = results.reduce((a, r) => a + (r.policies[p].endings[e] ?? 0), 0);
+      fin[e] = { k, rate: +(k / n).toFixed(4), ci95: wilson(k, n) };
+    }
+    row.final = fin;
     summary[p] = row;
   }
   const claims = results.reduce(

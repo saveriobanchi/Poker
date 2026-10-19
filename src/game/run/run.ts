@@ -60,8 +60,18 @@ import fallenData from './data/p4-fallen-route.json';
 import routeData from './data/p4-route.json';
 import shopData from './data/p4-shop.json';
 import relicData from './data/p4-relics-and-covenants.json';
+import act2Data from './data/p5-act2-route.json';
+import cinderData from './data/p5-fallen-continuation.json';
 
-export type TableNodeId = 'contract_1' | 'contract_2' | 'boss_ledger' | 'fallen_low_table';
+export type TableNodeId =
+  | 'contract_1'
+  | 'contract_2'
+  | 'boss_ledger'
+  | 'fallen_low_table'
+  | 'cinder_low_table'
+  | 'masked_salon'
+  | 'velvet_arena'
+  | 'crown_inquest';
 export type NodeId =
   | 'start'
   | TableNodeId
@@ -75,9 +85,23 @@ export type NodeId =
   | 'slice_victory'
   | 'slice_exile'
   | 'fallen_unlocked'
+  // P5 (design v0.7 §09–§10)
+  | 'act2_petition'
+  | 'gilded_gate'
+  | 'velvet_exchange'
+  | 'mirror_audience'
+  | 'secret_bargain'
+  | 'act2_victory'
+  | 'act2_living_exile'
+  | 'cinder_broker'
+  | 'oath_hearing'
+  | 'undercircuit_entry'
   | 'death';
 
-export const ENDINGS: NodeId[] = ['slice_victory', 'slice_exile', 'fallen_unlocked', 'death'];
+/** Final endings of the current build. */
+export const ENDINGS: NodeId[] = ['act2_victory', 'act2_living_exile', 'undercircuit_entry', 'death'];
+/** Act I chapter ends: a summary screen, then the story continues (design v0.7 §09–§10). */
+export const CHAPTER_ENDS: NodeId[] = ['slice_victory', 'slice_exile', 'fallen_unlocked'];
 
 export interface Standing {
   id: string;
@@ -116,8 +140,30 @@ export interface DutyState {
   usedEvents: string[];
 }
 
+/** Public, table-observed play of one character (for the Court of Mirrors). */
+export interface PublicStats {
+  hands: number;
+  vpip: number;
+  pfr: number;
+  shoves: number;
+}
+
+/** A recorded expansion of the accounting perimeter: external funds entering the local world once. */
+export interface PerimeterExpansion {
+  key: string;
+  account: string;
+  amount: number;
+}
+
+export interface ShopState {
+  id: 'lantern_shop' | 'velvet_exchange';
+  merchant: string;
+  offers: ShopOffer[];
+  rethreadSold: boolean;
+}
+
 export interface RunState {
-  version: 1;
+  version: 2;
   seed: number;
   node: NodeId;
   /** Main-route node that follows the current result, reward or audit. */
@@ -134,22 +180,43 @@ export interface RunState {
   /** Player's stack when the current table began (for net results and debt repayment). */
   entryStack: number;
   results: TableResult[];
-  shop: { offers: ShopOffer[]; rethreadSold: boolean } | null;
+  shop: ShopState | null;
   reward: RewardOption[] | null;
   duties: DutyState | null;
   eventResolved: boolean;
   auditedTables: TableNodeId[];
   log: string[];
+  /** Applied one-time migrations and ingress keys (design v0.7 §11). */
+  migrations: string[];
+  /** The original local total (1,009 in P4) plus every audited external ingress. */
+  perimeter: { base: number; expansions: PerimeterExpansion[] };
+  /** Act I chapter ends reached, in order. */
+  chapters: NodeId[];
+  /** One-shot route flags (events heard, items sold, pending tells). */
+  flags: string[];
+  /** Public play observed at tables, per character. */
+  observed: Record<string, PublicStats>;
 }
 
 export class RunError extends Error {}
 
 // ───────────────────────────── data ─────────────────────────────
 
+interface SeatData {
+  id: string;
+  stack?: string;
+  /** P4 local wallet funded at world creation. */
+  initial?: number;
+  /** P5 actor funded once from an external ledger at first appearance (design v0.7 §11). */
+  external?: number;
+  /** Cinder: replaces `id` when that character is dead or has no Lifechips. */
+  substitute?: { id: string; external: number };
+}
+
 interface TableNodeData {
   id: TableNodeId;
   label: string;
-  seats: { id: string; stack?: string; initial?: number }[];
+  seats: SeatData[];
   small_blind: number;
   big_blind: number;
   max_hands?: number;
@@ -157,11 +224,63 @@ interface TableNodeData {
   blind_schedule?: { hands: string; sb: number; bb: number }[];
 }
 
-const TABLE_NODES: Record<TableNodeId, TableNodeData> = Object.fromEntries(
+const P4_TABLES = Object.fromEntries(
   [...routeData.nodes, ...fallenData.nodes]
     .filter((n) => n.id in { contract_1: 1, contract_2: 1, boss_ledger: 1, fallen_low_table: 1 })
     .map((n) => [n.id, { ...n, label: 'label' in n ? n.label : (n as { title: string }).title } as TableNodeData]),
-) as Record<TableNodeId, TableNodeData>;
+) as Record<string, TableNodeData>;
+
+/** External ledger accounts of P5 (design v0.7 §11): who funds whom, once. */
+export const ACT2_LEDGER = act2Data.actor_migration.external_origin_account;
+export const ACT2_INGRESS_KEY = act2Data.actor_migration.exactly_once_key;
+export const CINDER_LEDGER = cinderData.external_origin_account;
+export const CINDER_INGRESS_KEY = 'cinder_ingress_v0.7';
+
+interface Act2Table {
+  id: string;
+  name: string;
+  seats: string[];
+  new_opponent_opening_wallets: Record<string, number>;
+  small_blind?: number;
+  big_blind?: number;
+  max_hands: number;
+  blind_schedule?: { hands: string; sb: number; bb: number }[];
+}
+
+const P5_TABLES: Record<string, TableNodeData> = Object.fromEntries(
+  (act2Data.nodes as unknown as (Act2Table & { kind: string })[])
+    .filter((n) => n.kind === 'contract_table' || n.kind === 'boss_table')
+    .map((n) => [
+      n.id,
+      {
+        id: n.id as TableNodeId,
+        label: n.name,
+        seats: n.seats.map((id) => (id === 'player' ? { id, stack: 'carry' } : { id, external: n.new_opponent_opening_wallets[id] })),
+        small_blind: n.small_blind ?? n.blind_schedule![0].sb,
+        big_blind: n.big_blind ?? n.blind_schedule![0].bb,
+        max_hands: n.max_hands,
+        blind_schedule: n.blind_schedule,
+      } satisfies TableNodeData,
+    ]),
+);
+{
+  const ember = cinderData.nodes.find((n) => n.id === 'cinder_low_table')!;
+  const subs = ember.alternative_rival_external_opening_wallets!;
+  P5_TABLES.cinder_low_table = {
+    id: 'cinder_low_table',
+    label: ember.title,
+    seats: [
+      { id: 'player', stack: 'carry' },
+      { id: 'night_clerk', substitute: { id: 'ash_porter', external: subs.ash_porter } },
+      { id: 'dock_runner', substitute: { id: 'cinder_mason', external: subs.cinder_mason } },
+    ],
+    small_blind: ember.small_blind!,
+    big_blind: ember.big_blind!,
+    max_hands: ember.max_hands!,
+  };
+}
+
+const TABLE_NODES = { ...P4_TABLES, ...P5_TABLES } as Record<TableNodeId, TableNodeData>;
 
 /** Main-route successor of each table when the player continues alive. */
 const AFTER: Record<TableNodeId, NodeId> = {
@@ -169,12 +288,16 @@ const AFTER: Record<TableNodeId, NodeId> = {
   contract_2: 'boss_ledger',
   boss_ledger: 'slice_victory',
   fallen_low_table: 'fallen_audience',
+  cinder_low_table: 'oath_hearing',
+  masked_salon: 'velvet_exchange',
+  velvet_arena: 'crown_inquest',
+  crown_inquest: 'act2_victory',
 };
 
 /** Initial world accounts (design v0.6: every wallet funded from named accounts at world creation). */
 function initialAccounts(): Record<string, number> {
   const accounts: Record<string, number> = { you: 100 };
-  for (const node of Object.values(TABLE_NODES)) {
+  for (const node of Object.values(P4_TABLES)) {
     for (const s of node.seats) if (s.id !== 'player' && s.initial !== undefined) accounts[s.id] = s.initial;
   }
   accounts[shopData.merchant.id] = shopData.merchant.initial_actual_lifechips;
@@ -197,7 +320,7 @@ export function createRun(seed: number): RunState {
   const characters = Object.fromEntries(Object.keys(accounts).filter((id) => PROFILES[id] || id === PLAYER_ID).map((id) => [id, characterFor(id)]));
   const sum = Object.values(accounts).reduce((a, b) => a + b, 0);
   const run: RunState = {
-    version: 1,
+    version: 2,
     seed: seed >>> 0,
     node: 'start',
     next: null,
@@ -218,6 +341,11 @@ export function createRun(seed: number): RunState {
     eventResolved: false,
     auditedTables: [],
     log: ['The Wagerer arrives in the Lantern district with 100 Lifechips.'],
+    migrations: [],
+    perimeter: { base: sum + LEDGER_TREASURY_INITIAL, expansions: [] },
+    chapters: [],
+    flags: [],
+    observed: {},
   };
   assertRunInvariants(run);
   return run;
@@ -244,6 +372,8 @@ export function assertRunInvariants(run: RunState): void {
   const accounts = Object.values(run.accounts).reduce((a, b) => a + b, 0);
   const sum = accounts + run.treasury + (run.table ? tableChips(run.table) : 0);
   if (sum !== run.totalLifechips) throw new Error(`Run invariant: ${sum} Lifechips, expected ${run.totalLifechips}`);
+  const perimeter = run.perimeter.base + run.perimeter.expansions.reduce((a, e) => a + e.amount, 0);
+  if (perimeter !== run.totalLifechips) throw new Error(`Run invariant: perimeter ${perimeter} ≠ total ${run.totalLifechips}`);
   if (Object.values(run.accounts).some((v) => !Number.isInteger(v) || v < 0) || run.treasury < 0) {
     throw new Error('Run invariant: negative or invalid balance');
   }
@@ -263,6 +393,40 @@ export function playerBook(run: RunState) {
   return run.table ? run.table.table.seats[humanSeat(run.table)].book : run.player.magic.book;
 }
 
+// ───────────────────────────── external ingress (design v0.7 §11) ─────────────────────────────
+
+/**
+ * Expands the accounting perimeter exactly once per key: an external ledger
+ * account is opened with `amount`, recorded as a journal entry and as a
+ * perimeter expansion. The original local total stays auditable as `base`.
+ */
+function ensureIngress(run: RunState, key: string, account: string, amount: number): void {
+  if (run.migrations.includes(key)) return;
+  run.migrations.push(key);
+  run.accounts[account] = (run.accounts[account] ?? 0) + amount;
+  run.totalLifechips += amount;
+  run.perimeter.expansions.push({ key, account, amount });
+  run.journal.push({ id: run.journal.length + 1, from: 'external_jurisdiction', to: account, amount, reason: `perimeter expansion ${key}` });
+}
+
+/** Funds a new actor's opening wallet from an external ledger at its first appearance (never twice). */
+function fundActor(run: RunState, ledger: string, id: string, amount: number, person = true): void {
+  const key = `ingress:${id}`;
+  if (run.migrations.includes(key)) return;
+  run.migrations.push(key);
+  transfer(run, ledger, id, amount, `opening wallet of ${id} from ${ledger}`);
+  if (person && !run.characters[id]) run.characters[id] = characterFor(id);
+}
+
+/** Seat ids for a table, with Cinder substitutes for dead or penniless regulars. */
+function seatIds(run: RunState, node: TableNodeData): string[] {
+  return node.seats.map((s) => {
+    if (s.id === 'player') return PLAYER_ID;
+    if (s.substitute && (!run.characters[s.id]?.alive || (run.accounts[s.id] ?? 0) < 1)) return s.substitute.id;
+    return s.id;
+  });
+}
+
 // ───────────────────────────── tables ─────────────────────────────
 
 function tableConfig(node: TableNodeData): TableConfig {
@@ -274,7 +438,11 @@ function tableConfig(node: TableNodeData): TableConfig {
 
 function enterTable(run: RunState, nodeId: TableNodeId): void {
   const node = TABLE_NODES[nodeId];
-  const ids = node.seats.map((s) => (s.id === 'player' ? PLAYER_ID : s.id));
+  const ids = seatIds(run, node);
+  for (const s of node.seats) {
+    if (s.external !== undefined) fundActor(run, ACT2_LEDGER, s.id, s.external);
+    if (s.substitute && ids.includes(s.substitute.id)) fundActor(run, CINDER_LEDGER, s.substitute.id, s.substitute.external);
+  }
   const seats: SeatConfig[] = ids.map((id) =>
     id === PLAYER_ID ? { id, name: 'You', kind: 'human' } : { id, name: PROFILES[id].name, kind: 'ai', profileId: id },
   );
@@ -307,6 +475,11 @@ function enterTable(run: RunState, nodeId: TableNodeId): void {
   run.entryStack = stacks[0];
   run.node = nodeId;
   run.log.push(`${node.label} begins.`);
+  // The Whispered Contract: a public tell marks the player in the first hand of the next table.
+  if (run.flags.includes('whispered_tell')) {
+    run.flags = run.flags.filter((f) => f !== 'whispered_tell');
+    session.table.magic.notices.push({ seat: 0, text: 'A whispered contract glows on your sleeve for all to see.' });
+  }
 }
 
 function standingsOf(t: TableSession): Standing[] {
@@ -327,7 +500,7 @@ function standingsOf(t: TableSession): Standing[] {
 }
 
 /** Boss tables: the minimum net profit for a top-two finish to count (design v0.7 §02). */
-export const BOSS_PROFIT_FLOOR: Partial<Record<TableNodeId, number>> = { boss_ledger: 12 };
+export const BOSS_PROFIT_FLOOR: Partial<Record<TableNodeId, number>> = { boss_ledger: 12, crown_inquest: 16 };
 
 /**
  * Contract and boss objectives (design v0.6 §03, v0.7 §02). A boss is won by
@@ -339,6 +512,7 @@ export function judge(nodeId: TableNodeId, standings: Standing[], net: number, e
   const me = standings.find((s) => s.id === PLAYER_ID)!;
   if (me.stack < 1) return 'alive_failure';
   if (nodeId === 'fallen_low_table') return 'win';
+  // The Ember Steps: survival continues either way; a top-two finish avoids the Favor penalty.
   const floor = BOSS_PROFIT_FLOOR[nodeId];
   if (floor !== undefined) {
     if (me.rank === 1) return 'win';
@@ -368,6 +542,10 @@ function finishTable(run: RunState): void {
     run.characters[s.id] = { ...t.world.characters[i], offTable: 0 };
   });
   run.player.magic = { ...run.player.magic, book: t.table.seats[me].book, extraDraw: 0 };
+  for (const [id, tally] of Object.entries(t.tallies ?? {})) {
+    const o = run.observed[id] ?? { hands: 0, vpip: 0, pfr: 0, shoves: 0 };
+    run.observed[id] = { hands: o.hands + tally.hands, vpip: o.vpip + tally.vpip, pfr: o.pfr + tally.pfr, shoves: o.shoves + tally.shoves };
+  }
   run.table = null;
   run.tableNode = null;
 
@@ -531,8 +709,13 @@ export type RunCommand =
   | { kind: 'advance' }
   | { kind: 'buy'; offer: number }
   | { kind: 'rethread'; uid: string; spell: SpellId }
-  | { kind: 'leaveShop'; to: 'optional_event' | 'contract_2' }
-  | { kind: 'event'; take: boolean }
+  | { kind: 'leaveShop'; to: 'optional_event' | 'contract_2' | 'mirror_audience' | 'secret_bargain' }
+  /** Petition, Court of Mirrors (`rival`: whose public pattern to study) or Whispered Contract. */
+  | { kind: 'event'; take: boolean; rival?: string }
+  /** Act II entry after an exile (design v0.7 §09): lose Favor, or surrender one relic. */
+  | { kind: 'petition'; choice: 'favor' | 'relic'; relic?: RelicId }
+  /** The Broker Understairs buys one relic at half its shop value, from his own wallet. */
+  | { kind: 'sell'; relic: RelicId }
   /** `replace`: with full relic slots, the owned relic given up for the new one (no refund). */
   | { kind: 'reward'; index: number | null; replace?: RelicId }
   | { kind: 'setback'; choice: 'public_record' | 'break_attunement'; uid?: string }
@@ -553,14 +736,23 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
     case 'rethread':
       rethread(run, cmd.uid, cmd.spell);
       break;
-    case 'leaveShop':
-      if (run.node !== 'lantern_shop') throw new RunError('Not in the shop');
-      if (cmd.to === 'optional_event' && run.eventResolved) throw new RunError('The petition has already been heard');
-      run.node = cmd.to;
-      if (cmd.to === 'contract_2') enterTable(run, 'contract_2');
+    case 'leaveShop': {
+      const exits: Partial<Record<NodeId, NodeId[]>> = {
+        lantern_shop: run.eventResolved ? ['contract_2'] : ['optional_event', 'contract_2'],
+        velvet_exchange: ['mirror_audience', 'secret_bargain'],
+      };
+      if (!(exits[run.node] ?? []).includes(cmd.to)) throw new RunError('You cannot go that way from here');
+      goTo(run, cmd.to);
       break;
+    }
     case 'event':
-      resolveEvent(run, cmd.take);
+      resolveEvent(run, cmd.take, cmd.rival);
+      break;
+    case 'petition':
+      petition(run, cmd.choice, cmd.relic);
+      break;
+    case 'sell':
+      sellToBroker(run, cmd.relic);
       break;
     case 'reward':
       chooseReward(run, cmd.index, cmd.replace);
@@ -580,9 +772,30 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
 }
 
 function goTo(run: RunState, node: NodeId): void {
-  if (node === 'contract_1' || node === 'contract_2' || node === 'boss_ledger' || node === 'fallen_low_table') enterTable(run, node);
-  else run.node = node;
-  if (node === 'lantern_shop' && !run.shop) openShop(run);
+  if (node in TABLE_NODES) return enterTable(run, node as TableNodeId);
+  run.node = node;
+  if (node === 'lantern_shop' && run.shop?.id !== 'lantern_shop') openShop(run, 'lantern_shop');
+  if (node === 'velvet_exchange' && run.shop?.id !== 'velvet_exchange') openShop(run, 'velvet_exchange');
+  if (node === 'gilded_gate') {
+    ensureIngress(run, ACT2_INGRESS_KEY, ACT2_LEDGER, act2Data.actor_migration.external_origin_initial);
+    if (!run.flags.includes('act2_entered')) run.flags.push('act2_entered');
+    run.log.push('The Gilded Gate opens onto the Circuit.');
+  }
+  if (node === 'cinder_broker') {
+    ensureIngress(run, CINDER_INGRESS_KEY, CINDER_LEDGER, cinderData.external_origin_initial);
+    fundActor(run, CINDER_LEDGER, BROKER_ID, BROKER.merchant_opening_wallet, false);
+  }
+  if (CHAPTER_ENDS.includes(node) && !run.chapters.includes(node)) run.chapters.push(node);
+}
+
+const BROKER = cinderData.nodes.find((n) => n.id === 'cinder_broker')! as unknown as { merchant_wallet: string; merchant_opening_wallet: number };
+export const BROKER_ID = BROKER.merchant_wallet;
+const VELVET = act2Data.nodes.find((n) => n.id === 'velvet_exchange')! as unknown as { merchant_id: string; merchant_initial_external_wallet: number };
+export const VELVET_MERCHANT = VELVET.merchant_id;
+
+/** True when the player owes no active debt or service (design v0.7 §10: free at the Hearing). */
+export function playerIsFree(run: RunState): boolean {
+  return !run.contracts.some((k) => k.debtor === PLAYER_ID && k.status !== 'cleared' && k.pact !== 'mercy');
 }
 
 function advance(run: RunState): void {
@@ -593,15 +806,35 @@ function advance(run: RunState): void {
     case 'contract_2':
     case 'boss_ledger':
     case 'fallen_low_table':
+    case 'cinder_low_table':
+    case 'masked_salon':
+    case 'velvet_arena':
+    case 'crown_inquest':
       return finishTable(run);
     case 'table_result':
       return afterResult(run);
     case 'fallen_registry':
       return goTo(run, 'fallen_low_table');
     case 'fallen_audience':
-      run.node = 'fallen_unlocked';
-      run.log.push('Fallen route unlocked: the P4 slice is complete.');
+      goTo(run, 'fallen_unlocked');
+      run.log.push('Fallen route unlocked: the Cinder road continues below.');
       return;
+    case 'fallen_unlocked':
+      return goTo(run, 'cinder_broker');
+    case 'slice_victory':
+      // A published invitation: Favor +1, no chips (design v0.7 §09).
+      run.characters[PLAYER_ID].reputation.favor += 1;
+      actBoundaryRepayments(run, 'act1');
+      return goTo(run, 'gilded_gate');
+    case 'slice_exile':
+      run.node = 'act2_petition';
+      return;
+    case 'gilded_gate':
+      return goTo(run, 'masked_salon');
+    case 'cinder_broker':
+      return goTo(run, 'cinder_low_table');
+    case 'oath_hearing':
+      return leaveHearing(run);
     default:
       throw new RunError(`Nothing to advance at ${run.node}`);
   }
@@ -612,7 +845,15 @@ function afterResult(run: RunState): void {
   if (r.outcome === 'dead') return void (run.node = 'death');
   if (r.outcome === 'fallen') return enterFallen(run);
   if (r.node === 'fallen_low_table') return goTo(run, 'fallen_audience');
-  if (r.node === 'boss_ledger') return void (run.node = r.outcome === 'win' ? 'slice_victory' : 'slice_exile');
+  if (r.node === 'boss_ledger') return goTo(run, r.outcome === 'win' ? 'slice_victory' : 'slice_exile');
+  if (r.node === 'crown_inquest') return goTo(run, r.outcome === 'win' ? 'act2_victory' : 'act2_living_exile');
+  if (r.node === 'cinder_low_table') {
+    if (r.outcome === 'alive_failure') {
+      run.characters[PLAYER_ID].reputation.favor -= 1;
+      run.log.push('You leave the Ember Steps outside the top two: Favor −1.');
+    }
+    return goTo(run, 'oath_hearing');
+  }
   run.next = AFTER[r.node];
   if (r.outcome === 'alive_failure') {
     run.node = 'setback_audience';
@@ -704,14 +945,19 @@ function resolveSetback(run: RunState, choice: 'public_record' | 'break_attuneme
 
 // ───────────────────────────── shop & event ─────────────────────────────
 
-function openShop(run: RunState): void {
+function openShop(run: RunState, id: ShopState['id']): void {
   const owned = run.player.magic.relics ?? [];
-  const rng = new Rng(deriveSeed(run.seed, 0x5e1e));
+  const rng = new Rng(id === 'lantern_shop' ? deriveSeed(run.seed, 0x5e1e) : deriveSeed(run.seed, 0x5e1e, 2));
   const offers = rng
     .shuffle(RELIC_IDS.filter((r) => !owned.includes(r)))
     .slice(0, 3)
     .map((relic) => ({ relic, price: RELICS[relic].price, sold: false }));
-  run.shop = { offers, rethreadSold: false };
+  let merchant = shopData.merchant.id;
+  if (id === 'velvet_exchange') {
+    merchant = VELVET_MERCHANT;
+    fundActor(run, ACT2_LEDGER, merchant, VELVET.merchant_initial_external_wallet, false);
+  }
+  run.shop = { id, merchant, offers, rethreadSold: false };
 }
 
 export const CANNOT_BUY = shopData.cannot_buy_message;
@@ -723,35 +969,41 @@ function pay(run: RunState, price: number, to: string, reason: string): void {
   transfer(run, PLAYER_ID, to, price, reason);
 }
 
+function inShop(run: RunState): boolean {
+  return !!run.shop && run.node === run.shop.id;
+}
+
 function buy(run: RunState, index: number): void {
-  if (run.node !== 'lantern_shop' || !run.shop) throw new RunError('Not in the shop');
-  const offer = run.shop.offers[index];
+  if (!inShop(run)) throw new RunError('Not in the shop');
+  const shop = run.shop!;
+  const offer = shop.offers[index];
   if (!offer) throw new RunError('No such offer');
   if (offer.sold) throw new RunError(SOLD_OUT);
   const relics = run.player.magic.relics ?? [];
   if (relics.includes(offer.relic)) throw new RunError('You already carry that relic');
   if (relics.length >= SLOT_LIMITS.relics) throw new RunError('Your relic slots are full');
-  pay(run, offer.price, shopData.merchant.id, `bought ${offer.relic}`);
+  pay(run, offer.price, shop.merchant, `bought ${offer.relic}`);
   offer.sold = true;
   run.player.magic.relics = [...relics, offer.relic];
   run.log.push(`Bought ${RELICS[offer.relic].name} for ${offer.price}.`);
 }
 
 function rethread(run: RunState, uid: string, spell: SpellId): void {
-  if (run.node !== 'lantern_shop' || !run.shop) throw new RunError('Not in the shop');
-  if (run.shop.rethreadSold) throw new RunError(SOLD_OUT);
+  if (!inShop(run)) throw new RunError('Not in the shop');
+  if (run.shop!.rethreadSold) throw new RunError(SOLD_OUT);
   const card = allCards(run.player.magic.book).find((c) => c.uid === uid);
   if (!card || !isBaseSpell(card.spell)) throw new RunError('Only an owned base spell can be rethreaded');
   if (!isBaseSpell(spell) || spell === card.spell) throw new RunError('Choose a different starter spell');
-  pay(run, RETHREAD_PRICE, shopData.merchant.id, 'spell rethread');
+  pay(run, RETHREAD_PRICE, run.shop!.merchant, 'spell rethread');
   run.player.magic.book = replaceInstance(run.player.magic.book, uid, spell);
-  run.shop.rethreadSold = true;
+  run.shop!.rethreadSold = true;
   run.log.push(`Spell Rethread: ${SPELLS[card.spell].name} becomes ${SPELLS[spell].name}.`);
 }
 
 export const OPEN_BOOK_FEE = routeData.nodes.find((n) => n.id === 'optional_event')!.entries!.find((e) => e.id === 'take_covenant')!.cost_chips!;
 
-function resolveEvent(run: RunState, take: boolean): void {
+function resolveEvent(run: RunState, take: boolean, rival?: string): void {
+  if (run.node === 'mirror_audience' || run.node === 'secret_bargain') return resolveAct2Event(run, take, rival);
   if (run.node !== 'optional_event' || run.eventResolved) throw new RunError('The petition is not open');
   if (take) {
     const covenants = run.player.magic.covenants ?? [];
@@ -762,6 +1014,88 @@ function resolveEvent(run: RunState, take: boolean): void {
   } else run.log.push('You decline the Mirror’s Petition.');
   run.eventResolved = true;
   goTo(run, 'contract_2');
+}
+
+/** Rivals whose public play the player has watched at a table (Court of Mirrors candidates). */
+export function mirrorCandidates(run: RunState): string[] {
+  return Object.keys(run.observed).filter((id) => id !== PLAYER_ID && run.observed[id].hands > 0 && run.characters[id]);
+}
+
+function resolveAct2Event(run: RunState, take: boolean, rival?: string): void {
+  if (run.node === 'mirror_audience') {
+    // Design v0.7 §09: study one rival's public pattern; no hidden cards, no Lifechips.
+    if (take) {
+      if (!rival || !mirrorCandidates(run).includes(rival)) throw new RunError('Choose a rival you have watched at a table');
+      run.flags.push(`mirror:${rival}`);
+      run.log.push(`The Court of Mirrors replays ${run.characters[rival].name}'s public play.`);
+    } else run.log.push('You leave the Court of Mirrors unconsulted.');
+  } else {
+    // The Whispered Contract: +1 Notoriety and a public tell in the first hand of the next table.
+    if (take) {
+      run.characters[PLAYER_ID].reputation.notoriety += 1;
+      run.flags.push('whispered_tell');
+      run.log.push('You accept the Whispered Contract.');
+    } else run.log.push('You decline the Whispered Contract.');
+  }
+  goTo(run, 'velvet_arena');
+}
+
+/** Act II entry after a living exile: Favor −1 (not below −3), or surrender one relic. No chips move. */
+function petition(run: RunState, choice: 'favor' | 'relic', relic?: RelicId): void {
+  if (run.node !== 'act2_petition') throw new RunError('No petition is open');
+  const you = run.characters[PLAYER_ID];
+  if (choice === 'favor') {
+    you.reputation.favor = Math.max(PETITION_FAVOR_FLOOR, you.reputation.favor - 1);
+    run.log.push('The Ledger accepts your petition at the cost of your standing.');
+  } else {
+    const relics = run.player.magic.relics ?? [];
+    if (!relic || !relics.includes(relic)) throw new RunError('Choose a relic you carry');
+    run.player.magic.relics = relics.filter((r) => r !== relic);
+    run.log.push(`The Ledger takes ${RELICS[relic].name} as the price of entry.`);
+  }
+  actBoundaryRepayments(run, 'act1');
+  goTo(run, 'gilded_gate');
+}
+
+export const PETITION_FAVOR_FLOOR = -3;
+
+/** Half the documented shop value, paid from the Broker's actual wallet (design v0.7 §10). */
+export function brokerPrice(relic: RelicId): number {
+  return Math.floor(RELICS[relic].price * 0.5);
+}
+
+function sellToBroker(run: RunState, relic: RelicId): void {
+  if (run.node !== 'cinder_broker') throw new RunError('The Broker is not here');
+  if (run.flags.includes('broker_sold')) throw new RunError('The Broker buys only once');
+  const relics = run.player.magic.relics ?? [];
+  if (!relics.includes(relic)) throw new RunError('You do not carry that relic');
+  const price = brokerPrice(relic);
+  if ((run.accounts[BROKER_ID] ?? 0) < price) throw new RunError('The Broker cannot afford it');
+  transfer(run, BROKER_ID, PLAYER_ID, price, `Broker buys ${relic}`);
+  run.player.magic.relics = relics.filter((r) => r !== relic);
+  run.flags.push('broker_sold');
+  run.log.push(`The Broker pays ${price} Lifechips for ${RELICS[relic].name}.`);
+}
+
+/**
+ * The Oathbreaker Hearing (design v0.7 §10): no forgiveness. A free character
+ * climbs to the Gilded Gate as Unbound Fallen; a bound one goes below to the
+ * Undercircuit with obligations intact. A character who already walked the
+ * Circuit before falling leaves as a living exile instead of replaying it.
+ */
+function leaveHearing(run: RunState): void {
+  actBoundaryRepayments(run, 'act1');
+  if (!playerIsFree(run)) {
+    run.log.push('Still bound, you take the stairs down to the Undercircuit.');
+    return goTo(run, 'undercircuit_entry');
+  }
+  run.characters[PLAYER_ID].socialRank = 'UNBOUND_FALLEN';
+  if (run.flags.includes('act2_entered')) {
+    run.log.push('Unbound, you leave the Circuit you once walked.');
+    return goTo(run, 'act2_living_exile');
+  }
+  run.log.push('Unbound, you climb the Stairs Above.');
+  goTo(run, 'gilded_gate');
 }
 
 // ───────────────────────────── evolution ─────────────────────────────
@@ -873,13 +1207,33 @@ export function saveRun(store: Store, run: RunState): void {
   store.setItem(RUN_SAVE_KEY, JSON.stringify(run));
 }
 
-/** Restores a saved run exactly, or null when absent or not a valid v1 run. */
+/**
+ * Upgrades a P4 (v1) run to v2 exactly once (design v0.7 §11): new fields are
+ * added, no Lifechip moves, and the original total becomes the perimeter base.
+ */
+export function migrateRun(raw: unknown): RunState {
+  const run = raw as RunState & { version: number };
+  if (run.version === 2) return run;
+  if (run.version !== 1) throw new RunError('Unknown run version');
+  run.version = 2;
+  run.migrations = ['save_v2'];
+  run.perimeter = { base: run.totalLifechips, expansions: [] };
+  run.chapters = CHAPTER_ENDS.includes(run.node) ? [run.node] : [];
+  run.flags = [];
+  run.observed = {};
+  if (run.shop) run.shop = { ...run.shop, id: 'lantern_shop', merchant: shopData.merchant.id };
+  run.log.push('Your chronicle is carried into the wider world (save v2).');
+  return run;
+}
+
+/** Restores a saved run exactly (migrating a v1 save), or null when absent or invalid. */
 export function loadRun(store: Store): RunState | null {
   const raw = store.getItem(RUN_SAVE_KEY);
   if (!raw) return null;
   try {
-    const run = JSON.parse(raw) as RunState;
-    if (run.version !== 1 || !run.accounts || !run.player) return null;
+    const parsed = JSON.parse(raw) as { version?: number; accounts?: unknown; player?: unknown };
+    if (!parsed.accounts || !parsed.player) return null;
+    const run = migrateRun(parsed);
     assertRunInvariants(run);
     return run;
   } catch {

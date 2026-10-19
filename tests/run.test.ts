@@ -225,7 +225,7 @@ describe('the Fallen route and sworn service', () => {
     expect(run.accounts.you).toBe(p3!.world.characters[0].offTable);
     assertRunInvariants(run);
     const end = playRun(run, 'passive', 3);
-    expect(['fallen_unlocked', 'death']).toContain(end.node);
+    expect(ENDINGS).toContain(end.node);
     // The rescue was never funded twice.
     expect(end.journal.filter((j) => j.reason.includes('endowment'))).toHaveLength(1);
   }, 120_000);

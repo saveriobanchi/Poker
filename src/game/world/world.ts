@@ -35,7 +35,8 @@ export interface Character {
   ruleKey: RuleKey;
   status: SeatStatus;
   alive: boolean;
-  socialRank: 'UNRANKED' | 'FALLEN';
+  /** UNBOUND_FALLEN: a Fallen character whose covenant is discharged (design v0.7 §10). */
+  socialRank: 'UNRANKED' | 'FALLEN' | 'UNBOUND_FALLEN';
   district: 'LANTERN_MARKET' | 'CINDER_WARRENS';
   /** Lifechips held away from this table (after a funded survival). */
   offTable: number;

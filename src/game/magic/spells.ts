@@ -114,5 +114,18 @@ export const RIVAL_SPELLBOOKS: Record<string, SpellCounts> = {
   night_clerk: BEGINNER_SPELLBOOK,
   dock_runner: BEGINNER_SPELLBOOK,
 };
+// Act II rivals (design v0.7 §09): primary/secondary disciplines 3/3, the others 1/1.
+Object.assign(RIVAL_SPELLBOOKS, {
+  isolde_morn: { briar_lock: 3, unmask: 3, cinder_challenge: 1, fate_exchange: 1 },
+  ravel_croft: { cinder_challenge: 3, fate_exchange: 3, unmask: 1, briar_lock: 1 },
+  vesa_kael: { fate_exchange: 3, unmask: 3, cinder_challenge: 1, briar_lock: 1 },
+  witness_arden: { unmask: 3, briar_lock: 3, cinder_challenge: 1, fate_exchange: 1 },
+  livia_shade: { cinder_challenge: 3, unmask: 3, briar_lock: 1, fate_exchange: 1 },
+  // The act boss carries one legal evolution.
+  margrave_noct: { briar_lock: 2, thorn_lattice: 1, fate_exchange: 3, cinder_challenge: 1, unmask: 1 },
+  aurelia_ash: { fate_exchange: 3, briar_lock: 3, cinder_challenge: 1, unmask: 1 },
+  ash_porter: BEGINNER_SPELLBOOK,
+  cinder_mason: BEGINNER_SPELLBOOK,
+} satisfies Record<string, SpellCounts>);
 // Design v0.7 §08: the boss carries one legal evolution — one Briar Lock becomes Quiet Briars.
 RIVAL_SPELLBOOKS.bailiff_sable = { ...RIVAL_SPELLBOOKS.bailiff_sable, briar_lock: 2, quiet_briars: 1 };
