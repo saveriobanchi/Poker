@@ -32,6 +32,9 @@ export interface PolicyReport {
   deathsByPhase: Record<string, number>;
   /** Runs where the player evolved at least one spell. */
   evolvedAny: number;
+  /** Evolution branches chosen, and the player's casts by spell (design v0.9 balance sign-off). */
+  evolutionBranches: Record<string, number>;
+  casts: Record<string, number>;
   /** Relics gained, by `${source}:${rarity}`. */
   relics: Record<string, number>;
   whisper: { offered: number; accepted: number };
@@ -129,6 +132,8 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
       cohorts: Object.fromEntries(COHORTS.map((c) => [c, { n: 0, died: 0, cleared: 0 }])) as PolicyReport['cohorts'],
       deathsByPhase: {},
       evolvedAny: 0,
+      evolutionBranches: {},
+      casts: {},
       relics: {},
       whisper: { offered: 0, accepted: 0 },
       repaid: { player: 0, npcVoluntary: 0 },
@@ -172,7 +177,10 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
         const key = `${tag}:${k}`;
         if (seenCasts.has(key)) return;
         seenCasts.add(key);
-        if (e.seat === me) inc(report.playerCasts, SPELLS[e.spell].id);
+        if (e.seat === me) {
+          inc(report.playerCasts, SPELLS[e.spell].id);
+          inc(pr.casts, SPELLS[e.spell].id);
+        }
         else {
           inc(report.aiCasts, SPELLS[e.spell].id);
           aiCastTotal++;
@@ -236,6 +244,10 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
     cohort('under_entrants', run.flags.includes('under_entered'), deathPhase === 'under', run.flags.includes('bound_writ') || (run.flags.includes('under_entered') && run.flags.includes('act3_entered')));
     cohort('act3_entrants', run.flags.includes('act3_entered'), deathPhase === 'act3', run.node === 'the_ledger_unbound');
     if (run.log.some((l) => l.includes(' evolves into '))) pr.evolvedAny++;
+    for (const l of run.log) {
+      const branch = / evolves into (.+)\.$/.exec(l)?.[1];
+      if (branch) inc(pr.evolutionBranches, branch);
+    }
     for (const l of run.log) {
       const reward = /^Reward: (.+)\.$/.exec(l)?.[1];
       const bought = /^Bought (.+) for \d+\.$/.exec(l)?.[1];

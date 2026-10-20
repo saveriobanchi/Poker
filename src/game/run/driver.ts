@@ -10,7 +10,7 @@ import { type AiProfile, PROFILES } from '../ai/profiles';
 import { getMagicView, isBaseSpell, SLOT_LIMITS } from '../magic';
 import { getLegalActions, getPublicView, type PlayerAction } from '../rules/engine';
 import { Rng } from '../rules/rng';
-import { humanSeat, sessionStatus } from '../table/session';
+import { type HumanCommand, humanSeat, sessionStatus, type TableSession } from '../table/session';
 import { currentClaim, pactOptions, roles } from '../world';
 import {
   ARCHIVE_RIVALS,
@@ -35,10 +35,9 @@ export type PolicyName = 'skilled' | 'passive' | 'maniac' | 'tight';
 export const POLICIES: PolicyName[] = ['skilled', 'passive', 'maniac', 'tight'];
 
 /** The skilled policy plays like a disciplined, magic-using rival. */
-const SKILLED: AiProfile = { ...PROFILES.corvin, id: 'skilled', looseness: 0.35, aggression: 0.6, bluff: 0.08, stickiness: 0.35 };
+export const SKILLED: AiProfile = { ...PROFILES.corvin, id: 'skilled', looseness: 0.35, aggression: 0.6, bluff: 0.08, stickiness: 0.35 };
 
-function pokerAction(run: RunState, policy: PolicyName, rng: Rng): PlayerAction {
-  const t = run.table!;
+function pokerAction(t: TableSession, policy: PolicyName, rng: Rng): PlayerAction {
   const me = humanSeat(t);
   const legal = getLegalActions(t.table.hand)!;
   const free: PlayerAction = legal.canCheck ? { type: 'check' } : { type: 'fold' };
@@ -59,6 +58,44 @@ function pokerAction(run: RunState, policy: PolicyName, rng: Rng): PlayerAction 
   void rng;
 }
 
+/**
+ * The scripted player's decision at its own turn, window, Second Reflection or
+ * Sigil, from its own views only (shared by runs and the offline spell-EV study).
+ */
+export function humanDecision(t: TableSession, policy: PolicyName, rng: Rng): HumanCommand {
+  const me = humanSeat(t);
+  const view = getPublicView(t.table.hand, me);
+  const magic = getMagicView(t.table, me);
+  switch (sessionStatus(t)) {
+    case 'humanSigil': {
+      // Skilled play rearranges a duplicate draw; other policies keep it.
+      const hand = magic.myHand;
+      const dup = policy === 'skilled' ? hand.find((c, i) => hand.findIndex((d) => d.spell === c.spell) !== i) : undefined;
+      return { kind: 'sigil', uid: dup?.uid ?? null };
+    }
+    case 'humanChoice':
+      return { kind: 'choose', pick: decideChoice(view, magic) };
+    case 'humanWindow': {
+      if (policy !== 'skilled') return { kind: 'pass' };
+      const c = decideOpening(view, magic, SKILLED, rng);
+      return c.kind === 'pass' ? { kind: 'pass' } : { kind: 'cast', uid: c.uid, params: c.params };
+    }
+    case 'humanToAct': {
+      if (policy !== 'skilled') return { kind: 'act', action: pokerAction(t, policy, rng) };
+      const c = decideTurn(view, magic, SKILLED, rng, publicShoveRates(t));
+      return c.kind === 'act' ? { kind: 'act', action: c.action } : { kind: 'cast', uid: c.uid, params: c.params };
+    }
+    default:
+      throw new Error('Not the player’s decision');
+  }
+}
+
+/** Smoothed public shove rates for every seat (design v0.7 §01). */
+export function publicShoveRates(t: TableSession): number[] {
+  const reads = t.reads ?? {};
+  return t.seats.map((s) => shoveRate(reads[s.id], shovePrior(s.profileId ? PROFILES[s.profileId] : undefined)));
+}
+
 /** One step of the run under `policy`. Returns null when the run has ended. */
 export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | null {
   if (ENDINGS.includes(run.node)) return null;
@@ -69,26 +106,11 @@ export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | nu
     switch (status) {
       case 'aiToAct':
         return runAi(run);
-      case 'humanSigil': {
-        // Skilled play rearranges a duplicate draw; other policies keep it.
-        const hand = getMagicView(t.table, me).myHand;
-        const dup = policy === 'skilled' ? hand.find((c, i) => hand.findIndex((d) => d.spell === c.spell) !== i) : undefined;
-        return runHuman(run, { kind: 'sigil', uid: dup?.uid ?? null });
-      }
+      case 'humanSigil':
       case 'humanChoice':
-        return runHuman(run, { kind: 'choose', pick: decideChoice(getPublicView(t.table.hand, me), getMagicView(t.table, me)) });
-      case 'humanWindow': {
-        if (policy !== 'skilled') return runHuman(run, { kind: 'pass' });
-        const c = decideOpening(getPublicView(t.table.hand, me), getMagicView(t.table, me), SKILLED, rng);
-        return runHuman(run, c.kind === 'pass' ? { kind: 'pass' } : { kind: 'cast', uid: c.uid, params: c.params });
-      }
-      case 'humanToAct': {
-        if (policy !== 'skilled') return runHuman(run, { kind: 'act', action: pokerAction(run, policy, rng) });
-        const reads = t.reads ?? {};
-        const rates = t.seats.map((s) => shoveRate(reads[s.id], shovePrior(s.profileId ? PROFILES[s.profileId] : undefined)));
-        const c = decideTurn(getPublicView(t.table.hand, me), getMagicView(t.table, me), SKILLED, rng, rates);
-        return runHuman(run, c.kind === 'act' ? { kind: 'act', action: c.action } : { kind: 'cast', uid: c.uid, params: c.params });
-      }
+      case 'humanWindow':
+      case 'humanToAct':
+        return runHuman(run, humanDecision(t, policy, rng));
       case 'humanClaim': {
         const claim = currentClaim(t.claims!)!;
         if (claim.stage === 'counter') return runClaim(run, { kind: 'answerCounter', accept: true });

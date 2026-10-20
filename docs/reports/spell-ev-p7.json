@@ -1,0 +1,1858 @@
+{
+  "label": "p7",
+  "batches": 20,
+  "sourceRunsPerBatch": 60,
+  "downstreamPolicies": [
+    "skilled",
+    "tight",
+    "maniac"
+  ],
+  "note": "end-of-hand player net, cast minus skip, paired from the same cloned legal state with common policy randomness; offline only",
+  "pairs": 317781,
+  "incompatible": 0,
+  "bySpellPolicy": {
+    "briar_lock|skilled": {
+      "n": 18669,
+      "meanDiff": -0.048,
+      "ci95": [
+        -0.216,
+        0.116
+      ],
+      "sd": 11.73,
+      "outliers": 277,
+      "bustCast": 0.0182,
+      "bustSkip": 0.0182,
+      "showdownCast": 0.1586,
+      "showdownSkip": 0.1584,
+      "meanAether": 0.71,
+      "divergentTrees": 7704
+    },
+    "briar_lock|tight": {
+      "n": 18669,
+      "meanDiff": 0.012,
+      "ci95": [
+        -0.108,
+        0.137
+      ],
+      "sd": 8.24,
+      "outliers": 247,
+      "bustCast": 0.0143,
+      "bustSkip": 0.014,
+      "showdownCast": 0.2039,
+      "showdownSkip": 0.2038,
+      "meanAether": 0.71,
+      "divergentTrees": 4540
+    },
+    "briar_lock|maniac": {
+      "n": 18669,
+      "meanDiff": 0.492,
+      "ci95": [
+        -0.189,
+        1.158
+      ],
+      "sd": 46.39,
+      "outliers": 142,
+      "bustCast": 0.1426,
+      "bustSkip": 0.1392,
+      "showdownCast": 0.3055,
+      "showdownSkip": 0.3412,
+      "meanAether": 0.71,
+      "divergentTrees": 5967
+    },
+    "fate_exchange|skilled": {
+      "n": 25016,
+      "meanDiff": 0.599,
+      "ci95": [
+        0.266,
+        0.954
+      ],
+      "sd": 28.35,
+      "outliers": 389,
+      "bustCast": 0.027,
+      "bustSkip": 0.0184,
+      "showdownCast": 0.1257,
+      "showdownSkip": 0.102,
+      "meanAether": 1.54,
+      "divergentTrees": 13315
+    },
+    "fate_exchange|tight": {
+      "n": 25016,
+      "meanDiff": -0.152,
+      "ci95": [
+        -0.528,
+        0.213
+      ],
+      "sd": 29.97,
+      "outliers": 404,
+      "bustCast": 0.0283,
+      "bustSkip": 0.0187,
+      "showdownCast": 0.2361,
+      "showdownSkip": 0.1597,
+      "meanAether": 1.54,
+      "divergentTrees": 8200
+    },
+    "fate_exchange|maniac": {
+      "n": 25016,
+      "meanDiff": 2.189,
+      "ci95": [
+        1.243,
+        3.188
+      ],
+      "sd": 79.63,
+      "outliers": 364,
+      "bustCast": 0.1379,
+      "bustSkip": 0.1491,
+      "showdownCast": 0.3461,
+      "showdownSkip": 0.3601,
+      "meanAether": 1.54,
+      "divergentTrees": 262
+    },
+    "cinder_challenge|skilled": {
+      "n": 27401,
+      "meanDiff": -0.064,
+      "ci95": [
+        -0.227,
+        0.113
+      ],
+      "sd": 14.02,
+      "outliers": 376,
+      "bustCast": 0.0587,
+      "bustSkip": 0.0599,
+      "showdownCast": 0.3417,
+      "showdownSkip": 0.3458,
+      "meanAether": 1,
+      "divergentTrees": 7319
+    },
+    "cinder_challenge|tight": {
+      "n": 27401,
+      "meanDiff": -0.028,
+      "ci95": [
+        -0.096,
+        0.044
+      ],
+      "sd": 6.01,
+      "outliers": 305,
+      "bustCast": 0.0257,
+      "bustSkip": 0.0256,
+      "showdownCast": 0.304,
+      "showdownSkip": 0.3033,
+      "meanAether": 1,
+      "divergentTrees": 4848
+    },
+    "cinder_challenge|maniac": {
+      "n": 27401,
+      "meanDiff": -0.044,
+      "ci95": [
+        -0.153,
+        0.059
+      ],
+      "sd": 9.15,
+      "outliers": 215,
+      "bustCast": 0.2132,
+      "bustSkip": 0.2137,
+      "showdownCast": 0.466,
+      "showdownSkip": 0.4682,
+      "meanAether": 1,
+      "divergentTrees": 4698
+    },
+    "unmask|skilled": {
+      "n": 10630,
+      "meanDiff": 0.244,
+      "ci95": [
+        0.025,
+        0.487
+      ],
+      "sd": 11.99,
+      "outliers": 176,
+      "bustCast": 0.023,
+      "bustSkip": 0.0232,
+      "showdownCast": 0.1786,
+      "showdownSkip": 0.1865,
+      "meanAether": 1.68,
+      "divergentTrees": 10604
+    },
+    "unmask|tight": {
+      "n": 10630,
+      "meanDiff": 0.178,
+      "ci95": [
+        0.046,
+        0.317
+      ],
+      "sd": 7.32,
+      "outliers": 162,
+      "bustCast": 0.0213,
+      "bustSkip": 0.0226,
+      "showdownCast": 0.2357,
+      "showdownSkip": 0.2314,
+      "meanAether": 1.68,
+      "divergentTrees": 10555
+    },
+    "unmask|maniac": {
+      "n": 10630,
+      "meanDiff": -0.295,
+      "ci95": [
+        -0.746,
+        0.134
+      ],
+      "sd": 21.87,
+      "outliers": 267,
+      "bustCast": 0.1754,
+      "bustSkip": 0.1746,
+      "showdownCast": 0.367,
+      "showdownSkip": 0.369,
+      "meanAether": 1.68,
+      "divergentTrees": 10622
+    },
+    "thorn_lattice|skilled": {
+      "n": 12349,
+      "meanDiff": 0.13,
+      "ci95": [
+        -0.13,
+        0.389
+      ],
+      "sd": 15.01,
+      "outliers": 199,
+      "bustCast": 0.0232,
+      "bustSkip": 0.0257,
+      "showdownCast": 0.1509,
+      "showdownSkip": 0.1547,
+      "meanAether": 1.55,
+      "divergentTrees": 4925
+    },
+    "thorn_lattice|tight": {
+      "n": 12349,
+      "meanDiff": -0.106,
+      "ci95": [
+        -0.28,
+        0.077
+      ],
+      "sd": 9.62,
+      "outliers": 158,
+      "bustCast": 0.0217,
+      "bustSkip": 0.0223,
+      "showdownCast": 0.1956,
+      "showdownSkip": 0.1965,
+      "meanAether": 1.55,
+      "divergentTrees": 2900
+    },
+    "thorn_lattice|maniac": {
+      "n": 12349,
+      "meanDiff": 2.301,
+      "ci95": [
+        1.238,
+        3.29
+      ],
+      "sd": 58.5,
+      "outliers": 98,
+      "bustCast": 0.1497,
+      "bustSkip": 0.1619,
+      "showdownCast": 0.3483,
+      "showdownSkip": 0.4273,
+      "meanAether": 1.55,
+      "divergentTrees": 3513
+    },
+    "twin_oracle|skilled": {
+      "n": 7877,
+      "meanDiff": 0.426,
+      "ci95": [
+        0.035,
+        0.794
+      ],
+      "sd": 16.49,
+      "outliers": 143,
+      "bustCast": 0.0273,
+      "bustSkip": 0.0232,
+      "showdownCast": 0.1804,
+      "showdownSkip": 0.1809,
+      "meanAether": 2.49,
+      "divergentTrees": 7856
+    },
+    "twin_oracle|tight": {
+      "n": 7877,
+      "meanDiff": -0.155,
+      "ci95": [
+        -0.38,
+        0.072
+      ],
+      "sd": 9.87,
+      "outliers": 86,
+      "bustCast": 0.0196,
+      "bustSkip": 0.0197,
+      "showdownCast": 0.2111,
+      "showdownSkip": 0.211,
+      "meanAether": 2.49,
+      "divergentTrees": 7828
+    },
+    "twin_oracle|maniac": {
+      "n": 7877,
+      "meanDiff": -0.271,
+      "ci95": [
+        -1.005,
+        0.475
+      ],
+      "sd": 32.91,
+      "outliers": 194,
+      "bustCast": 0.1791,
+      "bustSkip": 0.1785,
+      "showdownCast": 0.5248,
+      "showdownSkip": 0.523,
+      "meanAether": 2.49,
+      "divergentTrees": 7872
+    },
+    "quiet_briars|skilled": {
+      "n": 1410,
+      "meanDiff": 0.656,
+      "ci95": [
+        0.01,
+        1.345
+      ],
+      "sd": 12.77,
+      "outliers": 27,
+      "bustCast": 0.0333,
+      "bustSkip": 0.039,
+      "showdownCast": 0.1667,
+      "showdownSkip": 0.1695,
+      "meanAether": 0.6,
+      "divergentTrees": 522
+    },
+    "quiet_briars|tight": {
+      "n": 1410,
+      "meanDiff": 0.107,
+      "ci95": [
+        -0.326,
+        0.623
+      ],
+      "sd": 8.81,
+      "outliers": 17,
+      "bustCast": 0.0227,
+      "bustSkip": 0.0277,
+      "showdownCast": 0.2,
+      "showdownSkip": 0.1929,
+      "meanAether": 0.6,
+      "divergentTrees": 339
+    },
+    "quiet_briars|maniac": {
+      "n": 1410,
+      "meanDiff": 1.323,
+      "ci95": [
+        -0.913,
+        3.73
+      ],
+      "sd": 44.3,
+      "outliers": 20,
+      "bustCast": 0.1645,
+      "bustSkip": 0.1844,
+      "showdownCast": 0.3624,
+      "showdownSkip": 0.4071,
+      "meanAether": 0.6,
+      "divergentTrees": 398
+    },
+    "red_oath|skilled": {
+      "n": 111,
+      "meanDiff": -1.009,
+      "ci95": [
+        -3.315,
+        1.27
+      ],
+      "sd": 12.74,
+      "outliers": 3,
+      "bustCast": 0.0631,
+      "bustSkip": 0.036,
+      "showdownCast": 0.3333,
+      "showdownSkip": 0.3514,
+      "meanAether": 0,
+      "divergentTrees": 31
+    },
+    "red_oath|tight": {
+      "n": 111,
+      "meanDiff": 0.072,
+      "ci95": [
+        -1.667,
+        2.387
+      ],
+      "sd": 10.68,
+      "outliers": 2,
+      "bustCast": 0.018,
+      "bustSkip": 0.009,
+      "showdownCast": 0.2432,
+      "showdownSkip": 0.3063,
+      "meanAether": 0,
+      "divergentTrees": 24
+    },
+    "red_oath|maniac": {
+      "n": 111,
+      "meanDiff": -1.748,
+      "ci95": [
+        -8.171,
+        4
+      ],
+      "sd": 31.92,
+      "outliers": 3,
+      "bustCast": 0.1802,
+      "bustSkip": 0.1441,
+      "showdownCast": 0.4865,
+      "showdownSkip": 0.4144,
+      "meanAether": 0,
+      "divergentTrees": 15
+    },
+    "ember_echo|skilled": {
+      "n": 683,
+      "meanDiff": -0.291,
+      "ci95": [
+        -1.792,
+        1.334
+      ],
+      "sd": 20.98,
+      "outliers": 15,
+      "bustCast": 0.063,
+      "bustSkip": 0.0659,
+      "showdownCast": 0.3294,
+      "showdownSkip": 0.3309,
+      "meanAether": 1,
+      "divergentTrees": 170
+    },
+    "ember_echo|tight": {
+      "n": 683,
+      "meanDiff": -0.656,
+      "ci95": [
+        -1.335,
+        -0.076
+      ],
+      "sd": 8.38,
+      "outliers": 10,
+      "bustCast": 0.0249,
+      "bustSkip": 0.0249,
+      "showdownCast": 0.284,
+      "showdownSkip": 0.2928,
+      "meanAether": 1,
+      "divergentTrees": 109
+    },
+    "ember_echo|maniac": {
+      "n": 683,
+      "meanDiff": -0.001,
+      "ci95": [
+        -0.722,
+        0.685
+      ],
+      "sd": 9.59,
+      "outliers": 4,
+      "bustCast": 0.1435,
+      "bustSkip": 0.1449,
+      "showdownCast": 0.4993,
+      "showdownSkip": 0.5022,
+      "meanAether": 1,
+      "divergentTrees": 106
+    },
+    "second_reflection|skilled": {
+      "n": 989,
+      "meanDiff": 2.701,
+      "ci95": [
+        0.007,
+        5.47
+      ],
+      "sd": 44.04,
+      "outliers": 14,
+      "bustCast": 0.0475,
+      "bustSkip": 0.0182,
+      "showdownCast": 0.1648,
+      "showdownSkip": 0.0849,
+      "meanAether": 2.35,
+      "divergentTrees": 989
+    },
+    "second_reflection|tight": {
+      "n": 989,
+      "meanDiff": -0.913,
+      "ci95": [
+        -4.419,
+        2.222
+      ],
+      "sd": 51.34,
+      "outliers": 8,
+      "bustCast": 0.0485,
+      "bustSkip": 0.0172,
+      "showdownCast": 0.3519,
+      "showdownSkip": 0.1598,
+      "meanAether": 2.35,
+      "divergentTrees": 989
+    },
+    "second_reflection|maniac": {
+      "n": 989,
+      "meanDiff": 3.178,
+      "ci95": [
+        -5.161,
+        11.387
+      ],
+      "sd": 132.27,
+      "outliers": 4,
+      "bustCast": 0.1314,
+      "bustSkip": 0.1598,
+      "showdownCast": 0.4833,
+      "showdownSkip": 0.5066,
+      "meanAether": 2.35,
+      "divergentTrees": 989
+    },
+    "marked_fate|skilled": {
+      "n": 260,
+      "meanDiff": 0.181,
+      "ci95": [
+        -3.973,
+        3.935
+      ],
+      "sd": 33.45,
+      "outliers": 3,
+      "bustCast": 0.0385,
+      "bustSkip": 0.0346,
+      "showdownCast": 0.1423,
+      "showdownSkip": 0.1115,
+      "meanAether": 0.35,
+      "divergentTrees": 131
+    },
+    "marked_fate|tight": {
+      "n": 260,
+      "meanDiff": -1.435,
+      "ci95": [
+        -5.565,
+        2.873
+      ],
+      "sd": 35.49,
+      "outliers": 4,
+      "bustCast": 0.0385,
+      "bustSkip": 0.0192,
+      "showdownCast": 0.2269,
+      "showdownSkip": 0.1423,
+      "meanAether": 0.35,
+      "divergentTrees": 81
+    },
+    "marked_fate|maniac": {
+      "n": 260,
+      "meanDiff": 2.869,
+      "ci95": [
+        -13.835,
+        20.285
+      ],
+      "sd": 138.89,
+      "outliers": 2,
+      "bustCast": 0.1962,
+      "bustSkip": 0.2269,
+      "showdownCast": 0.5538,
+      "showdownSkip": 0.5808,
+      "meanAether": 0.35,
+      "divergentTrees": 3
+    },
+    "ravenous_eye|skilled": {
+      "n": 532,
+      "meanDiff": -0.169,
+      "ci95": [
+        -1.32,
+        0.925
+      ],
+      "sd": 13.4,
+      "outliers": 8,
+      "bustCast": 0.0226,
+      "bustSkip": 0.0282,
+      "showdownCast": 0.1842,
+      "showdownSkip": 0.1936,
+      "meanAether": 2.44,
+      "divergentTrees": 529
+    },
+    "ravenous_eye|tight": {
+      "n": 532,
+      "meanDiff": 0.585,
+      "ci95": [
+        -0.167,
+        1.355
+      ],
+      "sd": 9.75,
+      "outliers": 10,
+      "bustCast": 0.0188,
+      "bustSkip": 0.0244,
+      "showdownCast": 0.2368,
+      "showdownSkip": 0.2312,
+      "meanAether": 2.44,
+      "divergentTrees": 527
+    },
+    "ravenous_eye|maniac": {
+      "n": 532,
+      "meanDiff": 0.564,
+      "ci95": [
+        -1.289,
+        2.632
+      ],
+      "sd": 24.91,
+      "outliers": 11,
+      "bustCast": 0.1861,
+      "bustSkip": 0.1898,
+      "showdownCast": 0.5526,
+      "showdownSkip": 0.5508,
+      "meanAether": 2.44,
+      "divergentTrees": 532
+    }
+  },
+  "byStreet": {
+    "briar_lock|preflop": {
+      "n": 49788,
+      "meanDiff": 0.226,
+      "ci95": [
+        -0.017,
+        0.501
+      ],
+      "sd": 28.58,
+      "outliers": 875,
+      "bustCast": 0.0534,
+      "bustSkip": 0.0528,
+      "showdownCast": 0.1738,
+      "showdownSkip": 0.1893,
+      "meanAether": 0.71,
+      "divergentTrees": 13928
+    },
+    "fate_exchange|preflop": {
+      "n": 75048,
+      "meanDiff": 0.879,
+      "ci95": [
+        0.498,
+        1.231
+      ],
+      "sd": 51.79,
+      "outliers": 1235,
+      "bustCast": 0.0644,
+      "bustSkip": 0.0621,
+      "showdownCast": 0.236,
+      "showdownSkip": 0.2073,
+      "meanAether": 1.54,
+      "divergentTrees": 21777
+    },
+    "cinder_challenge|preflop": {
+      "n": 67962,
+      "meanDiff": -0.041,
+      "ci95": [
+        -0.12,
+        0.042
+      ],
+      "sd": 10.37,
+      "outliers": 770,
+      "bustCast": 0.0957,
+      "bustSkip": 0.0964,
+      "showdownCast": 0.319,
+      "showdownSkip": 0.3209,
+      "meanAether": 1,
+      "divergentTrees": 13894
+    },
+    "unmask|preflop": {
+      "n": 26955,
+      "meanDiff": -0.049,
+      "ci95": [
+        -0.229,
+        0.13
+      ],
+      "sd": 14.75,
+      "outliers": 463,
+      "bustCast": 0.0651,
+      "bustSkip": 0.0647,
+      "showdownCast": 0.2061,
+      "showdownSkip": 0.2071,
+      "meanAether": 1.68,
+      "divergentTrees": 26895
+    },
+    "briar_lock|flop": {
+      "n": 3888,
+      "meanDiff": -0.721,
+      "ci95": [
+        -1.437,
+        -0.015
+      ],
+      "sd": 22.64,
+      "outliers": 79,
+      "bustCast": 0.1106,
+      "bustSkip": 0.0998,
+      "showdownCast": 0.5784,
+      "showdownSkip": 0.5625,
+      "meanAether": 0.7,
+      "divergentTrees": 3046
+    },
+    "unmask|flop": {
+      "n": 2463,
+      "meanDiff": 0.675,
+      "ci95": [
+        -0.038,
+        1.401
+      ],
+      "sd": 17.57,
+      "outliers": 49,
+      "bustCast": 0.1218,
+      "bustSkip": 0.1283,
+      "showdownCast": 0.5238,
+      "showdownSkip": 0.5307,
+      "meanAether": 1.7,
+      "divergentTrees": 2427
+    },
+    "briar_lock|turn": {
+      "n": 1629,
+      "meanDiff": -1.303,
+      "ci95": [
+        -2.413,
+        -0.215
+      ],
+      "sd": 24.11,
+      "outliers": 39,
+      "bustCast": 0.0939,
+      "bustSkip": 0.0816,
+      "showdownCast": 0.6317,
+      "showdownSkip": 0.6249,
+      "meanAether": 0.73,
+      "divergentTrees": 1185
+    },
+    "unmask|turn": {
+      "n": 1599,
+      "meanDiff": 0.263,
+      "ci95": [
+        -0.478,
+        1.123
+      ],
+      "sd": 16.23,
+      "outliers": 21,
+      "bustCast": 0.1182,
+      "bustSkip": 0.1182,
+      "showdownCast": 0.5629,
+      "showdownSkip": 0.5672,
+      "meanAether": 1.71,
+      "divergentTrees": 1587
+    },
+    "briar_lock|river": {
+      "n": 702,
+      "meanDiff": 3.084,
+      "ci95": [
+        1.373,
+        4.859
+      ],
+      "sd": 23.96,
+      "outliers": 10,
+      "bustCast": 0.037,
+      "bustSkip": 0.0684,
+      "showdownCast": 0.7721,
+      "showdownSkip": 0.7151,
+      "meanAether": 0.7,
+      "divergentTrees": 52
+    },
+    "unmask|river": {
+      "n": 873,
+      "meanDiff": 0.686,
+      "ci95": [
+        -0.143,
+        1.49
+      ],
+      "sd": 12.56,
+      "outliers": 15,
+      "bustCast": 0.1042,
+      "bustSkip": 0.1065,
+      "showdownCast": 0.6403,
+      "showdownSkip": 0.6518,
+      "meanAether": 1.68,
+      "divergentTrees": 872
+    },
+    "cinder_challenge|flop": {
+      "n": 6918,
+      "meanDiff": -0.115,
+      "ci95": [
+        -0.412,
+        0.179
+      ],
+      "sd": 12.72,
+      "outliers": 97,
+      "bustCast": 0.1369,
+      "bustSkip": 0.137,
+      "showdownCast": 0.5772,
+      "showdownSkip": 0.5815,
+      "meanAether": 1,
+      "divergentTrees": 2064
+    },
+    "thorn_lattice|preflop": {
+      "n": 33393,
+      "meanDiff": 0.832,
+      "ci95": [
+        0.489,
+        1.239
+      ],
+      "sd": 36.01,
+      "outliers": 741,
+      "bustCast": 0.0629,
+      "bustSkip": 0.0686,
+      "showdownCast": 0.1903,
+      "showdownSkip": 0.2225,
+      "meanAether": 1.55,
+      "divergentTrees": 8962
+    },
+    "cinder_challenge|turn": {
+      "n": 4428,
+      "meanDiff": -0.026,
+      "ci95": [
+        -0.227,
+        0.197
+      ],
+      "sd": 7.18,
+      "outliers": 42,
+      "bustCast": 0.124,
+      "bustSkip": 0.1235,
+      "showdownCast": 0.6129,
+      "showdownSkip": 0.612,
+      "meanAether": 1,
+      "divergentTrees": 884
+    },
+    "cinder_challenge|river": {
+      "n": 2895,
+      "meanDiff": -0.009,
+      "ci95": [
+        -0.066,
+        0.051
+      ],
+      "sd": 1.55,
+      "outliers": 7,
+      "bustCast": 0.0532,
+      "bustSkip": 0.0528,
+      "showdownCast": 0.7174,
+      "showdownSkip": 0.7171,
+      "meanAether": 1,
+      "divergentTrees": 23
+    },
+    "twin_oracle|preflop": {
+      "n": 20436,
+      "meanDiff": -0.04,
+      "ci95": [
+        -0.318,
+        0.276
+      ],
+      "sd": 22.03,
+      "outliers": 342,
+      "bustCast": 0.0718,
+      "bustSkip": 0.0706,
+      "showdownCast": 0.2636,
+      "showdownSkip": 0.2629,
+      "meanAether": 2.49,
+      "divergentTrees": 20394
+    },
+    "twin_oracle|flop": {
+      "n": 1638,
+      "meanDiff": 0.916,
+      "ci95": [
+        -0.226,
+        2.064
+      ],
+      "sd": 22.95,
+      "outliers": 36,
+      "bustCast": 0.1062,
+      "bustSkip": 0.105,
+      "showdownCast": 0.5287,
+      "showdownSkip": 0.525,
+      "meanAether": 2.49,
+      "divergentTrees": 1613
+    },
+    "twin_oracle|turn": {
+      "n": 969,
+      "meanDiff": -1.036,
+      "ci95": [
+        -2.572,
+        0.394
+      ],
+      "sd": 23.69,
+      "outliers": 20,
+      "bustCast": 0.0908,
+      "bustSkip": 0.0826,
+      "showdownCast": 0.5831,
+      "showdownSkip": 0.5862,
+      "meanAether": 2.5,
+      "divergentTrees": 962
+    },
+    "twin_oracle|river": {
+      "n": 588,
+      "meanDiff": 0.565,
+      "ci95": [
+        -0.52,
+        1.641
+      ],
+      "sd": 13.98,
+      "outliers": 11,
+      "bustCast": 0.085,
+      "bustSkip": 0.0833,
+      "showdownCast": 0.6803,
+      "showdownSkip": 0.6922,
+      "meanAether": 2.47,
+      "divergentTrees": 587
+    },
+    "quiet_briars|preflop": {
+      "n": 3849,
+      "meanDiff": 0.771,
+      "ci95": [
+        -0.083,
+        1.597
+      ],
+      "sd": 26.87,
+      "outliers": 86,
+      "bustCast": 0.0678,
+      "bustSkip": 0.08,
+      "showdownCast": 0.2081,
+      "showdownSkip": 0.2276,
+      "meanAether": 0.6,
+      "divergentTrees": 1003
+    },
+    "red_oath|preflop": {
+      "n": 294,
+      "meanDiff": -1.282,
+      "ci95": [
+        -3.891,
+        0.752
+      ],
+      "sd": 20.56,
+      "outliers": 4,
+      "bustCast": 0.0884,
+      "bustSkip": 0.0646,
+      "showdownCast": 0.3299,
+      "showdownSkip": 0.3231,
+      "meanAether": 0,
+      "divergentTrees": 61
+    },
+    "thorn_lattice|flop": {
+      "n": 2220,
+      "meanDiff": 0.195,
+      "ci95": [
+        -1.063,
+        1.368
+      ],
+      "sd": 28.47,
+      "outliers": 39,
+      "bustCast": 0.1045,
+      "bustSkip": 0.0937,
+      "showdownCast": 0.5685,
+      "showdownSkip": 0.5626,
+      "meanAether": 1.52,
+      "divergentTrees": 1672
+    },
+    "thorn_lattice|turn": {
+      "n": 960,
+      "meanDiff": -0.701,
+      "ci95": [
+        -2.545,
+        0.985
+      ],
+      "sd": 28.63,
+      "outliers": 16,
+      "bustCast": 0.0625,
+      "bustSkip": 0.0708,
+      "showdownCast": 0.6385,
+      "showdownSkip": 0.6375,
+      "meanAether": 1.44,
+      "divergentTrees": 681
+    },
+    "thorn_lattice|river": {
+      "n": 474,
+      "meanDiff": 2.456,
+      "ci95": [
+        0.065,
+        4.939
+      ],
+      "sd": 26.23,
+      "outliers": 6,
+      "bustCast": 0.0232,
+      "bustSkip": 0.0527,
+      "showdownCast": 0.7384,
+      "showdownSkip": 0.6835,
+      "meanAether": 1.44,
+      "divergentTrees": 23
+    },
+    "quiet_briars|flop": {
+      "n": 258,
+      "meanDiff": 3.05,
+      "ci95": [
+        0.07,
+        6.112
+      ],
+      "sd": 25.29,
+      "outliers": 5,
+      "bustCast": 0.1395,
+      "bustSkip": 0.1357,
+      "showdownCast": 0.5543,
+      "showdownSkip": 0.5116,
+      "meanAether": 0.62,
+      "divergentTrees": 193
+    },
+    "ember_echo|preflop": {
+      "n": 1641,
+      "meanDiff": -0.34,
+      "ci95": [
+        -1.076,
+        0.319
+      ],
+      "sd": 14.09,
+      "outliers": 24,
+      "bustCast": 0.0701,
+      "bustSkip": 0.0719,
+      "showdownCast": 0.3035,
+      "showdownSkip": 0.3059,
+      "meanAether": 1,
+      "divergentTrees": 299
+    },
+    "ember_echo|flop": {
+      "n": 186,
+      "meanDiff": 1.14,
+      "ci95": [
+        -0.785,
+        3.382
+      ],
+      "sd": 14.32,
+      "outliers": 4,
+      "bustCast": 0.1237,
+      "bustSkip": 0.129,
+      "showdownCast": 0.586,
+      "showdownSkip": 0.5968,
+      "meanAether": 1,
+      "divergentTrees": 59
+    },
+    "ember_echo|turn": {
+      "n": 129,
+      "meanDiff": -2.341,
+      "ci95": [
+        -5.953,
+        0.55
+      ],
+      "sd": 18.98,
+      "outliers": 2,
+      "bustCast": 0.1318,
+      "bustSkip": 0.124,
+      "showdownCast": 0.6434,
+      "showdownSkip": 0.6667,
+      "meanAether": 1,
+      "divergentTrees": 27
+    },
+    "ember_echo|river": {
+      "n": 93,
+      "meanDiff": 0,
+      "ci95": [
+        0,
+        0
+      ],
+      "sd": 0,
+      "outliers": 0,
+      "bustCast": 0.0323,
+      "bustSkip": 0.0323,
+      "showdownCast": 0.7527,
+      "showdownSkip": 0.7527,
+      "meanAether": 1,
+      "divergentTrees": 0
+    },
+    "second_reflection|preflop": {
+      "n": 2967,
+      "meanDiff": 1.655,
+      "ci95": [
+        -1.388,
+        4.69
+      ],
+      "sd": 85.76,
+      "outliers": 39,
+      "bustCast": 0.0758,
+      "bustSkip": 0.065,
+      "showdownCast": 0.3333,
+      "showdownSkip": 0.2504,
+      "meanAether": 2.35,
+      "divergentTrees": 2967
+    },
+    "quiet_briars|turn": {
+      "n": 90,
+      "meanDiff": -9.011,
+      "ci95": [
+        -17.811,
+        -1.567
+      ],
+      "sd": 38.55,
+      "outliers": 1,
+      "bustCast": 0.1444,
+      "bustSkip": 0.1,
+      "showdownCast": 0.6444,
+      "showdownSkip": 0.5889,
+      "meanAether": 0.57,
+      "divergentTrees": 61
+    },
+    "marked_fate|preflop": {
+      "n": 780,
+      "meanDiff": 0.538,
+      "ci95": [
+        -5.313,
+        6.601
+      ],
+      "sd": 84.9,
+      "outliers": 14,
+      "bustCast": 0.091,
+      "bustSkip": 0.0936,
+      "showdownCast": 0.3077,
+      "showdownSkip": 0.2782,
+      "meanAether": 0.35,
+      "divergentTrees": 215
+    },
+    "ravenous_eye|preflop": {
+      "n": 1365,
+      "meanDiff": 0.386,
+      "ci95": [
+        -0.56,
+        1.372
+      ],
+      "sd": 17.52,
+      "outliers": 20,
+      "bustCast": 0.0755,
+      "bustSkip": 0.0799,
+      "showdownCast": 0.2769,
+      "showdownSkip": 0.2777,
+      "meanAether": 2.45,
+      "divergentTrees": 1362
+    },
+    "quiet_briars|river": {
+      "n": 33,
+      "meanDiff": 0,
+      "ci95": [
+        -8.667,
+        7.758
+      ],
+      "sd": 24.71,
+      "outliers": 1,
+      "bustCast": 0.0303,
+      "bustSkip": 0.0606,
+      "showdownCast": 0.7879,
+      "showdownSkip": 0.7273,
+      "meanAether": 0.36,
+      "divergentTrees": 2
+    },
+    "ravenous_eye|flop": {
+      "n": 99,
+      "meanDiff": 0.566,
+      "ci95": [
+        -3.929,
+        5.081
+      ],
+      "sd": 22.57,
+      "outliers": 2,
+      "bustCast": 0.0909,
+      "bustSkip": 0.1212,
+      "showdownCast": 0.5354,
+      "showdownSkip": 0.596,
+      "meanAether": 2.33,
+      "divergentTrees": 96
+    },
+    "ravenous_eye|turn": {
+      "n": 72,
+      "meanDiff": -0.833,
+      "ci95": [
+        -3.319,
+        0.917
+      ],
+      "sd": 9.53,
+      "outliers": 1,
+      "bustCast": 0.0694,
+      "bustSkip": 0.0556,
+      "showdownCast": 0.6667,
+      "showdownSkip": 0.6389,
+      "meanAether": 2.38,
+      "divergentTrees": 70
+    },
+    "red_oath|flop": {
+      "n": 21,
+      "meanDiff": 3.762,
+      "ci95": [
+        -4.952,
+        18
+      ],
+      "sd": 30.21,
+      "outliers": 1,
+      "bustCast": 0.0952,
+      "bustSkip": 0.0476,
+      "showdownCast": 0.4286,
+      "showdownSkip": 0.5714,
+      "meanAether": 0,
+      "divergentTrees": 9
+    },
+    "ravenous_eye|river": {
+      "n": 60,
+      "meanDiff": -0.033,
+      "ci95": [
+        -0.85,
+        0.633
+      ],
+      "sd": 2.88,
+      "outliers": 1,
+      "bustCast": 0.0667,
+      "bustSkip": 0.0667,
+      "showdownCast": 0.65,
+      "showdownSkip": 0.5833,
+      "meanAether": 2.3,
+      "divergentTrees": 60
+    },
+    "red_oath|turn": {
+      "n": 9,
+      "meanDiff": 0,
+      "ci95": [
+        -0.333,
+        0.333
+      ],
+      "sd": 0.5,
+      "outliers": 0,
+      "bustCast": 0.1111,
+      "bustSkip": 0.1111,
+      "showdownCast": 0.6667,
+      "showdownSkip": 0.6667,
+      "meanAether": 0,
+      "divergentTrees": 0
+    },
+    "red_oath|river": {
+      "n": 9,
+      "meanDiff": 0,
+      "ci95": [
+        0,
+        0
+      ],
+      "sd": 0,
+      "outliers": 0,
+      "bustCast": 0,
+      "bustSkip": 0,
+      "showdownCast": 0.6667,
+      "showdownSkip": 0.6667,
+      "meanAether": 0,
+      "divergentTrees": 0
+    }
+  },
+  "byDepth": {
+    "briar_lock|deep": {
+      "n": 14697,
+      "meanDiff": -0.112,
+      "ci95": [
+        -0.728,
+        0.504
+      ],
+      "sd": 38.19,
+      "outliers": 207,
+      "bustCast": 0.027,
+      "bustSkip": 0.026,
+      "showdownCast": 0.2243,
+      "showdownSkip": 0.2573,
+      "meanAether": 0.81,
+      "divergentTrees": 5085
+    },
+    "fate_exchange|deep": {
+      "n": 13329,
+      "meanDiff": 1.362,
+      "ci95": [
+        0.12,
+        2.541
+      ],
+      "sd": 72.44,
+      "outliers": 238,
+      "bustCast": 0.0242,
+      "bustSkip": 0.0237,
+      "showdownCast": 0.2472,
+      "showdownSkip": 0.2191,
+      "meanAether": 1.68,
+      "divergentTrees": 3917
+    },
+    "cinder_challenge|deep": {
+      "n": 17724,
+      "meanDiff": 0.046,
+      "ci95": [
+        -0.157,
+        0.235
+      ],
+      "sd": 12.42,
+      "outliers": 233,
+      "bustCast": 0.0353,
+      "bustSkip": 0.0364,
+      "showdownCast": 0.3468,
+      "showdownSkip": 0.3495,
+      "meanAether": 1,
+      "divergentTrees": 4654
+    },
+    "unmask|deep": {
+      "n": 8637,
+      "meanDiff": 0.006,
+      "ci95": [
+        -0.418,
+        0.383
+      ],
+      "sd": 19.3,
+      "outliers": 218,
+      "bustCast": 0.0387,
+      "bustSkip": 0.0395,
+      "showdownCast": 0.253,
+      "showdownSkip": 0.2584,
+      "meanAether": 1.89,
+      "divergentTrees": 8606
+    },
+    "briar_lock|mid": {
+      "n": 24705,
+      "meanDiff": 0.455,
+      "ci95": [
+        0.094,
+        0.809
+      ],
+      "sd": 28.32,
+      "outliers": 485,
+      "bustCast": 0.0567,
+      "bustSkip": 0.0594,
+      "showdownCast": 0.2211,
+      "showdownSkip": 0.2365,
+      "meanAether": 0.65,
+      "divergentTrees": 8430
+    },
+    "fate_exchange|mid": {
+      "n": 32199,
+      "meanDiff": 0.795,
+      "ci95": [
+        0.132,
+        1.411
+      ],
+      "sd": 58.48,
+      "outliers": 569,
+      "bustCast": 0.0553,
+      "bustSkip": 0.0559,
+      "showdownCast": 0.2332,
+      "showdownSkip": 0.2085,
+      "meanAether": 1.48,
+      "divergentTrees": 9366
+    },
+    "cinder_challenge|mid": {
+      "n": 35706,
+      "meanDiff": -0.116,
+      "ci95": [
+        -0.239,
+        0.001
+      ],
+      "sd": 11.94,
+      "outliers": 434,
+      "bustCast": 0.0856,
+      "bustSkip": 0.0858,
+      "showdownCast": 0.3618,
+      "showdownSkip": 0.3636,
+      "meanAether": 1,
+      "divergentTrees": 7824
+    },
+    "unmask|mid": {
+      "n": 13194,
+      "meanDiff": 0.12,
+      "ci95": [
+        -0.168,
+        0.382
+      ],
+      "sd": 15.99,
+      "outliers": 217,
+      "bustCast": 0.0756,
+      "bustSkip": 0.0753,
+      "showdownCast": 0.2651,
+      "showdownSkip": 0.2657,
+      "meanAether": 1.58,
+      "divergentTrees": 13153
+    },
+    "thorn_lattice|mid": {
+      "n": 15783,
+      "meanDiff": 1.12,
+      "ci95": [
+        0.472,
+        1.771
+      ],
+      "sd": 42.24,
+      "outliers": 302,
+      "bustCast": 0.0391,
+      "bustSkip": 0.0495,
+      "showdownCast": 0.2257,
+      "showdownSkip": 0.2611,
+      "meanAether": 1.52,
+      "divergentTrees": 5127
+    },
+    "fate_exchange|shallow": {
+      "n": 29520,
+      "meanDiff": 0.753,
+      "ci95": [
+        0.432,
+        1.038
+      ],
+      "sd": 26.81,
+      "outliers": 462,
+      "bustCast": 0.0924,
+      "bustSkip": 0.0861,
+      "showdownCast": 0.2339,
+      "showdownSkip": 0.2005,
+      "meanAether": 1.53,
+      "divergentTrees": 8494
+    },
+    "thorn_lattice|shallow": {
+      "n": 17535,
+      "meanDiff": 0.043,
+      "ci95": [
+        -0.21,
+        0.29
+      ],
+      "sd": 16.85,
+      "outliers": 353,
+      "bustCast": 0.1014,
+      "bustSkip": 0.1022,
+      "showdownCast": 0.2409,
+      "showdownSkip": 0.2478,
+      "meanAether": 1.6,
+      "divergentTrees": 5058
+    },
+    "unmask|shallow": {
+      "n": 10059,
+      "meanDiff": -0.027,
+      "ci95": [
+        -0.175,
+        0.111
+      ],
+      "sd": 7.71,
+      "outliers": 138,
+      "bustCast": 0.0998,
+      "bustSkip": 0.1003,
+      "showdownCast": 0.2607,
+      "showdownSkip": 0.2613,
+      "meanAether": 1.63,
+      "divergentTrees": 10022
+    },
+    "cinder_challenge|shallow": {
+      "n": 28773,
+      "meanDiff": -0.013,
+      "ci95": [
+        -0.073,
+        0.051
+      ],
+      "sd": 5.41,
+      "outliers": 358,
+      "bustCast": 0.1554,
+      "bustSkip": 0.156,
+      "showdownCast": 0.3962,
+      "showdownSkip": 0.3975,
+      "meanAether": 1,
+      "divergentTrees": 4387
+    },
+    "briar_lock|shallow": {
+      "n": 16605,
+      "meanDiff": -0.065,
+      "ci95": [
+        -0.276,
+        0.136
+      ],
+      "sd": 12.9,
+      "outliers": 338,
+      "bustCast": 0.0886,
+      "bustSkip": 0.0814,
+      "showdownCast": 0.2235,
+      "showdownSkip": 0.2113,
+      "meanAether": 0.72,
+      "divergentTrees": 4696
+    },
+    "twin_oracle|deep": {
+      "n": 3732,
+      "meanDiff": 0.237,
+      "ci95": [
+        -0.518,
+        1.112
+      ],
+      "sd": 25.12,
+      "outliers": 71,
+      "bustCast": 0.0067,
+      "bustSkip": 0.008,
+      "showdownCast": 0.3459,
+      "showdownSkip": 0.3513,
+      "meanAether": 2.56,
+      "divergentTrees": 3720
+    },
+    "twin_oracle|mid": {
+      "n": 10401,
+      "meanDiff": -0.139,
+      "ci95": [
+        -0.667,
+        0.385
+      ],
+      "sd": 27.85,
+      "outliers": 217,
+      "bustCast": 0.0622,
+      "bustSkip": 0.0618,
+      "showdownCast": 0.3045,
+      "showdownSkip": 0.3047,
+      "meanAether": 2.5,
+      "divergentTrees": 10365
+    },
+    "twin_oracle|shallow": {
+      "n": 9498,
+      "meanDiff": 0.059,
+      "ci95": [
+        -0.16,
+        0.276
+      ],
+      "sd": 10.36,
+      "outliers": 111,
+      "bustCast": 0.1167,
+      "bustSkip": 0.1128,
+      "showdownCast": 0.2906,
+      "showdownSkip": 0.2871,
+      "meanAether": 2.45,
+      "divergentTrees": 9471
+    },
+    "quiet_briars|shallow": {
+      "n": 2388,
+      "meanDiff": 0.737,
+      "ci95": [
+        0.075,
+        1.445
+      ],
+      "sd": 16.57,
+      "outliers": 50,
+      "bustCast": 0.1009,
+      "bustSkip": 0.1126,
+      "showdownCast": 0.255,
+      "showdownSkip": 0.2609,
+      "meanAether": 0.62,
+      "divergentTrees": 672
+    },
+    "quiet_briars|mid": {
+      "n": 1710,
+      "meanDiff": 0.84,
+      "ci95": [
+        -0.888,
+        2.416
+      ],
+      "sd": 35.2,
+      "outliers": 45,
+      "bustCast": 0.0404,
+      "bustSkip": 0.0491,
+      "showdownCast": 0.2275,
+      "showdownSkip": 0.2456,
+      "meanAether": 0.57,
+      "divergentTrees": 550
+    },
+    "red_oath|shallow": {
+      "n": 174,
+      "meanDiff": -2.098,
+      "ci95": [
+        -3.908,
+        -0.546
+      ],
+      "sd": 12.48,
+      "outliers": 3,
+      "bustCast": 0.1494,
+      "bustSkip": 0.1092,
+      "showdownCast": 0.3563,
+      "showdownSkip": 0.3506,
+      "meanAether": 0,
+      "divergentTrees": 36
+    },
+    "ember_echo|shallow": {
+      "n": 504,
+      "meanDiff": -0.315,
+      "ci95": [
+        -1.147,
+        0.284
+      ],
+      "sd": 7.97,
+      "outliers": 6,
+      "bustCast": 0.1726,
+      "bustSkip": 0.1726,
+      "showdownCast": 0.3829,
+      "showdownSkip": 0.3929,
+      "meanAether": 1,
+      "divergentTrees": 65
+    },
+    "ember_echo|mid": {
+      "n": 891,
+      "meanDiff": -0.389,
+      "ci95": [
+        -1.288,
+        0.473
+      ],
+      "sd": 14.07,
+      "outliers": 15,
+      "bustCast": 0.0707,
+      "bustSkip": 0.0741,
+      "showdownCast": 0.3558,
+      "showdownSkip": 0.367,
+      "meanAether": 1,
+      "divergentTrees": 159
+    },
+    "thorn_lattice|deep": {
+      "n": 3729,
+      "meanDiff": 2.758,
+      "ci95": [
+        0.869,
+        4.713
+      ],
+      "sd": 59.17,
+      "outliers": 43,
+      "bustCast": 0.0024,
+      "bustSkip": 0.0051,
+      "showdownCast": 0.2127,
+      "showdownSkip": 0.3079,
+      "meanAether": 1.42,
+      "divergentTrees": 1153
+    },
+    "second_reflection|mid": {
+      "n": 1260,
+      "meanDiff": 0.572,
+      "ci95": [
+        -4.665,
+        5.533
+      ],
+      "sd": 94.07,
+      "outliers": 15,
+      "bustCast": 0.0556,
+      "bustSkip": 0.0508,
+      "showdownCast": 0.327,
+      "showdownSkip": 0.2563,
+      "meanAether": 2.36,
+      "divergentTrees": 1260
+    },
+    "second_reflection|deep": {
+      "n": 531,
+      "meanDiff": 5.298,
+      "ci95": [
+        -4.844,
+        16.303
+      ],
+      "sd": 129.75,
+      "outliers": 3,
+      "bustCast": 0.0019,
+      "bustSkip": 0.0038,
+      "showdownCast": 0.3446,
+      "showdownSkip": 0.2863,
+      "meanAether": 2.28,
+      "divergentTrees": 531
+    },
+    "second_reflection|shallow": {
+      "n": 1176,
+      "meanDiff": 1.171,
+      "ci95": [
+        -0.911,
+        3.214
+      ],
+      "sd": 38.54,
+      "outliers": 20,
+      "bustCast": 0.131,
+      "bustSkip": 0.108,
+      "showdownCast": 0.335,
+      "showdownSkip": 0.2279,
+      "meanAether": 2.36,
+      "divergentTrees": 1176
+    },
+    "marked_fate|mid": {
+      "n": 324,
+      "meanDiff": -2.009,
+      "ci95": [
+        -14.5,
+        10.046
+      ],
+      "sd": 111.13,
+      "outliers": 5,
+      "bustCast": 0.0802,
+      "bustSkip": 0.0802,
+      "showdownCast": 0.3025,
+      "showdownSkip": 0.2901,
+      "meanAether": 0.24,
+      "divergentTrees": 90
+    },
+    "marked_fate|shallow": {
+      "n": 372,
+      "meanDiff": 5.478,
+      "ci95": [
+        1.315,
+        10.223
+      ],
+      "sd": 44.51,
+      "outliers": 6,
+      "bustCast": 0.121,
+      "bustSkip": 0.1263,
+      "showdownCast": 0.3145,
+      "showdownSkip": 0.2554,
+      "meanAether": 0.45,
+      "divergentTrees": 101
+    },
+    "ravenous_eye|shallow": {
+      "n": 666,
+      "meanDiff": 0.557,
+      "ci95": [
+        -0.062,
+        1.305
+      ],
+      "sd": 8.86,
+      "outliers": 8,
+      "bustCast": 0.1096,
+      "bustSkip": 0.1156,
+      "showdownCast": 0.3123,
+      "showdownSkip": 0.2973,
+      "meanAether": 2.5,
+      "divergentTrees": 659
+    },
+    "ravenous_eye|mid": {
+      "n": 621,
+      "meanDiff": 0.646,
+      "ci95": [
+        -0.738,
+        1.974
+      ],
+      "sd": 18.5,
+      "outliers": 10,
+      "bustCast": 0.0725,
+      "bustSkip": 0.0773,
+      "showdownCast": 0.277,
+      "showdownSkip": 0.2899,
+      "meanAether": 2.4,
+      "divergentTrees": 620
+    },
+    "ravenous_eye|deep": {
+      "n": 309,
+      "meanDiff": -0.812,
+      "ci95": [
+        -3.89,
+        2.061
+      ],
+      "sd": 26.14,
+      "outliers": 7,
+      "bustCast": 0.0097,
+      "bustSkip": 0.0129,
+      "showdownCast": 0.4466,
+      "showdownSkip": 0.4563,
+      "meanAether": 2.38,
+      "divergentTrees": 309
+    },
+    "marked_fate|deep": {
+      "n": 84,
+      "meanDiff": -11.512,
+      "ci95": [
+        -32.083,
+        9.857
+      ],
+      "sd": 102.23,
+      "outliers": 0,
+      "bustCast": 0,
+      "bustSkip": 0,
+      "showdownCast": 0.2976,
+      "showdownSkip": 0.3333,
+      "meanAether": 0.29,
+      "divergentTrees": 24
+    },
+    "ember_echo|deep": {
+      "n": 654,
+      "meanDiff": -0.217,
+      "ci95": [
+        -1.492,
+        1.076
+      ],
+      "sd": 17.61,
+      "outliers": 14,
+      "bustCast": 0.0122,
+      "bustSkip": 0.0122,
+      "showdownCast": 0.3823,
+      "showdownSkip": 0.3731,
+      "meanAether": 1,
+      "divergentTrees": 161
+    },
+    "quiet_briars|deep": {
+      "n": 132,
+      "meanDiff": -1.932,
+      "ci95": [
+        -10.621,
+        6.833
+      ],
+      "sd": 50.22,
+      "outliers": 2,
+      "bustCast": 0.0076,
+      "bustSkip": 0.0076,
+      "showdownCast": 0.2273,
+      "showdownSkip": 0.3182,
+      "meanAether": 0.55,
+      "divergentTrees": 37
+    },
+    "red_oath|mid": {
+      "n": 102,
+      "meanDiff": -0.157,
+      "ci95": [
+        -6.51,
+        5.333
+      ],
+      "sd": 30.69,
+      "outliers": 2,
+      "bustCast": 0.0294,
+      "bustSkip": 0.0196,
+      "showdownCast": 0.3333,
+      "showdownSkip": 0.3333,
+      "meanAether": 0,
+      "divergentTrees": 22
+    },
+    "red_oath|deep": {
+      "n": 57,
+      "meanDiff": 1.456,
+      "ci95": [
+        -2.509,
+        7.088
+      ],
+      "sd": 18.89,
+      "outliers": 1,
+      "bustCast": 0,
+      "bustSkip": 0,
+      "showdownCast": 0.386,
+      "showdownSkip": 0.4211,
+      "meanAether": 0,
+      "divergentTrees": 12
+    }
+  },
+  "skilledChoiceFrequency": {
+    "briar_lock": {
+      "offered": 18669,
+      "cast": 6167,
+      "rate": 0.3303
+    },
+    "fate_exchange": {
+      "offered": 25016,
+      "cast": 2651,
+      "rate": 0.106
+    },
+    "cinder_challenge": {
+      "offered": 27401,
+      "cast": 1951,
+      "rate": 0.0712
+    },
+    "unmask": {
+      "offered": 10630,
+      "cast": 3787,
+      "rate": 0.3563
+    },
+    "thorn_lattice": {
+      "offered": 12349,
+      "cast": 3848,
+      "rate": 0.3116
+    },
+    "twin_oracle": {
+      "offered": 7877,
+      "cast": 2813,
+      "rate": 0.3571
+    },
+    "quiet_briars": {
+      "offered": 1410,
+      "cast": 418,
+      "rate": 0.2965
+    },
+    "red_oath": {
+      "offered": 111,
+      "cast": 12,
+      "rate": 0.1081
+    },
+    "ember_echo": {
+      "offered": 683,
+      "cast": 38,
+      "rate": 0.0556
+    },
+    "second_reflection": {
+      "offered": 989,
+      "cast": 85,
+      "rate": 0.0859
+    },
+    "marked_fate": {
+      "offered": 260,
+      "cast": 25,
+      "rate": 0.0962
+    },
+    "ravenous_eye": {
+      "offered": 532,
+      "cast": 157,
+      "rate": 0.2951
+    }
+  },
+  "seconds": 400.6
+}

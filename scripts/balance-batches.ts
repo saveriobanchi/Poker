@@ -85,6 +85,8 @@ if (!isMainThread) {
     row.deathsByPhase = sum((r) => r.policies[p].deathsByPhase);
     row.relics = sum((r) => r.policies[p].relics);
     row.evolvedAny = +(results.reduce((a, r) => a + r.policies[p].evolvedAny, 0) / n).toFixed(4);
+    row.evolutionBranches = sum((r) => r.policies[p].evolutionBranches);
+    row.castsPerRun = Object.fromEntries(Object.entries(sum((r) => r.policies[p].casts)).map(([k, v]) => [k, +(v / n).toFixed(2)]));
     row.whisper = sum((r) => r.policies[p].whisper);
     row.repaid = sum((r) => r.policies[p].repaid);
     summary[p] = row;

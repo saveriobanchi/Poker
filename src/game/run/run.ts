@@ -1377,6 +1377,11 @@ function sellToBroker(run: RunState, relic: RelicId): void {
 function leaveHearing(run: RunState): void {
   actBoundaryRepayments(run, 'cinder_hearing');
   if (!playerIsFree(run)) {
+    // The Undercircuit is walked once per run (design v0.9 §07): a second fall ends under the low lanterns.
+    if (run.flags.includes('under_entered')) {
+      run.log.push('Still bound, you return below for good.');
+      return goTo(run, 'under_living_end');
+    }
     run.log.push('Still bound, you take the stairs down to the Undercircuit.');
     return goTo(run, 'under_declaration');
   }

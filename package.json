@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run test",
     "simulate": "esbuild scripts/simulate-runs.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/simulate-runs.mjs --log-level=warning && node node_modules/.cache/simulate-runs.mjs",
-    "balance": "esbuild scripts/balance-batches.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/balance-batches.mjs --log-level=warning && node node_modules/.cache/balance-batches.mjs"
+    "balance": "esbuild scripts/balance-batches.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/balance-batches.mjs --log-level=warning && node node_modules/.cache/balance-batches.mjs",
+    "spell-ev": "esbuild scripts/spell-ev.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/spell-ev.mjs --log-level=warning && node node_modules/.cache/spell-ev.mjs"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

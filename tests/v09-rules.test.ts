@@ -138,3 +138,14 @@ describe('rewards, shops and epilogues (design v0.9 §11, §12)', () => {
     expect(() => runCommand(run, { kind: 'fate', choice: 'claim' })).toThrow();
   });
 });
+
+describe('a bound character who already walked the Undercircuit (design v0.9 §07)', () => {
+  it('ends under the low lanterns instead of replaying the Underlamp', () => {
+    const run = createRun(11);
+    run.node = 'oath_hearing';
+    run.flags.push('under_entered', 'act3_entered');
+    run.results.push({ node: 'underlamp_table', outcome: 'win', standings: [], net: 0, hands: 6, repayment: 0 });
+    run.contracts.push({ id: 'kb2', claimId: 'c', pact: 'debt', debtor: 'you', creditor: 'vesper', principal: 10, obligation: 15, repaid: 0, servicesOwed: 0, servicesDone: 0, tablesCompleted: 0, status: 'active' });
+    expect(runCommand(run, { kind: 'advance' }).node).toBe('under_living_end');
+  });
+});
