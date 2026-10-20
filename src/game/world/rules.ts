@@ -4,6 +4,7 @@
  */
 import opponents from '../run/data/p4-opponents.json';
 import worldRules from '../run/data/p4-world-rules.json';
+import act2Temperaments from '../run/data/p6-last-claim-temperaments.json';
 
 export type Pact = 'mercy' | 'debt' | 'service';
 export const PACTS: Pact[] = ['mercy', 'debt', 'service'];
@@ -110,6 +111,23 @@ export function outlook(p: number): Outlook {
 export const DEBT = { multiplier: 1.5, repayShare: 0.3, overdueAfterTables: 4, preservedStack: 1 };
 export const SERVICE_TASKS = 3;
 export const MAX_PLAYER_SURVIVAL_COVENANTS = 1;
+
+/**
+ * Act II rivals (design v0.8 §07): claimant base and pact preference, debtor
+ * acceptance, priority and hard vetoes, endowment from their own wallet.
+ */
+for (const p of act2Temperaments.profiles) {
+  ENDOWMENT[p.id] = p.endowment;
+  CLAIMANT_BASE[p.id] = p.claimant_base;
+  CLAIMANT_PACT_PREFERENCE[p.id] = p.pact_preference as Partial<Record<Pact, number>>;
+  const veto = p.hard_veto as Pact[];
+  const listed = p.debtor_priority as Pact[];
+  DEBTOR_TEMPERAMENT[p.id] = {
+    acceptance: p.debtor_acceptance as Record<Pact, number>,
+    veto,
+    priority: [...listed, ...PACTS.filter((x) => !listed.includes(x))].filter((x) => !veto.includes(x)),
+  };
+}
 
 /** Ledger relief treasury at run start (accepted in design v0.6 §01). */
 export const LEDGER_TREASURY_INITIAL = worldRules.treasury_start;

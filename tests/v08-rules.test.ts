@@ -142,3 +142,30 @@ describe('NPC debt boundaries (design v0.8 §06)', () => {
     assertRunInvariants(run);
   });
 });
+
+describe('Act II Last Claim temperaments (design v0.8 §07)', () => {
+  it('every Act II rival has its own claimant, debtor and veto profile, and offers stay reproducible', async () => {
+    const { CLAIMANT_BASE, DEBTOR_TEMPERAMENT, ENDOWMENT, CLAIMANT_PACT_PREFERENCE } = await import('../src/game/world');
+    const data = (await import('../src/game/run/data/p6-last-claim-temperaments.json')).default;
+    for (const p of data.profiles) {
+      expect(CLAIMANT_BASE[p.id]).toBe(p.claimant_base);
+      expect(ENDOWMENT[p.id]).toBe(10);
+      expect(CLAIMANT_PACT_PREFERENCE[p.id]).toEqual(p.pact_preference);
+      expect(DEBTOR_TEMPERAMENT[p.id].veto).toEqual(p.hard_veto);
+      for (const v of p.hard_veto) expect(DEBTOR_TEMPERAMENT[p.id].priority).not.toContain(v);
+    }
+    expect(DEBTOR_TEMPERAMENT.margrave_noct.veto).toEqual(['service']);
+    expect(DEBTOR_TEMPERAMENT.vesa_kael.veto).toEqual([]);
+    expect(DEBTOR_TEMPERAMENT.isolde_morn.priority).toEqual(['mercy', 'debt']);
+  });
+
+  it('a vetoed pact is a hard zero for an Act II debtor; the rest are clamped 5-90%', async () => {
+    const { createCharacter, createWorld, debtorAcceptance } = await import('../src/game/world');
+    const chars = [createCharacter('you', 'You', 'human', 'player'), createCharacter('margrave_noct', 'Margrave Noct', 'ai', 'margrave_noct')];
+    const w = createWorld(chars, 200);
+    const claim = { id: 'x', debtor: 1, claimant: { kind: 'seat' as const, seat: 0 }, potIndex: 0, potAmount: 10, roll: 0.5, stage: 'open' as const, offer: null, accepted: null, counter: null, outcome: null };
+    expect(debtorAcceptance(w, claim, 'service')).toBe(0);
+    expect(debtorAcceptance(w, claim, 'mercy')).toBeCloseTo(0.72);
+    expect(debtorAcceptance(w, claim, 'debt')).toBeCloseTo(0.58);
+  });
+});
