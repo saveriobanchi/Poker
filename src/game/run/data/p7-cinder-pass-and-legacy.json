@@ -1,0 +1,60 @@
+{
+  "schema": "p7-v0.9",
+  "cinder_pass": {
+    "earned": "Ember Steps top-two living finish only",
+    "benefit": "waive one Crown Writ Favor petition once, if otherwise eligible",
+    "uses": 1,
+    "may_skip_act2": "only if independent conditional Writ eligibility from Undercircuit was earned",
+    "cannot": [
+      "create chips",
+      "forgive debts",
+      "cancel service",
+      "replay a table",
+      "waive an unearned Undercircuit qualification"
+    ],
+    "idempotency_key": "cinder_pass_redeemed_v0.9"
+  },
+  "writ": {
+    "petition_favor_cost": -1,
+    "minimum_favor": -3,
+    "charge_at_most_once_per_run": true,
+    "low_stack_offer_if_less_than": 24,
+    "low_stack_route_once": true
+  },
+  "epilogues": [
+    {
+      "ending": "the_ledger_unbound",
+      "fates": [
+        "reform",
+        "claim"
+      ],
+      "run_completed": true,
+      "mechanical_next": "archive ending; unlock world-legacy narrative journal, optional fresh-character new run",
+      "allegiance_memory": "preserved as world testament; can influence future dialogue and encounter availability, never mint Lifechips or revive the same character"
+    },
+    {
+      "ending": "the_unchosen_road",
+      "fates": [
+        "retire",
+        "keep_wagering_in_future_content"
+      ],
+      "run_completed": true,
+      "mechanical_next": "living character archived; no auto-reset or repeat of defeated tables"
+    },
+    {
+      "ending": "under_living_end",
+      "fates": [
+        "honor_contract",
+        "seek_liberation_in_future_content"
+      ],
+      "run_completed": true,
+      "mechanical_next": "living bound/unbound archived, obligations and wallet preserved; an optional future finite Cinder sequel can be authored, but no repeatable P7 poker node"
+    }
+  ],
+  "new_run": {
+    "character": "new person, not resurrected predecessor",
+    "base_lifechips": "existing new-character rules funded from its own declared world initial wallet",
+    "legacy_rewards": "lore, unlocks and cosmetic/encounter variation only, no permanent chip buffs",
+    "save_policy": "archive previous character and keep an immutable world testament; do not import their inventory into a new run"
+  }
+}

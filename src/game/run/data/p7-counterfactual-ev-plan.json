@@ -1,0 +1,41 @@
+{
+  "schema": "p7-v0.9",
+  "goal": "Estimate incremental expected value of casting a specific spell versus skipping at same legally reached decision, for balance review rather than displaying perfect probabilities to players.",
+  "sampling": {
+    "states_per_common_spell_target": 10000,
+    "states_per_rare_spell_target": 2000,
+    "policies": [
+      "skilled",
+      "tight",
+      "mixed-aggressive"
+    ],
+    "seeded_batches": 10,
+    "match_randomness": "common random numbers from cloned complete game state, separately seeded subsequent decision policy, identical starting state and private deck; do not expose counterfactual cards to an actual in-game agent"
+  },
+  "arm_a": "cast chosen legal spell, follow fixed downstream policy, resolve hand and if feasible the rest of table",
+  "arm_b": "skip spell in same window, follow same downstream policy",
+  "metrics": [
+    "end-of-hand player net Lifechips",
+    "end-of-table player net Lifechips",
+    "bankruptcy probability",
+    "showdown rate",
+    "per-use Aether balance",
+    "probability of surviving table",
+    "opponent stack changes",
+    "relative choice frequencies"
+  ],
+  "report": [
+    "n per category and by street/stack depth",
+    "paired mean EV difference and bootstrap 95% CI",
+    "variance and outliers",
+    "number of paired replays with different legal trees",
+    "relative frequency of each spell/branch",
+    "flag analyses with incompatible state continuations"
+  ],
+  "requirements": [
+    "P0-P6 chip and RNG invariants in every branch",
+    "counterfactual always offline for analysis, not an on-screen odds oracle",
+    "difference in downstream outcomes is allowed; never force identical actions when illegal",
+    "preserve private-info boundaries of acting agents"
+  ]
+}

@@ -5,6 +5,7 @@
 import opponents from '../run/data/p4-opponents.json';
 import worldRules from '../run/data/p4-world-rules.json';
 import act2Temperaments from '../run/data/p6-last-claim-temperaments.json';
+import act3Temperaments from '../run/data/p7-act3-temperaments.json';
 
 export type Pact = 'mercy' | 'debt' | 'service';
 export const PACTS: Pact[] = ['mercy', 'debt', 'service'];
@@ -113,10 +114,11 @@ export const SERVICE_TASKS = 3;
 export const MAX_PLAYER_SURVIVAL_COVENANTS = 1;
 
 /**
- * Act II rivals (design v0.8 §07): claimant base and pact preference, debtor
- * acceptance, priority and hard vetoes, endowment from their own wallet.
+ * Act II rivals (design v0.8 §07) and Act III rivals (v0.9 §09): claimant base
+ * and pact preference, debtor acceptance, priority and hard vetoes, endowment
+ * from their own wallet.
  */
-for (const p of act2Temperaments.profiles) {
+for (const p of [...act2Temperaments.profiles, ...act3Temperaments.profiles]) {
   ENDOWMENT[p.id] = p.endowment;
   CLAIMANT_BASE[p.id] = p.claimant_base;
   CLAIMANT_PACT_PREFERENCE[p.id] = p.pact_preference as Partial<Record<Pact, number>>;

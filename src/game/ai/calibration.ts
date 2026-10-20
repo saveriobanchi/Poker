@@ -51,23 +51,42 @@ export function measureStyles(
   return Object.fromEntries([...tally].map(([id, t]) => [id, { vpip: t.vpip / t.n, pfr: t.pfr / t.n, opportunities: t.n }]));
 }
 
-/** A public dossier: counts over a small number of recorded public preflop hands. */
+/** One archived public preflop hand of a dossier's subject: the actions it took, in order. */
+export interface DossierHand {
+  hand: number;
+  actions: ('fold' | 'check' | 'call' | 'raise' | 'shove')[];
+}
+
+/** A public dossier (design v0.9 §02): the archived action log, and figures recomputed from it. */
 export interface Dossier {
   rival: string;
+  /** The seed fixed before the player chose, so the archive is reproducible. */
+  seed: number;
+  records: DossierHand[];
   hands: number;
   vpip: number;
   pfr: number;
   shoves: number;
 }
 
+/** Figures derived only from the stored public records. */
+export function dossierFigures(records: DossierHand[]): { hands: number; vpip: number; pfr: number; shoves: number } {
+  return {
+    hands: records.length,
+    vpip: records.filter((r) => r.actions.some((a) => a === 'call' || a === 'raise' || a === 'shove')).length,
+    pfr: records.filter((r) => r.actions.some((a) => a === 'raise' || a === 'shove')).length,
+    shoves: records.filter((r) => r.actions.includes('shove')).length,
+  };
+}
+
 /**
- * Records `hands` seeded public hands (preflop actions only, the part every
- * spectator sees) of `rival` at a table with `others`. No hole card is recorded.
+ * Archives `hands` seeded legal public hands (preflop actions only, the part every
+ * spectator sees) of `rival` against `others`. No hole card is recorded.
  */
 export function publicDossier(rival: AiProfile, others: AiProfile[], hands: number, seed: number, bigBlind = 4): Dossier {
   const seats = [rival, ...others];
   const rng = new Rng(seed);
-  const d: Dossier = { rival: rival.id, hands: 0, vpip: 0, pfr: 0, shoves: 0 };
+  const records: DossierHand[] = [];
   for (let h = 0; h < hands; h++) {
     let s = startHand({
       seed: seed * 1_000_003 + h,
@@ -76,23 +95,19 @@ export function publicDossier(rival: AiProfile, others: AiProfile[], hands: numb
       smallBlind: bigBlind / 2,
       bigBlind,
     });
-    let v = false;
-    let p = false;
-    let sh = false;
+    const actions: DossierHand['actions'] = [];
     while (s.phase === 'betting' && s.street === 'preflop') {
       const seat = s.toAct!;
       const a = decide(getPublicView(s, seat), seats[seat], rng);
-      if (seat === 0) {
-        if (a.type !== 'fold' && a.type !== 'check') v = true;
-        if (a.type === 'raise' || a.type === 'bet' || a.type === 'allIn') p = true;
-        if (a.type === 'allIn' || ((a.type === 'raise' || a.type === 'bet') && a.to >= 50)) sh = true;
-      }
+      const before = s.seats[seat].stack + s.seats[seat].streetCommitted;
       s = applyAction(s, seat, a);
+      if (seat !== 0) continue;
+      // Record what spectators saw: a bet/raise of half the starting stack or more is a shove.
+      const logged = s.log.at(-1)!.action;
+      if (logged.type === 'fold' || logged.type === 'check' || logged.type === 'call') actions.push(logged.type);
+      else actions.push(logged.type === 'allIn' || logged.to >= before * 0.5 ? 'shove' : 'raise');
     }
-    d.hands++;
-    if (v) d.vpip++;
-    if (p) d.pfr++;
-    if (sh) d.shoves++;
+    records.push({ hand: h + 1, actions });
   }
-  return d;
+  return { rival: rival.id, seed, records, ...dossierFigures(records) };
 }

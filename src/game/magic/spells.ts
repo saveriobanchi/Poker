@@ -132,7 +132,8 @@ Object.assign(RIVAL_SPELLBOOKS, {
   master_fen: { fate_exchange: 3, unmask: 3, cinder_challenge: 1, briar_lock: 1 },
   archivist_sorn: { unmask: 3, fate_exchange: 3, cinder_challenge: 1, briar_lock: 1 },
   captain_rusk: { cinder_challenge: 3, briar_lock: 3, unmask: 1, fate_exchange: 1 },
-  ledger_regent: { fate_exchange: 3, briar_lock: 3, cinder_challenge: 1, unmask: 1 },
+  // Design v0.9 §10: one Fate Exchange becomes Second Reflection, the boss's only evolution.
+  ledger_regent: { fate_exchange: 2, second_reflection: 1, briar_lock: 3, cinder_challenge: 1, unmask: 1 },
   the_uncrowned: { cinder_challenge: 3, unmask: 3, briar_lock: 1, fate_exchange: 1 },
   stone_crier: BEGINNER_SPELLBOOK,
   copper_runner: BEGINNER_SPELLBOOK,

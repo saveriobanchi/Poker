@@ -1,0 +1,54 @@
+{
+  "schema": "p7-v0.9",
+  "merchants": [
+    {
+      "id": "selene",
+      "name": "Selene",
+      "personality": "pragmatic, quiet, sympathetic to careful gamblers",
+      "dialogue_behavior": "brief advice emphasizing retained Lifechips",
+      "economic_rule": "no special discount",
+      "opening_wallet": 80,
+      "last_claim_eligibility": "not eligible unless actually seated at a funded table"
+    },
+    {
+      "id": "merchant_elin",
+      "name": "Elin of the Velvet Exchange",
+      "personality": "status-conscious, values invitations",
+      "dialogue_behavior": "comments on visible social rank and known obligations",
+      "economic_rule": "no special discount",
+      "opening_wallet": 100,
+      "last_claim_eligibility": "not eligible unless actually seated at a funded table"
+    },
+    {
+      "id": "merchant_oran",
+      "name": "Merchant Oran",
+      "personality": "impeccably formal archivist of relic provenance",
+      "dialogue_behavior": "cautions about rare relic opportunity cost",
+      "economic_rule": "no special discount",
+      "opening_wallet": 90,
+      "last_claim_eligibility": "not eligible unless actually seated at a funded table"
+    },
+    {
+      "id": "broker_osric",
+      "name": "Broker Osric",
+      "personality": "hard-nosed broker with understated compassion",
+      "dialogue_behavior": "mentions actual wallet funding before buying relic",
+      "economic_rule": "buyback remains half original price",
+      "opening_wallet": 60,
+      "last_claim_eligibility": "not eligible unless actually seated at a funded table"
+    },
+    {
+      "id": "merchant_wisp",
+      "name": "Matron Wisp",
+      "personality": "sharp, matter-of-fact guardian of the Underledger",
+      "dialogue_behavior": "recognizes bound and unbound callers",
+      "economic_rule": "buyback remains half original price",
+      "opening_wallet": 60,
+      "last_claim_eligibility": "not eligible unless actually seated at a funded table"
+    }
+  ],
+  "invariants": [
+    "Never convert dialogue into chips or favors without a separately priced valid transaction",
+    "No unlogged wallet refill"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schema": "p7-v0.9",
+  "previous": "p6-v0.8",
+  "status": "proposed creative sign-off; implementation and playtesting required",
+  "decisions": [
+    {
+      "id": "01",
+      "what": "Fateweaver Sigil pass semantics",
+      "rule_text": "Keeping the original three-spell draw remains a valid explicit decision and consumes this table’s Sigil activation. Show “Keep — consumes Sigil for this table” before confirmation. No replacement card is sampled on Keep. The Sigil cannot be reopened this table.",
+      "numbers": "One activation per table; zero extra casts; zero change to the poker deck.",
+      "invariants_touched": "Spell count, deterministic RNG, no free repeat selection.",
+      "acceptance_test": "Keep costs the table activation, consumes no draw RNG, and reload cannot reopen. Swap moves exactly one spell and draws one legal replacement."
+    },
+    {
+      "id": "02",
+      "what": "Archival opponent dossiers",
+      "rule_text": "Court and Silver Archive dossiers contain only archived public actions from deterministic legal simulation of the named NPC against peers. Precompute and persist the dossier seed before the player makes a choice. Distinguish “archived sample” from the player’s personally witnessed hands. Do not synthesize nominal hand frequencies without an actual action log.",
+      "numbers": "Up to 12 archived public preflop hands per dossier; show n alongside VPIP/PFR/shove frequency.",
+      "invariants_touched": "AI privacy, public information, reproducible archival provenance.",
+      "acceptance_test": "All shown figures recompute from stored legal public action records; no hole cards or future board cards are exposed."
+    },
+    {
+      "id": "03",
+      "what": "Whisper spell disclosure",
+      "rule_text": "The first Arena hand publicly names one seeded spell ID in the player’s drawn spellhand; not the instance UUID, not a hole card and not a promise that the spell will be cast.",
+      "numbers": "One disclosure only; +1 Notoriety and prior +1 Resonance/Aether fallback unchanged.",
+      "invariants_touched": "Spellhand privacy, seeded once-only events.",
+      "acceptance_test": "No duplicated reveal, no leaked poker card and no inconsistent disclosure after save/restore."
+    },
+    {
+      "id": "04",
+      "what": "Cinder Pass",
+      "rule_text": "Earning the Cinder Pass from a top-two Ember Steps finish grants a single-use waiver of the 1-Favor Crown Writ petition fee once the player is otherwise eligible. Does not grant entry to the Writ without the applicable route requirements; does not erase obligations, grant Lifechips, permit table replays or bypass a required Underlamp qualification. If a fee was already paid, do not refund it.",
+      "numbers": "One per run; maximum 1 Favor saved; consumed atomically when used.",
+      "invariants_touched": "Reputation, writ eligibility, one-time reward.",
+      "acceptance_test": "Pass is not reusable; does not bypass bound-status conditions; redemption and reload produce the same Favor."
+    },
+    {
+      "id": "05",
+      "what": "Crown Writ return and fee idempotency",
+      "rule_text": "A Crown Writ fee is charged no more than once per run. Eligibility is checked at each arrival, and previously played tables remain permanently exhausted. A second arrival after Undercircuit can continue only to as-yet-unplayed content.",
+      "numbers": "Maximum one Favor petition fee; Favor floor −3.",
+      "invariants_touched": "Finite graph, unique transition ids, social accounting.",
+      "acceptance_test": "Any cycle through Writ refuses paid replay and cannot repeatedly charge Favor."
+    },
+    {
+      "id": "06",
+      "what": "Alternative path past Act II",
+      "rule_text": "A bound Fallen character may earn a conditional writ through the Undercircuit without replaying Act II. This is a legitimate difficult alternative, not automatic progression. Require Underlamp top-two, not-overdue obligations and retained binding public notice. No bonuses or retroactive Act II rewards.",
+      "numbers": "Underlamp 6 hands; top-two; 1/1 blinds; one conditional writ.",
+      "invariants_touched": "Branch reachability, contract preservation, chip economy.",
+      "acceptance_test": "Bound character cannot enter via mere Cinder Pass; an earned writ retains obligations and existing chip balances."
+    },
+    {
+      "id": "07",
+      "what": "Fall during Act III",
+      "rule_text": "A survivor rescued during Act III follows Fallen and, if eligible, Undercircuit content without replaying prior Crown tables. On becoming free, they receive the living epilogue The Unchosen Road. While bound, they may conclude at The Low Lanterns Remain. Persist actual debts, chips and achievements.",
+      "numbers": "At most one successful survival covenant per run; no Crown table re-entry.",
+      "invariants_touched": "No replay, last-chip law, ending integrity.",
+      "acceptance_test": "Fall during any Act III node never resets a table or rescues twice and always resolves into an eligible ending/death."
+    },
+    {
+      "id": "08",
+      "what": "Low-stack threshold",
+      "rule_text": "Keep the existing pre-Coronet safety offer for stacks strictly below 24 Lifechips. The offer sends an eligible player to the one-time Undercircuit route; it is optional, not chip protection. Once Undercircuit is used, display the risk but do not offer a replay.",
+      "numbers": "Trigger 1–23 Lifechips; starting Crown big blind 8.",
+      "invariants_touched": "Actionable information, finite route, no artificial bankroll floor.",
+      "acceptance_test": "At 23 show option, at 24 do not; at second arrival route is closed and no chips are created."
+    },
+    {
+      "id": "09",
+      "what": "Act III personalities",
+      "rule_text": "Replace generic “other” Last Claim behavior for all seven named Act III rivals with explicit claimant rates, preferences, debtor rates, priority and veto data in p7-act3-temperaments.json. Merchants get authored social temperament but are never Last Claim claimants unless genuinely seated and funded in a later expansion.",
+      "numbers": "Seven rivals; each endowment 10 actual chips; clamp non-veto rates to [0.05,0.90].",
+      "invariants_touched": "NPC autonomy, seeded claim, wallet debit, one-counteroffer limit.",
+      "acceptance_test": "Every profile negotiates deterministically using one persisted roll and never accepts a vetoed pact."
+    },
+    {
+      "id": "10",
+      "what": "Ledger Regent evolving magic",
+      "rule_text": "Replace exactly one Fate Exchange copy in the Regent’s legal eight-card Spellbook with Second Reflection. This is the sole evolved spell in their P7 boss deck; no relic and no extra cast. Preserve exact casting cost and private selection as already defined for that evolution.",
+      "numbers": "Eight total spell instances; one Second Reflection, cost 3 Aether.",
+      "invariants_touched": "Private information, spell-instance conservation, AI magic legality.",
+      "acceptance_test": "Regent still casts only one spell per hand, never sees player-private information, never duplicates a card."
+    },
+    {
+      "id": "11",
+      "what": "Table of Seals rewards",
+      "rule_text": "Approve the single evolution token reward. If a spell has 1 Resonance, evolve exactly one instance; otherwise the existing +1 Resonance fallback applies to a legal unevolved instance. If all owned spells are evolved or capped, offer “Decline” without an extra chip reward; report no valid target.",
+      "numbers": "One reward per success; evolution requires Resonance ≥1.",
+      "invariants_touched": "Inventory conservation, event idempotency, no chip rewards.",
+      "acceptance_test": "Cannot dupe token with save/load; hard-cap one branch per spell instance."
+    },
+    {
+      "id": "12",
+      "what": "Rarity-weighted merchant stocks and UI polish",
+      "rule_text": "Approve 60/35/5 rarity-weighted stock for all *freshly opened* shops. Existing saved stock must remain byte-for-byte stable. Seeded distinct offers and nonowned rules remain. Track scarcity and show owned/replaced warnings.",
+      "numbers": "60% common / 35% uncommon / 5% rare before unavailable-tier renormalization.",
+      "invariants_touched": "Shop determinism, migration stability, wallet conservation.",
+      "acceptance_test": "Load an old Selene save to identical offers; new shops sample weights and preserve their stock across reloads."
+    }
+  ]
+}

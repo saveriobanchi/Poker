@@ -65,6 +65,7 @@ import act2Data from './data/p5-act2-route.json';
 import cinderData from './data/p5-fallen-continuation.json';
 import act3Data from './data/p6-act3-route.json';
 import underData from './data/p6-undercircuit-route.json';
+import passData from './data/p7-cinder-pass-and-legacy.json';
 
 export type TableNodeId =
   | 'contract_1'
@@ -221,6 +222,8 @@ export interface RunState {
   observed: Record<string, PublicStats>;
   /** Court of Mirrors / Silver Archive dossier, shown at the next table only (design v0.8 §02). */
   dossier?: (Dossier & { witnessed: PublicStats | null }) | null;
+  /** Archive seeds fixed on arrival, before the player chooses (design v0.9 §02). */
+  dossierSeeds?: Record<string, number>;
 }
 
 export class RunError extends Error {}
@@ -816,6 +819,8 @@ export type RunCommand =
   | { kind: 'archive'; choice: 'study' | 'resonate'; rival?: string; uid?: string }
   /** The Ledger Unbound: record a narrative allegiance (no mechanics). */
   | { kind: 'allegiance'; choice: 'reform' | 'claim' }
+  /** Epilogue of a living ending (design v0.9): recorded once, no mechanics. */
+  | { kind: 'fate'; choice: string }
   /** `replace`: with full relic slots, the owned relic given up (no refund); `uid`: spell for a Resonance reward. */
   | { kind: 'reward'; index: number | null; replace?: RelicId; uid?: string }
   | { kind: 'setback'; choice: 'public_record' | 'break_attunement'; uid?: string }
@@ -863,9 +868,15 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
     case 'archive':
       resolveArchive(run, cmd.choice, cmd.rival, cmd.uid);
       break;
+    case 'fate': {
+      const fates = EPILOGUE_FATES[run.node] ?? [];
+      if (!fates.includes(cmd.choice) || run.flags.some((f) => f.startsWith('fate:'))) throw new RunError('No epilogue to choose');
+      run.flags.push(`fate:${cmd.choice}`);
+      break;
+    }
     case 'allegiance':
       if (run.node !== 'the_ledger_unbound' || run.flags.some((f) => f.startsWith('allegiance:'))) throw new RunError('No allegiance to record');
-      run.flags.push(`allegiance:${cmd.choice}`);
+      run.flags.push(`allegiance:${cmd.choice}`, `fate:${cmd.choice}`);
       run.log.push(cmd.choice === 'reform' ? 'You petition to reform the Ledger’s law.' : 'You claim the Ledger’s authority.');
       break;
     case 'reward':
@@ -902,6 +913,9 @@ function goTo(run: RunState, node: NodeId): void {
     if (!run.flags.includes('under_entered')) run.flags.push('under_entered');
   }
   if (node === 'under_broker') fundActor(run, UNDER_LEDGER, WISP_ID, UNDER_FUNDING.merchant_wisp as number, false);
+  // Fix the archive seeds on arrival, before any choice is offered.
+  if (node === 'mirror_audience') for (const r of ARENA_RIVALS) dossierSeed(run, r, 0xd055);
+  if (node === 'crown_archive') for (const r of ARCHIVE_RIVALS) dossierSeed(run, r, 0xa4c1);
   if (node === 'gilded_gate') {
     ensureIngress(run, ACT2_INGRESS_KEY, ACT2_LEDGER, act2Data.actor_migration.external_origin_initial);
     if (!run.flags.includes('act2_entered')) run.flags.push('act2_entered');
@@ -917,6 +931,11 @@ function goTo(run: RunState, node: NodeId): void {
 const BROKER = cinderData.nodes.find((n) => n.id === 'cinder_broker')! as unknown as { merchant_wallet: string; merchant_opening_wallet: number };
 export const WISP_ID = 'merchant_wisp';
 export const ORAN_ID = 'merchant_oran';
+/** Epilogue fates per living ending (design v0.9, p7-cinder-pass-and-legacy.json). */
+export const EPILOGUE_FATES: Record<string, string[]> = Object.fromEntries(passData.epilogues.map((e) => [e.ending, e.fates]));
+
+export const CINDER_PASS_REDEEMED = passData.cinder_pass.idempotency_key;
+
 /** Below this many Lifechips the Crown Writ offers the Undercircuit first (design v0.8 §08). */
 export const WRIT_LOW_STACK = 24;
 export const ARCHIVE_RIVALS = (act3Data.nodes.find((n) => n.id === 'seals_table')! as unknown as { seat_ids: string[] }).seat_ids.filter((x) => x !== 'player');
@@ -933,8 +952,14 @@ export function canRecover(run: RunState): boolean {
  */
 function enterWrit(run: RunState, entry: 'invitation' | 'petition' | 'conditional'): void {
   if (entry !== 'invitation' && !run.flags.includes('writ_granted')) {
-    const you = run.characters[PLAYER_ID];
-    you.reputation.favor = Math.max(PETITION_FAVOR_FLOOR, you.reputation.favor - 1);
+    if (run.flags.includes('cinder_pass') && !run.flags.includes(CINDER_PASS_REDEEMED)) {
+      // Design v0.9 §04: the Cinder Pass waives this one fee, once; it grants nothing else.
+      run.flags.push(CINDER_PASS_REDEEMED);
+      run.log.push('Your Cinder Pass waives the petition fee.');
+    } else {
+      const you = run.characters[PLAYER_ID];
+      you.reputation.favor = Math.max(PETITION_FAVOR_FLOOR, you.reputation.favor - 1);
+    }
   }
   if (entry === 'conditional' && !run.flags.includes('bound_writ')) run.flags.push('bound_writ');
   if (!run.flags.includes('writ_granted')) run.flags.push('writ_granted');
@@ -1059,6 +1084,7 @@ function afterResult(run: RunState): void {
     return;
   }
   const offers = rewardOffers(run, r.node);
+  if (!offers.length && r.node === 'seals_table') run.log.push('No spell is left to evolve or attune: the Table of Seals has no valid reward target.');
   if (offers.length) {
     run.reward = offers;
     run.node = 'reward';
@@ -1073,7 +1099,8 @@ export function rewardOffers(run: RunState, node: TableNodeId): RewardOption[] {
   if (node === 'contract_1') {
     return full ? [] : rng.shuffle(COMMON_RELICS.filter((r) => !owned.includes(r))).slice(0, 3).map((relic) => ({ kind: 'relic', relic }));
   }
-  if (node === 'seals_table') return [{ kind: 'evolution_token' }];
+  // Design v0.9 §11: the token only when some unevolved spell could use it; otherwise no valid target.
+  if (node === 'seals_table') return allCards(playerBook(run)).some((c) => isBaseSpell(c.spell)) ? [{ kind: 'evolution_token' }] : [];
   if (node === 'contract_2' || node === 'velvet_arena' || node === 'coronet_table') {
     const relic = weightedRelic(rng, RELIC_IDS.filter((r) => !owned.includes(r)));
     return [...(relic ? [{ kind: 'relic' as const, relic }] : []), { kind: 'evolution_token' }];
@@ -1248,8 +1275,15 @@ export function mirrorCandidates(run: RunState): string[] {
 /** Records a seeded public dossier of at most 12 hands, supplemented by what the player witnessed. */
 function makeDossier(run: RunState, rival: string, peers: string[], salt: number): void {
   const others = peers.filter((p) => p !== rival).map((p) => PROFILES[p]);
-  const d = publicDossier(PROFILES[rival], others.length ? others : [PROFILES.corvin], DOSSIER_HANDS, deriveSeed(run.seed, salt, rival.length));
+  const seed = dossierSeed(run, rival, salt);
+  const d = publicDossier(PROFILES[rival], others.length ? others : [PROFILES.corvin], DOSSIER_HANDS, seed);
   run.dossier = { ...d, witnessed: run.observed[rival] ?? null };
+}
+
+/** The archive seed for `rival`, fixed (and saved) when the player arrives, before any choice (design v0.9 §02). */
+function dossierSeed(run: RunState, rival: string, salt: number): number {
+  run.dossierSeeds ??= {};
+  return (run.dossierSeeds[rival] ??= deriveSeed(run.seed, salt, rival.length));
 }
 
 export const DOSSIER_HANDS = 12;
