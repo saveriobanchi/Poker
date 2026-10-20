@@ -3,10 +3,12 @@ import { PROFILES } from '../src/game/ai';
 import { measureStyles } from '../src/game/ai/calibration';
 import opponents from '../src/game/run/data/p4-opponents.json';
 import act2 from '../src/game/run/data/p5-act2-route.json';
+import act3 from '../src/game/run/data/p6-act3-route.json';
 
 const TARGETS: Record<string, { vpip: number; pfr: number }> = Object.fromEntries([
   ...opponents.opponents.map((o) => [o.id, { vpip: o.vpip_target, pfr: o.pfr_target }]),
   ...act2.adversaries.map((a) => [a.id, { vpip: a.target_vpip, pfr: a.target_pfr }]),
+  ...act3.funding.opponents.map((a) => [a.id, { vpip: a.vpip_target, pfr: a.pfr_target }]),
 ]);
 
 /** A disciplined stand-in for the player's seat. */
@@ -17,6 +19,9 @@ const TABLES = [
   { ids: ['isolde_morn', 'ravel_croft', 'vesa_kael'], stacks: [100, 140, 125, 135], bb: 4 },
   { ids: ['witness_arden', 'livia_shade'], stacks: [100, 160, 145], bb: 4 },
   { ids: ['margrave_noct', 'aurelia_ash'], stacks: [100, 190, 155], bb: 6 },
+  { ids: ['dame_neris', 'copper_saint', 'master_fen'], stacks: [150, 165, 155, 145], bb: 8 },
+  { ids: ['archivist_sorn', 'captain_rusk'], stacks: [150, 170, 145], bb: 8 },
+  { ids: ['ledger_regent', 'the_uncrowned'], stacks: [150, 220, 190], bb: 8 },
 ];
 
 describe('rival styles (design v0.6 §07, v0.7 §09)', () => {

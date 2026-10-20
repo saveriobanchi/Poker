@@ -126,6 +126,16 @@ Object.assign(RIVAL_SPELLBOOKS, {
   aurelia_ash: { fate_exchange: 3, briar_lock: 3, cinder_challenge: 1, unmask: 1 },
   ash_porter: BEGINNER_SPELLBOOK,
   cinder_mason: BEGINNER_SPELLBOOK,
+  // Act III rivals (design v0.8 §08): affinity pairs 3/3, the others 1/1.
+  dame_neris: { briar_lock: 3, unmask: 3, cinder_challenge: 1, fate_exchange: 1 },
+  copper_saint: { cinder_challenge: 3, briar_lock: 3, unmask: 1, fate_exchange: 1 },
+  master_fen: { fate_exchange: 3, unmask: 3, cinder_challenge: 1, briar_lock: 1 },
+  archivist_sorn: { unmask: 3, fate_exchange: 3, cinder_challenge: 1, briar_lock: 1 },
+  captain_rusk: { cinder_challenge: 3, briar_lock: 3, unmask: 1, fate_exchange: 1 },
+  ledger_regent: { fate_exchange: 3, briar_lock: 3, cinder_challenge: 1, unmask: 1 },
+  the_uncrowned: { cinder_challenge: 3, unmask: 3, briar_lock: 1, fate_exchange: 1 },
+  stone_crier: BEGINNER_SPELLBOOK,
+  copper_runner: BEGINNER_SPELLBOOK,
 } satisfies Record<string, SpellCounts>);
 // Design v0.7 §08: the boss carries one legal evolution — one Briar Lock becomes Quiet Briars.
 RIVAL_SPELLBOOKS.bailiff_sable = { ...RIVAL_SPELLBOOKS.bailiff_sable, briar_lock: 2, quiet_briars: 1 };

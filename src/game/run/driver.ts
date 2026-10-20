@@ -13,7 +13,9 @@ import { Rng } from '../rules/rng';
 import { humanSeat, sessionStatus } from '../table/session';
 import { currentClaim, pactOptions, roles } from '../world';
 import {
+  ARCHIVE_RIVALS,
   attuneOptions,
+  canRecover,
   ENDINGS,
   mirrorCandidates,
   mirrorChoice,
@@ -138,6 +140,19 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
       return policy === 'maniac' || policy === 'skilled' ? { kind: 'event', take: true, uid: resonanceTargets(run)[0]?.uid } : { kind: 'event', take: false };
     case 'act2_petition':
       return { kind: 'petition', choice: 'favor' };
+    case 'crown_writ':
+      return canRecover(run) && policy !== 'maniac' ? { kind: 'recover' } : { kind: 'advance' };
+    case 'crown_archive': {
+      if (run.flags.includes('archive_done')) return { kind: 'advance' };
+      const uid = resonanceTargets(run)[0]?.uid;
+      return policy === 'skilled' || !uid ? { kind: 'archive', choice: 'study', rival: ARCHIVE_RIVALS[0] } : { kind: 'archive', choice: 'resonate', uid };
+    }
+    case 'royal_exchange': {
+      const chips = playerChips(run);
+      const affordable = run.shop!.offers.findIndex((o) => !o.sold && chips - o.price >= 80 && (run.player.magic.relics ?? []).length < SLOT_LIMITS.relics);
+      if (policy === 'skilled' && affordable >= 0) return { kind: 'buy', offer: affordable };
+      return { kind: 'leaveShop', to: 'seals_table' };
+    }
     case 'optional_event':
       return { kind: 'event', take: playerChips(run) >= 60 };
     case 'reward': {

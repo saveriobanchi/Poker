@@ -63,6 +63,8 @@ import shopData from './data/p4-shop.json';
 import relicData from './data/p4-relics-and-covenants.json';
 import act2Data from './data/p5-act2-route.json';
 import cinderData from './data/p5-fallen-continuation.json';
+import act3Data from './data/p6-act3-route.json';
+import underData from './data/p6-undercircuit-route.json';
 
 export type TableNodeId =
   | 'contract_1'
@@ -72,7 +74,12 @@ export type TableNodeId =
   | 'cinder_low_table'
   | 'masked_salon'
   | 'velvet_arena'
-  | 'crown_inquest';
+  | 'crown_inquest'
+  // P6 (design v0.8 §08–§09)
+  | 'coronet_table'
+  | 'seals_table'
+  | 'crown_table'
+  | 'underlamp_table';
 export type NodeId =
   | 'start'
   | TableNodeId
@@ -96,13 +103,24 @@ export type NodeId =
   | 'act2_living_exile'
   | 'cinder_broker'
   | 'oath_hearing'
+  /** P5 legacy: now the doorway to the Underledger. */
   | 'undercircuit_entry'
+  // P6 (design v0.8 §08–§09)
+  | 'crown_writ'
+  | 'crown_archive'
+  | 'royal_exchange'
+  | 'the_ledger_unbound'
+  | 'the_unchosen_road'
+  | 'under_declaration'
+  | 'under_broker'
+  | 'under_hearing'
+  | 'under_living_end'
   | 'death';
 
 /** Final endings of the current build. */
-export const ENDINGS: NodeId[] = ['act2_victory', 'act2_living_exile', 'undercircuit_entry', 'death'];
-/** Act I chapter ends: a summary screen, then the story continues (design v0.7 §09–§10). */
-export const CHAPTER_ENDS: NodeId[] = ['slice_victory', 'slice_exile', 'fallen_unlocked'];
+export const ENDINGS: NodeId[] = ['the_ledger_unbound', 'the_unchosen_road', 'under_living_end', 'death'];
+/** Chapter ends: a summary screen, then the story continues (design v0.7 §09–§10, v0.8 §08). */
+export const CHAPTER_ENDS: NodeId[] = ['slice_victory', 'slice_exile', 'fallen_unlocked', 'act2_victory', 'act2_living_exile'];
 
 export interface Standing {
   id: string;
@@ -161,14 +179,14 @@ export interface PerimeterExpansion {
 }
 
 export interface ShopState {
-  id: 'lantern_shop' | 'velvet_exchange';
+  id: 'lantern_shop' | 'velvet_exchange' | 'royal_exchange';
   merchant: string;
   offers: ShopOffer[];
   rethreadSold: boolean;
 }
 
 export interface RunState {
-  version: 2;
+  version: 3;
   seed: number;
   node: NodeId;
   /** Main-route node that follows the current result, reward or audit. */
@@ -214,8 +232,10 @@ interface SeatData {
   stack?: string;
   /** P4 local wallet funded at world creation. */
   initial?: number;
-  /** P5 actor funded once from an external ledger at first appearance (design v0.7 §11). */
+  /** P5+ actor funded once from an external ledger at first appearance (design v0.7 §11). */
   external?: number;
+  /** The external ledger funding it (default: the Act II ledger). */
+  ledger?: string;
   /** Cinder: replaces `id` when that character is dead or has no Lifechips. */
   substitute?: { id: string; external: number };
 }
@@ -287,7 +307,52 @@ const P5_TABLES: Record<string, TableNodeData> = Object.fromEntries(
   };
 }
 
-const TABLE_NODES = { ...P4_TABLES, ...P5_TABLES } as Record<TableNodeId, TableNodeData>;
+export const CROWN_LEDGER = act3Data.funding.account;
+export const CROWN_INGRESS_KEY = act3Data.funding.exactly_once;
+export const UNDER_LEDGER = underData.funding.account;
+export const UNDER_INGRESS_KEY = underData.funding.exactly_once;
+const CROWN_WALLETS = Object.fromEntries(act3Data.funding.opponents.map((o) => [o.id, o.wallet])) as Record<string, number>;
+const UNDER_FUNDING = underData.funding as unknown as Record<string, number | string>;
+
+interface Act3Table {
+  id: string;
+  name: string;
+  seat_ids: string[];
+  sb?: number;
+  bb?: number;
+  hands: number;
+  blind_schedule?: { hands: string; sb: number; bb: number }[];
+}
+
+const P6_TABLES: Record<string, TableNodeData> = Object.fromEntries(
+  (act3Data.nodes as unknown as (Act3Table & { type: string })[])
+    .filter((n) => n.type === 'contract_table' || n.type === 'boss_table')
+    .map((n) => [
+      n.id,
+      {
+        id: n.id as TableNodeId,
+        label: n.name,
+        seats: n.seat_ids.map((id) => (id === 'player' ? { id, stack: 'carry' } : { id, external: CROWN_WALLETS[id], ledger: CROWN_LEDGER })),
+        small_blind: n.sb ?? n.blind_schedule![0].sb,
+        big_blind: n.bb ?? n.blind_schedule![0].bb,
+        max_hands: n.hands,
+        blind_schedule: n.blind_schedule,
+      } satisfies TableNodeData,
+    ]),
+);
+{
+  const lamp = underData.nodes.find((n) => n.id === 'underlamp_table')! as unknown as { label: string; seats: string[]; sb: number; bb: number; hands: number };
+  P6_TABLES.underlamp_table = {
+    id: 'underlamp_table',
+    label: lamp.label,
+    seats: lamp.seats.map((id) => (id === 'player' ? { id, stack: 'carry' } : { id, external: UNDER_FUNDING[id] as number, ledger: UNDER_LEDGER })),
+    small_blind: lamp.sb,
+    big_blind: lamp.bb,
+    max_hands: lamp.hands,
+  };
+}
+
+const TABLE_NODES = { ...P4_TABLES, ...P5_TABLES, ...P6_TABLES } as Record<TableNodeId, TableNodeData>;
 
 /** Main-route successor of each table when the player continues alive. */
 const AFTER: Record<TableNodeId, NodeId> = {
@@ -299,6 +364,10 @@ const AFTER: Record<TableNodeId, NodeId> = {
   masked_salon: 'velvet_exchange',
   velvet_arena: 'crown_inquest',
   crown_inquest: 'act2_victory',
+  coronet_table: 'crown_archive',
+  seals_table: 'crown_table',
+  crown_table: 'the_ledger_unbound',
+  underlamp_table: 'under_hearing',
 };
 
 /** Initial world accounts (design v0.6: every wallet funded from named accounts at world creation). */
@@ -327,7 +396,7 @@ export function createRun(seed: number): RunState {
   const characters = Object.fromEntries(Object.keys(accounts).filter((id) => PROFILES[id] || id === PLAYER_ID).map((id) => [id, characterFor(id)]));
   const sum = Object.values(accounts).reduce((a, b) => a + b, 0);
   const run: RunState = {
-    version: 2,
+    version: 3,
     seed: seed >>> 0,
     node: 'start',
     next: null,
@@ -444,10 +513,12 @@ function tableConfig(node: TableNodeData): TableConfig {
 }
 
 function enterTable(run: RunState, nodeId: TableNodeId): void {
+  // Finite route: a table is never played twice (design v0.6 §03, v0.8 §08).
+  if (run.results.some((r) => r.node === nodeId)) throw new RunError(`${TABLE_NODES[nodeId].label} has already been played`);
   const node = TABLE_NODES[nodeId];
   const ids = seatIds(run, node);
   for (const s of node.seats) {
-    if (s.external !== undefined) fundActor(run, ACT2_LEDGER, s.id, s.external);
+    if (s.external !== undefined) fundActor(run, s.ledger ?? ACT2_LEDGER, s.id, s.external);
     if (s.substitute && ids.includes(s.substitute.id)) fundActor(run, CINDER_LEDGER, s.substitute.id, s.substitute.external);
   }
   const seats: SeatConfig[] = ids.map((id) =>
@@ -484,6 +555,10 @@ function enterTable(run: RunState, nodeId: TableNodeId): void {
   run.entryStack = stacks[0];
   run.node = nodeId;
   run.log.push(`${node.label} begins.`);
+  // A conditional writ: the bound player's status is announced in the first Crown Table hand.
+  if (nodeId === 'crown_table' && run.flags.includes('bound_writ')) {
+    session.table.magic.notices.push({ seat: 0, text: 'The herald reads it aloud: this Wagerer sits under a conditional writ, still bound.' });
+  }
   // The Whispered Contract: one spell of the player's opening hand is named publicly (never a poker card).
   if (run.flags.includes('whispered_tell')) {
     run.flags = run.flags.filter((f) => f !== 'whispered_tell');
@@ -514,7 +589,7 @@ function standingsOf(t: TableSession): Standing[] {
 }
 
 /** Boss tables: the minimum net profit for a top-two finish to count (design v0.7 §02). */
-export const BOSS_PROFIT_FLOOR: Partial<Record<TableNodeId, number>> = { boss_ledger: 12, crown_inquest: 16 };
+export const BOSS_PROFIT_FLOOR: Partial<Record<TableNodeId, number>> = { boss_ledger: 12, crown_inquest: 16, crown_table: 20 };
 
 /**
  * Contract and boss objectives (design v0.6 §03, v0.7 §02). A boss is won by
@@ -728,13 +803,19 @@ export type RunCommand =
   | { kind: 'advance' }
   | { kind: 'buy'; offer: number }
   | { kind: 'rethread'; uid: string; spell: SpellId }
-  | { kind: 'leaveShop'; to: 'optional_event' | 'contract_2' | 'mirror_audience' | 'secret_bargain' }
+  | { kind: 'leaveShop'; to: 'optional_event' | 'contract_2' | 'mirror_audience' | 'secret_bargain' | 'seals_table' }
   /** Petition, Court of Mirrors (`rival`: whose dossier) or Whispered Contract (`uid`: spell to attune). */
   | { kind: 'event'; take: boolean; rival?: string; uid?: string }
   /** Act II entry after an exile (design v0.7 §09): lose Favor, or surrender one relic. */
   | { kind: 'petition'; choice: 'favor' | 'relic'; relic?: RelicId }
-  /** The Broker Understairs buys one relic at half its shop value, from his own wallet. */
+  /** The Broker Understairs / Matron Wisp buys one relic at half its shop value, from their own wallet. */
   | { kind: 'sell'; relic: RelicId }
+  /** Crown Writ with fewer than 24 Lifechips: take the finite Undercircuit recovery first (design v0.8 §08). */
+  | { kind: 'recover' }
+  /** The Silver Archive: study one next-table rival, or attune a spell for +1 Notoriety. */
+  | { kind: 'archive'; choice: 'study' | 'resonate'; rival?: string; uid?: string }
+  /** The Ledger Unbound: record a narrative allegiance (no mechanics). */
+  | { kind: 'allegiance'; choice: 'reform' | 'claim' }
   /** `replace`: with full relic slots, the owned relic given up (no refund); `uid`: spell for a Resonance reward. */
   | { kind: 'reward'; index: number | null; replace?: RelicId; uid?: string }
   | { kind: 'setback'; choice: 'public_record' | 'break_attunement'; uid?: string }
@@ -759,6 +840,7 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
       const exits: Partial<Record<NodeId, NodeId[]>> = {
         lantern_shop: run.eventResolved ? ['contract_2'] : ['optional_event', 'contract_2'],
         velvet_exchange: ['mirror_audience', 'secret_bargain'],
+        royal_exchange: ['seals_table'],
       };
       if (!(exits[run.node] ?? []).includes(cmd.to)) throw new RunError('You cannot go that way from here');
       goTo(run, cmd.to);
@@ -772,6 +854,19 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
       break;
     case 'sell':
       sellToBroker(run, cmd.relic);
+      break;
+    case 'recover':
+      if (run.node !== 'crown_writ' || !canRecover(run)) throw new RunError('The Undercircuit recovery is not open to you');
+      run.flags.push('writ_granted');
+      goTo(run, 'under_declaration');
+      break;
+    case 'archive':
+      resolveArchive(run, cmd.choice, cmd.rival, cmd.uid);
+      break;
+    case 'allegiance':
+      if (run.node !== 'the_ledger_unbound' || run.flags.some((f) => f.startsWith('allegiance:'))) throw new RunError('No allegiance to record');
+      run.flags.push(`allegiance:${cmd.choice}`);
+      run.log.push(cmd.choice === 'reform' ? 'You petition to reform the Ledger’s law.' : 'You claim the Ledger’s authority.');
       break;
     case 'reward':
       chooseReward(run, cmd.index, cmd.replace, cmd.uid);
@@ -791,10 +886,22 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
 }
 
 function goTo(run: RunState, node: NodeId): void {
+  if (node === 'coronet_table' && !run.flags.includes('act3_entered')) run.flags.push('act3_entered');
   if (node in TABLE_NODES) return enterTable(run, node as TableNodeId);
   run.node = node;
   if (node === 'lantern_shop' && run.shop?.id !== 'lantern_shop') openShop(run, 'lantern_shop');
   if (node === 'velvet_exchange' && run.shop?.id !== 'velvet_exchange') openShop(run, 'velvet_exchange');
+  if (node === 'royal_exchange' && run.shop?.id !== 'royal_exchange') openShop(run, 'royal_exchange');
+  if (node === 'crown_writ') {
+    ensureIngress(run, CROWN_INGRESS_KEY, CROWN_LEDGER, act3Data.funding.initial);
+    actBoundaryRepayments(run, 'act2');
+    run.log.push('A Crown Writ is read aloud.');
+  }
+  if (node === 'under_declaration') {
+    ensureIngress(run, UNDER_INGRESS_KEY, UNDER_LEDGER, underData.funding.initial);
+    if (!run.flags.includes('under_entered')) run.flags.push('under_entered');
+  }
+  if (node === 'under_broker') fundActor(run, UNDER_LEDGER, WISP_ID, UNDER_FUNDING.merchant_wisp as number, false);
   if (node === 'gilded_gate') {
     ensureIngress(run, ACT2_INGRESS_KEY, ACT2_LEDGER, act2Data.actor_migration.external_origin_initial);
     if (!run.flags.includes('act2_entered')) run.flags.push('act2_entered');
@@ -808,6 +915,44 @@ function goTo(run: RunState, node: NodeId): void {
 }
 
 const BROKER = cinderData.nodes.find((n) => n.id === 'cinder_broker')! as unknown as { merchant_wallet: string; merchant_opening_wallet: number };
+export const WISP_ID = 'merchant_wisp';
+export const ORAN_ID = 'merchant_oran';
+/** Below this many Lifechips the Crown Writ offers the Undercircuit first (design v0.8 §08). */
+export const WRIT_LOW_STACK = 24;
+export const ARCHIVE_RIVALS = (act3Data.nodes.find((n) => n.id === 'seals_table')! as unknown as { seat_ids: string[] }).seat_ids.filter((x) => x !== 'player');
+
+/** The Undercircuit recovery is finite: once per run, and only for a short stack. */
+export function canRecover(run: RunState): boolean {
+  return run.node === 'crown_writ' && playerChips(run) < WRIT_LOW_STACK && !run.flags.includes('under_entered');
+}
+
+/**
+ * Enters the Crown Writ (design v0.8 §04, §08). An invitation is free; a petition
+ * costs Favor −1 (never below −3); a conditional writ also marks the bound
+ * player's first Crown Table hand. No chips move.
+ */
+function enterWrit(run: RunState, entry: 'invitation' | 'petition' | 'conditional'): void {
+  if (entry !== 'invitation' && !run.flags.includes('writ_granted')) {
+    const you = run.characters[PLAYER_ID];
+    you.reputation.favor = Math.max(PETITION_FAVOR_FLOOR, you.reputation.favor - 1);
+  }
+  if (entry === 'conditional' && !run.flags.includes('bound_writ')) run.flags.push('bound_writ');
+  if (!run.flags.includes('writ_granted')) run.flags.push('writ_granted');
+  goTo(run, 'crown_writ');
+}
+
+function resolveArchive(run: RunState, choice: 'study' | 'resonate', rival?: string, uid?: string): void {
+  if (run.node !== 'crown_archive' || run.flags.includes('archive_done')) throw new RunError('The Archive is closed');
+  if (choice === 'study') {
+    if (!rival || !ARCHIVE_RIVALS.includes(rival)) throw new RunError('Choose a rival of the Table of Seals');
+    makeDossier(run, rival, [...ARCHIVE_RIVALS, 'dame_neris'], 0xa4c1);
+    run.log.push(`The Silver Archive opens ${PROFILES[rival].name}'s public hands.`);
+  } else {
+    grantResonance(run, uid, 'The Silver Archive');
+    run.characters[PLAYER_ID].reputation.notoriety += 1;
+  }
+  run.flags.push('archive_done');
+}
 export const BROKER_ID = BROKER.merchant_wallet;
 const VELVET = act2Data.nodes.find((n) => n.id === 'velvet_exchange')! as unknown as { merchant_id: string; merchant_initial_external_wallet: number };
 export const VELVET_MERCHANT = VELVET.merchant_id;
@@ -826,6 +971,10 @@ function advance(run: RunState): void {
     case 'boss_ledger':
     case 'fallen_low_table':
     case 'cinder_low_table':
+    case 'coronet_table':
+    case 'seals_table':
+    case 'crown_table':
+    case 'underlamp_table':
     case 'masked_salon':
     case 'velvet_arena':
     case 'crown_inquest':
@@ -857,6 +1006,23 @@ function advance(run: RunState): void {
     case 'mirror_audience':
       if (!mirrorChoice(run)) throw new RunError('Consult the Court or decline first');
       return goTo(run, 'velvet_arena');
+    case 'act2_victory':
+      return enterWrit(run, 'invitation');
+    case 'act2_living_exile':
+      return enterWrit(run, 'petition');
+    case 'crown_writ':
+      return goTo(run, 'coronet_table');
+    case 'crown_archive':
+      if (!run.flags.includes('archive_done')) throw new RunError('Choose at the Archive first');
+      return goTo(run, 'royal_exchange');
+    case 'undercircuit_entry':
+      return goTo(run, 'under_declaration');
+    case 'under_declaration':
+      return goTo(run, 'under_broker');
+    case 'under_broker':
+      return goTo(run, 'underlamp_table');
+    case 'under_hearing':
+      return leaveUnderHearing(run);
     default:
       throw new RunError(`Nothing to advance at ${run.node}`);
   }
@@ -869,6 +1035,12 @@ function afterResult(run: RunState): void {
   if (r.node === 'fallen_low_table') return goTo(run, 'fallen_audience');
   if (r.node === 'boss_ledger') return goTo(run, r.outcome === 'win' ? 'slice_victory' : 'slice_exile');
   if (r.node === 'crown_inquest') return goTo(run, r.outcome === 'win' ? 'act2_victory' : 'act2_living_exile');
+  if (r.node === 'crown_table') return goTo(run, r.outcome === 'win' ? 'the_ledger_unbound' : 'the_unchosen_road');
+  if (r.node === 'underlamp_table') {
+    // Alive either way; only a top-two finish unlocks the conditional writ (design v0.8 §09).
+    if (r.outcome === 'win' && !run.flags.includes('under_writ_eligible')) run.flags.push('under_writ_eligible');
+    return goTo(run, 'under_hearing');
+  }
   if (r.node === 'cinder_low_table') {
     if (r.outcome === 'win' && !run.flags.includes('cinder_pass')) {
       run.characters[PLAYER_ID].reputation.favor += 1;
@@ -901,7 +1073,8 @@ export function rewardOffers(run: RunState, node: TableNodeId): RewardOption[] {
   if (node === 'contract_1') {
     return full ? [] : rng.shuffle(COMMON_RELICS.filter((r) => !owned.includes(r))).slice(0, 3).map((relic) => ({ kind: 'relic', relic }));
   }
-  if (node === 'contract_2' || node === 'velvet_arena') {
+  if (node === 'seals_table') return [{ kind: 'evolution_token' }];
+  if (node === 'contract_2' || node === 'velvet_arena' || node === 'coronet_table') {
     const relic = weightedRelic(rng, RELIC_IDS.filter((r) => !owned.includes(r)));
     return [...(relic ? [{ kind: 'relic' as const, relic }] : []), { kind: 'evolution_token' }];
   }
@@ -980,15 +1153,25 @@ function resolveSetback(run: RunState, choice: 'public_record' | 'break_attuneme
 
 function openShop(run: RunState, id: ShopState['id']): void {
   const owned = run.player.magic.relics ?? [];
-  const rng = new Rng(id === 'lantern_shop' ? deriveSeed(run.seed, 0x5e1e) : deriveSeed(run.seed, 0x5e1e, 2));
-  const offers = rng
-    .shuffle(RELIC_IDS.filter((r) => !owned.includes(r)))
-    .slice(0, 3)
-    .map((relic) => ({ relic, price: RELICS[relic].price, sold: false }));
+  const salt = { lantern_shop: undefined, velvet_exchange: 2, royal_exchange: 3 }[id];
+  const rng = new Rng(salt === undefined ? deriveSeed(run.seed, 0x5e1e) : deriveSeed(run.seed, 0x5e1e, salt));
+  // Three distinct non-owned relics, each drawn by rarity weight (the rare one only rarely; design v0.8 §05).
+  const pool = RELIC_IDS.filter((r) => !owned.includes(r));
+  const picks: RelicId[] = [];
+  while (picks.length < 3) {
+    const r = weightedRelic(rng, pool.filter((x) => !picks.includes(x)));
+    if (!r) break;
+    picks.push(r);
+  }
+  const offers = picks.map((relic) => ({ relic, price: RELICS[relic].price, sold: false }));
   let merchant = shopData.merchant.id;
   if (id === 'velvet_exchange') {
     merchant = VELVET_MERCHANT;
     fundActor(run, ACT2_LEDGER, merchant, VELVET.merchant_initial_external_wallet, false);
+  }
+  if (id === 'royal_exchange') {
+    merchant = ORAN_ID;
+    fundActor(run, CROWN_LEDGER, merchant, act3Data.funding.merchant_oran, false);
   }
   run.shop = { id, merchant, offers, rethreadSold: false };
 }
@@ -1137,16 +1320,18 @@ export function brokerPrice(relic: RelicId): number {
 }
 
 function sellToBroker(run: RunState, relic: RelicId): void {
-  if (run.node !== 'cinder_broker') throw new RunError('The Broker is not here');
-  if (run.flags.includes('broker_sold')) throw new RunError('The Broker buys only once');
+  if (run.node !== 'cinder_broker' && run.node !== 'under_broker') throw new RunError('No buyer is here');
+  const buyer = run.node === 'cinder_broker' ? BROKER_ID : WISP_ID;
+  const soldFlag = run.node === 'cinder_broker' ? 'broker_sold' : 'wisp_sold';
+  if (run.flags.includes(soldFlag)) throw new RunError('The buyer buys only once');
   const relics = run.player.magic.relics ?? [];
   if (!relics.includes(relic)) throw new RunError('You do not carry that relic');
   const price = brokerPrice(relic);
-  if ((run.accounts[BROKER_ID] ?? 0) < price) throw new RunError('The Broker cannot afford it');
-  transfer(run, BROKER_ID, PLAYER_ID, price, `Broker buys ${relic}`);
+  if ((run.accounts[buyer] ?? 0) < price) throw new RunError('The buyer cannot afford it');
+  transfer(run, buyer, PLAYER_ID, price, `${buyer} buys ${relic}`);
   run.player.magic.relics = relics.filter((r) => r !== relic);
-  run.flags.push('broker_sold');
-  run.log.push(`The Broker pays ${price} Lifechips for ${RELICS[relic].name}.`);
+  run.flags.push(soldFlag);
+  run.log.push(`${RELICS[relic].name} is sold for ${price} Lifechips.`);
 }
 
 /**
@@ -1159,15 +1344,40 @@ function leaveHearing(run: RunState): void {
   actBoundaryRepayments(run, 'cinder_hearing');
   if (!playerIsFree(run)) {
     run.log.push('Still bound, you take the stairs down to the Undercircuit.');
-    return goTo(run, 'undercircuit_entry');
+    return goTo(run, 'under_declaration');
   }
   run.characters[PLAYER_ID].socialRank = 'UNBOUND_FALLEN';
+  if (run.flags.includes('act3_entered')) {
+    run.log.push('Unbound, you leave high society behind.');
+    return goTo(run, 'the_unchosen_road');
+  }
   if (run.flags.includes('act2_entered')) {
-    run.log.push('Unbound, you leave the Circuit you once walked.');
-    return goTo(run, 'act2_living_exile');
+    // Design v0.8 §04: a free Act II survivor petitions for a Crown Writ instead of replaying the Circuit.
+    run.log.push('Unbound, you petition for a Crown Writ.');
+    return enterWrit(run, 'petition');
   }
   run.log.push('Unbound, you climb the Stairs Above.');
   goTo(run, 'gilded_gate');
+}
+
+/** Debts still overdue bar the conditional writ (design v0.8 §09). */
+export function playerOverdue(run: RunState): boolean {
+  return run.contracts.some((k) => k.debtor === PLAYER_ID && k.status === 'overdue');
+}
+
+/**
+ * The Petition of Cinders (design v0.8 §09): free → Crown Writ by petition; bound,
+ * top two at the Underlamp and not overdue → a conditional writ that keeps every
+ * obligation; otherwise the Low Lanterns remain. Never after high society.
+ */
+function leaveUnderHearing(run: RunState): void {
+  if (run.flags.includes('act3_entered')) return goTo(run, 'under_living_end');
+  if (playerIsFree(run)) return enterWrit(run, 'petition');
+  if (run.flags.includes('under_writ_eligible') && !playerOverdue(run)) {
+    run.log.push('A conditional Crown Writ is granted; your obligations stand.');
+    return enterWrit(run, 'conditional');
+  }
+  goTo(run, 'under_living_end');
 }
 
 // ───────────────────────────── evolution ─────────────────────────────
@@ -1285,10 +1495,19 @@ export function saveRun(store: Store, run: RunState): void {
  */
 export function migrateRun(raw: unknown): RunState {
   const run = raw as RunState & { version: number };
-  if (run.version === 2) return run;
+  if (run.version === 3) return run;
+  if (run.version === 2) {
+    // v2 -> v3 (design v0.8): P5 endings became chapters; nothing moves, nothing is minted.
+    run.version = 3;
+    run.migrations.push('save_v3');
+    run.dossier ??= null;
+    if ((run.node === 'act2_victory' || run.node === 'act2_living_exile') && !run.chapters.includes(run.node)) run.chapters.push(run.node);
+    run.log.push('Your chronicle continues (save v3).');
+    return run;
+  }
   if (run.version !== 1) throw new RunError('Unknown run version');
-  run.version = 2;
-  run.migrations = ['save_v2'];
+  run.version = 3;
+  run.migrations = ['save_v2', 'save_v3'];
   run.perimeter = { base: run.totalLifechips, expansions: [] };
   run.chapters = CHAPTER_ENDS.includes(run.node) ? [run.node] : [];
   run.flags = [];

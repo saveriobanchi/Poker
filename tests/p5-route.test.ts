@@ -51,8 +51,8 @@ describe('save migration and audited ingress (design v0.7 §09, §11)', () => {
     const { m, store } = memStore();
     m.set('lastWager.run.v1', JSON.stringify(asV1(p4)));
     const run = loadRun(store)!;
-    expect(run.version).toBe(2);
-    expect(run.migrations).toEqual(['save_v2']);
+    expect(run.version).toBe(3);
+    expect(run.migrations).toEqual(['save_v2', 'save_v3']);
     expect(run.totalLifechips).toBe(1009);
     expect(run.perimeter).toEqual({ base: 1009, expansions: [] });
     expect(run.journal).toEqual(p4.journal);
@@ -116,7 +116,7 @@ describe('Act II, the Gilded Circuit', () => {
         finals.add(end.node);
       }
     }
-    expect(finals.has('act2_victory') || finals.has('act2_living_exile')).toBe(true);
+    expect(finals.has('the_ledger_unbound') || finals.has('the_unchosen_road')).toBe(true);
   }, 240_000);
 
 });
@@ -167,7 +167,7 @@ describe('the Cinder continuation (design v0.7 §10)', () => {
     if (playerIsFree(r)) {
       expect(bound.node).toBe('gilded_gate');
       expect(bound.characters.you.socialRank).toBe('UNBOUND_FALLEN');
-    } else expect(bound.node).toBe('undercircuit_entry');
+    } else expect(bound.node).toBe('under_declaration');
     const freed = structuredClone(r);
     freed.contracts = freed.contracts.map((k) => (k.debtor === 'you' ? { ...k, status: 'cleared' as const } : k));
     expect(runCommand(freed, { kind: 'advance' }).node).toBe('gilded_gate');
