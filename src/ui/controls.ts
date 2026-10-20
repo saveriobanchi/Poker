@@ -15,6 +15,8 @@ export interface ControlsCallbacks {
   onNextHand(): void;
   /** Second Reflection: keep candidate 0 or 1. */
   onChoose(pick: 0 | 1): void;
+  /** Fateweaver's Sigil: rearrange one drawn spell (uid) or keep the draw (null). */
+  onSigil(uid: string | null): void;
 }
 
 function el<T extends HTMLElement>(id: string): T {
@@ -280,6 +282,22 @@ export class Controls {
         );
       }
     }
+  }
+
+  /** Fateweaver's Sigil: once per table, before any window. */
+  showSigil(view: PublicView, magic: MagicView): void {
+    this.reset();
+    this.view = view;
+    this.actionRow.hidden = true;
+    this.renderSpells(magic, null);
+    const label = document.createElement('span');
+    label.textContent = 'Sigil: rearrange which spell?';
+    this.choice.replaceChildren(
+      label,
+      ...magic.myHand.map((c) => button(SPELLS[c.spell].name, () => this.cb.onSigil(c.uid), 'choice')),
+      button('Keep my draw', () => this.cb.onSigil(null), 'choice ghost'),
+    );
+    this.choice.hidden = false;
   }
 
   /** Second Reflection's private pick: the table waits until the player chooses. */

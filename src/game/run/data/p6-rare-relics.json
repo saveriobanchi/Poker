@@ -1,0 +1,17 @@
+{
+  "schema": "p6-v0.8",
+  "relics": [
+    {
+      "id": "fateweavers_sigil",
+      "name": "Fateweaver's Sigil",
+      "rarity": "rare",
+      "price": 38,
+      "unique": true,
+      "once_per_table": true,
+      "trigger": "After drawing own three magical hand cards and before any opening magic window; only if at least one additional magical draw source is available.",
+      "effect": "Choose exactly one of the three drawn magic cards, put it on bottom of spell draw pile; draw exactly one replacement from top. If draw is empty before placement, discard pile may be reshuffled using normal spell-deck rule, then chosen card goes to bottom. No Aether, Lifechips or cast consumed. No physical poker card affected.",
+      "public_tell": "The Sigil briefly rearranges a spell."
+    }
+  ],
+  "weights": "Base reward 60% common / 35% uncommon / 5% rare; renormalize when unavailable; no forced rare if already owned; non-owned filter before weight renormalization."
+}

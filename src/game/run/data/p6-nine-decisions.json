@@ -1,0 +1,50 @@
+{
+  "schema": "p6-v0.8",
+  "decisions": [
+    {
+      "id": "whispered_contract",
+      "decision": "MODIFY",
+      "rule": "Accept +1 Notoriety; choose an owned, unevolved spell instance with Resonance <2 and grant +1 Resonance (max 2); if none eligible, next table begins with +1 Aether up to cap 3. On first Velvet Arena hand publicly disclose the ID of one randomly selected spell drawn into own opening spell hand; tell is public, poker cards stay private. Choice/events seeded and saved once."
+    },
+    {
+      "id": "court_of_mirrors",
+      "decision": "MODIFY",
+      "rule": "Select a public poker dossier for Witness Arden OR Livia Shade from up to 12 recorded public hands, with sample size shown. Include recorded VPIP/PFR/shoves; never claim exact lifetime stats or disclose unrevealed cards. HUD dossier persists at Velvet Arena and then expires. Personal witnessed histories may also be read. No wallet changes."
+    },
+    {
+      "id": "ember_steps",
+      "decision": "MODIFY",
+      "rule": "Alive top-two gets +1 Favor and a Cinder Pass flag exactly once; alive lower than top-two gets -1 Favor, no additional chip loss or Keeper Audit; zero triggers Last Claim per existing one-rescue rule. Dead or zero-wallet regular replaced only by once-funded substitute."
+    },
+    {
+      "id": "cinder_ingress",
+      "decision": "APPROVE",
+      "rule": "Existing 96-chip external ingress remains: Osric 60, Ash Porter 18, Cinder Mason 18, unused balances in source account; account must exist before transfers. Never remint on reload."
+    },
+    {
+      "id": "free_at_hearing",
+      "decision": "APPROVE",
+      "rule": "Free means no outstanding debt and no unfulfilled service covenant. Unbound Mercy is not a binding obligation; an overdue-but-unpaid debt is still binding."
+    },
+    {
+      "id": "act2_fallen",
+      "decision": "EXTEND",
+      "rule": "P5 may retain Mask Falls ending for existing saves; from P6, free survivors can seek Crown Writ via one nonchip petition (-1 Favor, min -3), no Act II replay; bound survivors continue Undercircuit and may earn a conditional writ while obligations persist."
+    },
+    {
+      "id": "act2_spellbooks",
+      "decision": "APPROVE",
+      "rule": "Each rival uses 3/3 primary pair and 1/1 other disciplines; Margrave Noct substitutes one Briar Lock with Thorn Lattice; Ash Porter and Cinder Mason use beginner Spellbook."
+    },
+    {
+      "id": "act2_rewards",
+      "decision": "CHANGE",
+      "rule": "Masked Salon winner selects one seeded non-owned relic (replacement allowed when full) OR +1 Resonance to one owned unevolved spell (max 2). Velvet Arena winner selects a non-owned relic OR one evolution token with existing fallback; all rewards non-chip, collected once."
+    },
+    {
+      "id": "npc_debt_boundaries",
+      "decision": "EXTEND",
+      "rule": "Allow voluntary wallet-funded NPC repayment on each unique completed act boundary and single Cinder Hearing boundary; record actId+obligationId and preserve at least one Lifechip. No idle-time passive payments, no double credits. Creditor death routes funds to named estate, not void."
+    }
+  ]
+}

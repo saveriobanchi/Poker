@@ -17,6 +17,7 @@ import {
   ENDINGS,
   mirrorCandidates,
   mirrorChoice,
+  resonanceTargets,
   evolutionOffers,
   playerChips,
   runAi,
@@ -66,6 +67,12 @@ export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | nu
     switch (status) {
       case 'aiToAct':
         return runAi(run);
+      case 'humanSigil': {
+        // Skilled play rearranges a duplicate draw; other policies keep it.
+        const hand = getMagicView(t.table, me).myHand;
+        const dup = policy === 'skilled' ? hand.find((c, i) => hand.findIndex((d) => d.spell === c.spell) !== i) : undefined;
+        return runHuman(run, { kind: 'sigil', uid: dup?.uid ?? null });
+      }
       case 'humanChoice':
         return runHuman(run, { kind: 'choose', pick: decideChoice(getPublicView(t.table.hand, me), getMagicView(t.table, me)) });
       case 'humanWindow': {
@@ -128,7 +135,7 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
       return rival ? { kind: 'event', take: true, rival } : { kind: 'event', take: false };
     }
     case 'secret_bargain':
-      return { kind: 'event', take: policy === 'maniac' };
+      return policy === 'maniac' || policy === 'skilled' ? { kind: 'event', take: true, uid: resonanceTargets(run)[0]?.uid } : { kind: 'event', take: false };
     case 'act2_petition':
       return { kind: 'petition', choice: 'favor' };
     case 'optional_event':
@@ -140,7 +147,12 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
         if (token >= 0) return { kind: 'reward', index: token };
       }
       const full = (run.player.magic.relics ?? []).length >= SLOT_LIMITS.relics;
-      return { kind: 'reward', index: 0, replace: full && run.reward![0].kind === 'relic' ? run.player.magic.relics![0] : undefined };
+      return {
+        kind: 'reward',
+        index: 0,
+        replace: full && run.reward![0].kind === 'relic' ? run.player.magic.relics![0] : undefined,
+        uid: run.reward![0].kind === 'resonance' ? resonanceTargets(run)[0]?.uid : undefined,
+      };
     }
     case 'setback_audience':
       return { kind: 'setback', choice: 'public_record' };

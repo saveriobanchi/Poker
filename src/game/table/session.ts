@@ -18,6 +18,7 @@ import {
   MagicTable,
   RIVAL_SPELLBOOKS,
   choiceSeat,
+  sigilSeat,
   type SeatMagic,
   windowSeat,
 } from '../magic';
@@ -98,6 +99,8 @@ export type SessionStatus =
   | 'humanWindow'
   /** The player must pick a Second Reflection candidate. */
   | 'humanChoice'
+  /** The player decides on their Fateweaver's Sigil (design v0.8 §05). */
+  | 'humanSigil'
   | 'humanToAct'
   | 'aiToAct'
   /** A Last Claim needs the player's decision (as debtor or claimant). */
@@ -209,7 +212,7 @@ export function humanSeat(session: TableSession): number {
 export function currentActor(session: TableSession): number | null {
   const t = session.table;
   if (t.hand.phase !== 'betting') return null;
-  return choiceSeat(t) ?? windowSeat(t) ?? t.hand.toAct;
+  return choiceSeat(t) ?? sigilSeat(t) ?? windowSeat(t) ?? t.hand.toAct;
 }
 
 /** Table stacks after settlement and any Last Claim transfers. */
@@ -224,6 +227,7 @@ export function sessionStatus(session: TableSession): SessionStatus {
     const actor = currentActor(session);
     if (actor !== me) return 'aiToAct';
     if (choiceSeat(session.table) === me) return 'humanChoice';
+    if (sigilSeat(session.table) === me) return 'humanSigil';
     return windowSeat(session.table) === me ? 'humanWindow' : 'humanToAct';
   }
   const claim = session.claims ? currentClaim(session.claims) : null;
@@ -346,6 +350,7 @@ export function chooseAiCommand(session: TableSession): MagicCommand {
   const view = getPublicView(t.hand, seat);
   const magic = getMagicView(t, seat);
   if (choiceSeat(t) === seat) return { kind: 'choose', seat, pick: decideChoice(view, magic) };
+  if (sigilSeat(t) === seat) return { kind: 'sigil', seat, uid: null }; // rivals never carry relics; keep the draw
   if (windowSeat(t) === seat) {
     const choice = decideOpening(view, magic, profile, rng);
     return choice.kind === 'pass' ? { kind: 'pass', seat } : { kind: 'cast', seat, uid: choice.uid, params: choice.params };

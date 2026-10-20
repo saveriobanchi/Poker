@@ -7,6 +7,7 @@ import './style.css';
 import { getMagicView } from './game/magic/table';
 import { SPELLS } from './game/magic/spells';
 import { RELICS } from './game/magic/relics';
+import { PROFILES } from './game/ai/profiles';
 import { getPublicView } from './game/rules/engine';
 import {
   createRun,
@@ -14,7 +15,6 @@ import {
   attuneOptions,
   evolutionOffers,
   fallenFromSave,
-  mirrorChoice,
   loadRun,
   runAi,
   runClaim,
@@ -111,6 +111,7 @@ class Game {
       onCast: (uid, params) => this.human({ kind: 'cast', uid, params }),
       onPass: () => this.human({ kind: 'pass' }),
       onChoose: (pick) => this.human({ kind: 'choose', pick }),
+      onSigil: (uid) => this.human({ kind: 'sigil', uid }),
       onNextHand: () => this.nextHand(),
     });
     this.run = loadRun(this.store);
@@ -241,8 +242,8 @@ class Game {
     this.handInfo.title = `${s.config.label}, hand ${s.handNumber}${cap}, blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
     const relics = run.player.magic.relics ?? [];
     const covenants = run.player.magic.covenants ?? [];
-    const mirror = mirrorChoice(run);
-    const read = mirror && run.observed[mirror] ? `👁 ${run.characters[mirror].name}: plays ${Math.round((100 * run.observed[mirror].vpip) / Math.max(1, run.observed[mirror].hands))}%` : null;
+    const d = run.dossier;
+    const read = d ? `👁 ${PROFILES[d.rival]?.name ?? d.rival}: plays ${d.vpip}/${d.hands}, raises ${d.pfr}/${d.hands}, shoves ${d.shoves}` : null;
     this.relicStrip.textContent = [...relics.map((r) => `◈ ${RELICS[r].name}`), ...covenants.map(() => '✠ Open Book'), ...(read ? [read] : [])].join('  ');
     this.relicStrip.hidden = !relics.length && !covenants.length && !read;
 
@@ -260,6 +261,10 @@ class Game {
       case 'humanWindow':
         this.ticker.textContent = `${spellText ? spellText + ' ' : notice ? notice.text + ' ' : ''}The ${t.hand.street} opens. Cast an opening spell?`;
         this.controls.showWindow(view, magic, names);
+        break;
+      case 'humanSigil':
+        this.ticker.textContent = 'Fateweaver’s Sigil: send one drawn spell to the bottom and draw another?';
+        this.controls.showSigil(view, magic);
         break;
       case 'humanChoice':
         this.ticker.textContent = 'Two cards answer your reflection. Only you see them.';
@@ -344,7 +349,7 @@ class Game {
     const s = this.run?.table;
     if (!s) return;
     const status = sessionStatus(s);
-    if (status !== 'humanToAct' && status !== 'humanWindow' && status !== 'humanChoice') return;
+    if (status !== 'humanToAct' && status !== 'humanWindow' && status !== 'humanChoice' && status !== 'humanSigil') return;
     try {
       this.set(runHuman(this.run!, command));
     } catch (e) {

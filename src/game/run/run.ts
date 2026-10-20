@@ -8,6 +8,7 @@
  * transfers. Nothing is minted: `assertRunInvariants` checks the total after
  * every command. All randomness is seeded from the run seed.
  */
+import { type Dossier, publicDossier } from '../ai/calibration';
 import { PROFILES } from '../ai/profiles';
 import {
   adjustResonance,
@@ -124,7 +125,11 @@ export interface TableResult {
   repayment: number;
 }
 
-export type RewardOption = { kind: 'relic'; relic: RelicId } | { kind: 'evolution_token' };
+export type RewardOption =
+  | { kind: 'relic'; relic: RelicId }
+  | { kind: 'evolution_token' }
+  /** +1 Resonance to one owned unevolved instance, capped at 2 (design v0.8 §05). */
+  | { kind: 'resonance' };
 
 export interface ShopOffer {
   relic: RelicId;
@@ -196,6 +201,8 @@ export interface RunState {
   flags: string[];
   /** Public play observed at tables, per character. */
   observed: Record<string, PublicStats>;
+  /** Court of Mirrors / Silver Archive dossier, shown at the next table only (design v0.8 §02). */
+  dossier?: (Dossier & { witnessed: PublicStats | null }) | null;
 }
 
 export class RunError extends Error {}
@@ -454,7 +461,9 @@ function enterTable(run: RunState, nodeId: TableNodeId): void {
   });
   const characters = ids.map((id) => ({ ...structuredClone(run.characters[id]), status: 'seated' as const, offTable: 0 }));
   const pm = run.player.magic;
-  const entryAether = Math.min(AETHER.max, AETHER.initial + ((pm.relics ?? []).includes('lantern_reservoir') ? 1 : 0));
+  const whisperAether = run.flags.includes('whisper_aether') ? 1 : 0;
+  run.flags = run.flags.filter((f) => f !== 'whisper_aether');
+  const entryAether = Math.min(AETHER.max, AETHER.initial + ((pm.relics ?? []).includes('lantern_reservoir') ? 1 : 0) + whisperAether);
   const playerMagic: SeatMagic = { ...structuredClone(pm), book: resetForTable(pm.book), aether: entryAether, tableFlags: [], extraDraw: 0 };
   const seed = deriveSeed(run.seed, 0x7a, Object.keys(TABLE_NODES).indexOf(nodeId), run.results.length);
   const session = createSession({
@@ -475,10 +484,15 @@ function enterTable(run: RunState, nodeId: TableNodeId): void {
   run.entryStack = stacks[0];
   run.node = nodeId;
   run.log.push(`${node.label} begins.`);
-  // The Whispered Contract: a public tell marks the player in the first hand of the next table.
+  // The Whispered Contract: one spell of the player's opening hand is named publicly (never a poker card).
   if (run.flags.includes('whispered_tell')) {
     run.flags = run.flags.filter((f) => f !== 'whispered_tell');
-    session.table.magic.notices.push({ seat: 0, text: 'A whispered contract glows on your sleeve for all to see.' });
+    const drawn = session.table.magic.hands[0];
+    if (drawn.length) {
+      const named = drawn[new Rng(deriveSeed(run.seed, 0x3a15)).nextInt(drawn.length)];
+      session.table.magic.notices.push({ seat: 0, text: `A whisper names one of your spells: ${SPELLS[named.spell].name}.` });
+      run.flags.push(`whisper_named:${named.spell}`);
+    }
   }
 }
 
@@ -565,6 +579,7 @@ function finishTable(run: RunState): void {
     repayment = repayDebts(run, final - run.entryStack);
   }
   run.results.push({ node: nodeId, outcome, standings, net: final - run.entryStack, hands: t.handNumber, repayment });
+  run.dossier = null; // a dossier serves one table only
   run.log.push(`${TABLE_NODES[nodeId].label}: ${outcome.replace('_', ' ')}.`);
   run.node = 'table_result';
 }
@@ -616,7 +631,11 @@ export function actBoundaryRepayments(run: RunState, actKey: string): void {
       run.accounts[k.debtor] -= pay;
       run.treasury += pay;
       run.journal.push({ id: run.journal.length + 1, from: k.debtor, to: 'ledger', amount: pay, reason: `voluntary debt payment (${k.id}, ${actKey})` });
-    } else transfer(run, k.debtor, k.creditor, pay, `voluntary debt payment (${k.id}, ${actKey})`);
+    } else {
+      // A dead creditor's due goes to their named estate, never the void (design v0.8 §06).
+      const to = run.characters[k.creditor]?.alive === false ? `estate:${k.creditor}` : k.creditor;
+      transfer(run, k.debtor, to, pay, `voluntary debt payment (${k.id}, ${actKey})`);
+    }
     next.repaid += pay;
     run.log.push(`${debtor.name} pays ${pay} Lifechips towards a debt.`);
     if (next.repaid >= next.obligation) {
@@ -710,14 +729,14 @@ export type RunCommand =
   | { kind: 'buy'; offer: number }
   | { kind: 'rethread'; uid: string; spell: SpellId }
   | { kind: 'leaveShop'; to: 'optional_event' | 'contract_2' | 'mirror_audience' | 'secret_bargain' }
-  /** Petition, Court of Mirrors (`rival`: whose public pattern to study) or Whispered Contract. */
-  | { kind: 'event'; take: boolean; rival?: string }
+  /** Petition, Court of Mirrors (`rival`: whose dossier) or Whispered Contract (`uid`: spell to attune). */
+  | { kind: 'event'; take: boolean; rival?: string; uid?: string }
   /** Act II entry after an exile (design v0.7 §09): lose Favor, or surrender one relic. */
   | { kind: 'petition'; choice: 'favor' | 'relic'; relic?: RelicId }
   /** The Broker Understairs buys one relic at half its shop value, from his own wallet. */
   | { kind: 'sell'; relic: RelicId }
-  /** `replace`: with full relic slots, the owned relic given up for the new one (no refund). */
-  | { kind: 'reward'; index: number | null; replace?: RelicId }
+  /** `replace`: with full relic slots, the owned relic given up (no refund); `uid`: spell for a Resonance reward. */
+  | { kind: 'reward'; index: number | null; replace?: RelicId; uid?: string }
   | { kind: 'setback'; choice: 'public_record' | 'break_attunement'; uid?: string }
   | { kind: 'evolve'; uid: string; branch: SpellId; useToken?: boolean }
   /** Evolution token with no qualified spell: +1 Resonance to one unevolved instance (design v0.7 §04). */
@@ -746,7 +765,7 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
       break;
     }
     case 'event':
-      resolveEvent(run, cmd.take, cmd.rival);
+      resolveEvent(run, cmd.take, cmd.rival, cmd.uid);
       break;
     case 'petition':
       petition(run, cmd.choice, cmd.relic);
@@ -755,7 +774,7 @@ export function runCommand(run0: RunState, cmd: RunCommand): RunState {
       sellToBroker(run, cmd.relic);
       break;
     case 'reward':
-      chooseReward(run, cmd.index, cmd.replace);
+      chooseReward(run, cmd.index, cmd.replace, cmd.uid);
       break;
     case 'setback':
       resolveSetback(run, cmd.choice, cmd.uid);
@@ -851,6 +870,11 @@ function afterResult(run: RunState): void {
   if (r.node === 'boss_ledger') return goTo(run, r.outcome === 'win' ? 'slice_victory' : 'slice_exile');
   if (r.node === 'crown_inquest') return goTo(run, r.outcome === 'win' ? 'act2_victory' : 'act2_living_exile');
   if (r.node === 'cinder_low_table') {
+    if (r.outcome === 'win' && !run.flags.includes('cinder_pass')) {
+      run.characters[PLAYER_ID].reputation.favor += 1;
+      run.flags.push('cinder_pass');
+      run.log.push('Top two on the Ember Steps: Favor +1 and a Cinder Pass.');
+    }
     if (r.outcome === 'alive_failure') {
       run.characters[PLAYER_ID].reputation.favor -= 1;
       run.log.push('You leave the Ember Steps outside the top two: Favor −1.');
@@ -877,9 +901,13 @@ export function rewardOffers(run: RunState, node: TableNodeId): RewardOption[] {
   if (node === 'contract_1') {
     return full ? [] : rng.shuffle(COMMON_RELICS.filter((r) => !owned.includes(r))).slice(0, 3).map((relic) => ({ kind: 'relic', relic }));
   }
-  if (node === 'contract_2') {
+  if (node === 'contract_2' || node === 'velvet_arena') {
     const relic = weightedRelic(rng, RELIC_IDS.filter((r) => !owned.includes(r)));
     return [...(relic ? [{ kind: 'relic' as const, relic }] : []), { kind: 'evolution_token' }];
+  }
+  if (node === 'masked_salon') {
+    const relic = weightedRelic(rng, RELIC_IDS.filter((r) => !owned.includes(r)));
+    return [...(relic ? [{ kind: 'relic' as const, relic }] : []), ...(resonanceTargets(run).length ? [{ kind: 'resonance' as const }] : [])];
   }
   return [];
 }
@@ -903,7 +931,7 @@ function weightedRelic(rng: Rng, candidates: RelicId[]): RelicId | null {
   return pool[rng.nextInt(pool.length)];
 }
 
-function chooseReward(run: RunState, index: number | null, replace?: RelicId): void {
+function chooseReward(run: RunState, index: number | null, replace?: RelicId, uid?: string): void {
   if (run.node !== 'reward' || !run.reward) throw new RunError('No reward to choose');
   if (index !== null) {
     const choice = run.reward[index];
@@ -917,6 +945,8 @@ function chooseReward(run: RunState, index: number | null, replace?: RelicId): v
       }
       run.player.magic.relics = [...relics, choice.relic];
       run.log.push(`Reward: ${RELICS[choice.relic].name}.`);
+    } else if (choice.kind === 'resonance') {
+      grantResonance(run, uid, 'Reward');
     } else {
       run.player.evolutionTokens += 1;
       run.log.push('Reward: a spell evolution token.');
@@ -1005,8 +1035,8 @@ function rethread(run: RunState, uid: string, spell: SpellId): void {
 
 export const OPEN_BOOK_FEE = routeData.nodes.find((n) => n.id === 'optional_event')!.entries!.find((e) => e.id === 'take_covenant')!.cost_chips!;
 
-function resolveEvent(run: RunState, take: boolean, rival?: string): void {
-  if (run.node === 'mirror_audience' || run.node === 'secret_bargain') return resolveAct2Event(run, take, rival);
+function resolveEvent(run: RunState, take: boolean, rival?: string, uid?: string): void {
+  if (run.node === 'mirror_audience' || run.node === 'secret_bargain') return resolveAct2Event(run, take, rival, uid);
   if (run.node !== 'optional_event' || run.eventResolved) throw new RunError('The petition is not open');
   if (take) {
     const covenants = run.player.magic.covenants ?? [];
@@ -1024,25 +1054,56 @@ export function mirrorChoice(run: RunState): string | null {
   return run.flags.find((f) => f.startsWith('mirror:'))?.slice('mirror:'.length) ?? null;
 }
 
-/** Rivals whose public play the player has watched at a table (Court of Mirrors candidates). */
+const ARENA_RIVALS = (act2Data.nodes.find((n) => n.id === 'velvet_arena')! as unknown as { seats: string[] }).seats.filter((x) => x !== 'player');
+
+/** Court of Mirrors (design v0.8 §02): a dossier on one rival of the next table — Witness Arden or Livia Shade. */
 export function mirrorCandidates(run: RunState): string[] {
-  return Object.keys(run.observed).filter((id) => id !== PLAYER_ID && run.observed[id].hands > 0 && run.characters[id]);
+  void run;
+  return ARENA_RIVALS;
 }
 
-function resolveAct2Event(run: RunState, take: boolean, rival?: string): void {
+/** Records a seeded public dossier of at most 12 hands, supplemented by what the player witnessed. */
+function makeDossier(run: RunState, rival: string, peers: string[], salt: number): void {
+  const others = peers.filter((p) => p !== rival).map((p) => PROFILES[p]);
+  const d = publicDossier(PROFILES[rival], others.length ? others : [PROFILES.corvin], DOSSIER_HANDS, deriveSeed(run.seed, salt, rival.length));
+  run.dossier = { ...d, witnessed: run.observed[rival] ?? null };
+}
+
+export const DOSSIER_HANDS = 12;
+
+/** Owned, unevolved instances below 2 Resonance (Whispered Contract, Salon reward, Silver Archive). */
+export function resonanceTargets(run: RunState): SpellCard[] {
+  return allCards(playerBook(run)).filter((c) => isBaseSpell(c.spell) && (c.resonance ?? 0) < 2);
+}
+
+function grantResonance(run: RunState, uid: string | undefined, why: string): void {
+  const targets = resonanceTargets(run);
+  if (!uid || !targets.some((c) => c.uid === uid)) throw new RunError('Choose an unevolved spell below 2 Resonance');
+  if (run.table) {
+    const me = humanSeat(run.table);
+    run.table.table.seats[me].book = adjustResonance(run.table.table.seats[me].book, uid, 1);
+  } else run.player.magic.book = adjustResonance(run.player.magic.book, uid, 1);
+  run.log.push(`${why}: ${SPELLS[targets.find((c) => c.uid === uid)!.spell].name} gains 1 Resonance.`);
+}
+
+function resolveAct2Event(run: RunState, take: boolean, rival?: string, uid?: string): void {
   if (run.node === 'mirror_audience') {
     // Design v0.7 §09: study one rival's public pattern; no hidden cards, no Lifechips.
     if (mirrorChoice(run)) throw new RunError('The Court shows one rival only');
     if (take) {
-      if (!rival || !mirrorCandidates(run).includes(rival)) throw new RunError('Choose a rival you have watched at a table');
+      if (!rival || !mirrorCandidates(run).includes(rival)) throw new RunError('Choose Witness Arden or Livia Shade');
       run.flags.push(`mirror:${rival}`);
-      run.log.push(`The Court of Mirrors replays ${run.characters[rival].name}'s public play.`);
+      makeDossier(run, rival, [...ARENA_RIVALS, 'isolde_morn'], 0xd055);
+      run.log.push(`The Court of Mirrors shows a dossier on ${PROFILES[rival].name}.`);
       return; // stay to study the reflection; `advance` leaves for the Arena
     }
     run.log.push('You leave the Court of Mirrors unconsulted.');
   } else {
-    // The Whispered Contract: +1 Notoriety and a public tell in the first hand of the next table.
+    // The Whispered Contract (design v0.8 §01): +1 Resonance to an unevolved spell below 2 —
+    // or, if none, +1 Aether at the next table — for +1 Notoriety and one disclosed spell.
     if (take) {
+      if (resonanceTargets(run).length) grantResonance(run, uid, 'The Whispered Contract');
+      else run.flags.push('whisper_aether');
       run.characters[PLAYER_ID].reputation.notoriety += 1;
       run.flags.push('whispered_tell');
       run.log.push('You accept the Whispered Contract.');
@@ -1095,7 +1156,7 @@ function sellToBroker(run: RunState, relic: RelicId): void {
  * Circuit before falling leaves as a living exile instead of replaying it.
  */
 function leaveHearing(run: RunState): void {
-  actBoundaryRepayments(run, 'act1');
+  actBoundaryRepayments(run, 'cinder_hearing');
   if (!playerIsFree(run)) {
     run.log.push('Still bound, you take the stairs down to the Undercircuit.');
     return goTo(run, 'undercircuit_entry');

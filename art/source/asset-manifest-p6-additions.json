@@ -1,0 +1,65 @@
+{
+  "version": "p6-v0.8",
+  "portrait_requirements": {
+    "width": 512,
+    "height": 512,
+    "format": "PNG RGBA",
+    "alpha": true,
+    "bust_frame": true,
+    "readable_circle_px": 64,
+    "lighting": "warm candle key upper-left, cool bounce upper-right",
+    "art_direction": "gouache painterly fantasy, coherent with P2 Vesper/Oracle/Corvin, no AI-generated typography"
+  },
+  "images": [
+    {
+      "id": "portrait.adjudicator",
+      "source": "art/incoming/p4/adjudicator.png",
+      "runtime": "public/assets/portraits/adjudicator.webp",
+      "status": "needed",
+      "description": "A solemn androgynous adult masked archivist in ash-grey ceremonial robe, brass Ledger seal at collar, face half-hidden beneath a geometric visor; upright symmetrical silhouette, muted warm gold/cold slate."
+    },
+    {
+      "id": "portrait.mara-quill",
+      "source": "art/incoming/p4/mara-quill.png",
+      "runtime": "public/assets/portraits/mara-quill.webp",
+      "status": "needed",
+      "description": "Adult human bookie with expressive round spectacles, auburn hair pulled back, ink-stained fingers and ochre merchant waistcoat, alert mischievous expression."
+    },
+    {
+      "id": "portrait.eldric-vale",
+      "source": "art/incoming/p4/eldric-vale.png",
+      "runtime": "public/assets/portraits/eldric-vale.webp",
+      "status": "needed",
+      "description": "Adult dark-haired rakish noble gambler with narrow scar, black plum velvet, burgundy lapel, confident sideways smile and sharp profile."
+    },
+    {
+      "id": "portrait.bailiff-sable",
+      "source": "art/incoming/p4/bailiff-sable.png",
+      "runtime": "public/assets/portraits/bailiff-sable.webp",
+      "status": "needed",
+      "description": "Adult imposing stern bald or closely shaven bailiff, broad black mantle, dark brass judicial crest, heavy jaw, cold analytical gaze."
+    },
+    {
+      "id": "portrait.sister-rill",
+      "source": "art/incoming/p4/sister-rill.png",
+      "runtime": "public/assets/portraits/sister-rill.webp",
+      "status": "needed",
+      "description": "Adult contemplative monastic woman with green-grey hood, thin silver chain, gentle but calculating eyes and simple woven vestments."
+    },
+    {
+      "id": "portrait.night-clerk",
+      "source": "art/incoming/p5/night-clerk.png",
+      "runtime": "public/assets/portraits/night-clerk.webp",
+      "status": "needed",
+      "description": "Adult pale sleepless registry clerk, coal-dark vest, brass spectacles, parchment strips tucked at breast, thin silhouette, lamp-worn under-eyes."
+    },
+    {
+      "id": "portrait.dock-runner",
+      "source": "art/incoming/p5/dock-runner.png",
+      "runtime": "public/assets/portraits/dock-runner.webp",
+      "status": "needed",
+      "description": "Adult wiry dark-skinned dock courier with rolled canvas coat and rope scarf, copper ear cuff, windswept cropped hair, wary determined look."
+    }
+  ],
+  "new_act3_art": "Use gold monograms as explicit placeholders for seven Act III opponents, separate portrait generation later; no falsely claimed completed art."
+}

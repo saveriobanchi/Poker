@@ -50,3 +50,49 @@ export function measureStyles(
   }
   return Object.fromEntries([...tally].map(([id, t]) => [id, { vpip: t.vpip / t.n, pfr: t.pfr / t.n, opportunities: t.n }]));
 }
+
+/** A public dossier: counts over a small number of recorded public preflop hands. */
+export interface Dossier {
+  rival: string;
+  hands: number;
+  vpip: number;
+  pfr: number;
+  shoves: number;
+}
+
+/**
+ * Records `hands` seeded public hands (preflop actions only, the part every
+ * spectator sees) of `rival` at a table with `others`. No hole card is recorded.
+ */
+export function publicDossier(rival: AiProfile, others: AiProfile[], hands: number, seed: number, bigBlind = 4): Dossier {
+  const seats = [rival, ...others];
+  const rng = new Rng(seed);
+  const d: Dossier = { rival: rival.id, hands: 0, vpip: 0, pfr: 0, shoves: 0 };
+  for (let h = 0; h < hands; h++) {
+    let s = startHand({
+      seed: seed * 1_000_003 + h,
+      players: seats.map((_, i) => ({ id: `S${i}`, stack: 100 })),
+      button: h % seats.length,
+      smallBlind: bigBlind / 2,
+      bigBlind,
+    });
+    let v = false;
+    let p = false;
+    let sh = false;
+    while (s.phase === 'betting' && s.street === 'preflop') {
+      const seat = s.toAct!;
+      const a = decide(getPublicView(s, seat), seats[seat], rng);
+      if (seat === 0) {
+        if (a.type !== 'fold' && a.type !== 'check') v = true;
+        if (a.type === 'raise' || a.type === 'bet' || a.type === 'allIn') p = true;
+        if (a.type === 'allIn' || ((a.type === 'raise' || a.type === 'bet') && a.to >= 50)) sh = true;
+      }
+      s = applyAction(s, seat, a);
+    }
+    d.hands++;
+    if (v) d.vpip++;
+    if (p) d.pfr++;
+    if (sh) d.shoves++;
+  }
+  return d;
+}

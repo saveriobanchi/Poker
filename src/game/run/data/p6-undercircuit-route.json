@@ -1,0 +1,64 @@
+{
+  "schema": "p6-v0.8",
+  "entry": "undercircuit_entry",
+  "funding": {
+    "account": "p6_external_ledger_under",
+    "initial": 102,
+    "exactly_once": "p6_under_ingress_v0.8",
+    "merchant_wisp": 60,
+    "stone_crier": 20,
+    "copper_runner": 22
+  },
+  "nodes": [
+    {
+      "id": "under_declaration",
+      "kind": "story",
+      "label": "The Underledger",
+      "effect": "Show old creditor, duty/debt outstanding, wallet and real chip state; do not clear existing obligations",
+      "next": "under_broker"
+    },
+    {
+      "id": "under_broker",
+      "kind": "shop",
+      "label": "Matron Wisp",
+      "wallet": "merchant_wisp",
+      "rule": "One relic buyback at floor(original price/2), buyer must have actual funds, optional; no refills",
+      "next": "underlamp_table"
+    },
+    {
+      "id": "underlamp_table",
+      "kind": "contract_table",
+      "label": "The Underlamp Table",
+      "seats": [
+        "player",
+        "stone_crier",
+        "copper_runner"
+      ],
+      "sb": 1,
+      "bb": 1,
+      "hands": 6,
+      "win": "player>=1 chip AND finishes top two",
+      "alive_failure": "still proceed to hearing, no chip penalty, conditional writ locked",
+      "zero": "permanent_death_if_survival_covenant_used",
+      "win_effect": "grant under_writ_eligible flag, once only; service/debt progress from standard table events",
+      "next": "under_hearing"
+    },
+    {
+      "id": "under_hearing",
+      "kind": "story",
+      "label": "The Petition of Cinders",
+      "rule": "If no active debt or duties, grant free passage to Crown Writ via Favor -1 petition (min -3). If bound AND under_writ_eligible AND not overdue, grant conditional Crown Writ, retain contracts, Favor -1 (min -3), first Crown Table hand public notice of bound status. Otherwise living Undercircuit ending. No obligation forgiven.",
+      "next_options": [
+        "crown_writ",
+        "under_living_end"
+      ]
+    },
+    {
+      "id": "under_living_end",
+      "kind": "ending",
+      "label": "The Low Lanterns Remain",
+      "effect": "Survive with exact chips and obligations, archived continuation; no free funds or status reset"
+    }
+  ],
+  "accounting": "All wallets sourced once from 102; no repeated Underlamp farming; if player has 0 chips, resolve existing Last Claim first (normally second bankrupt death)."
+}

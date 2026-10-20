@@ -119,30 +119,6 @@ describe('Act II, the Gilded Circuit', () => {
     expect(finals.has('act2_victory') || finals.has('act2_living_exile')).toBe(true);
   }, 240_000);
 
-  it('the Court of Mirrors shows only rivals watched at a table; the Whispered Contract marks the next table', () => {
-    let run: RunState | null = null;
-    for (let seed = 1; seed < 80 && !run; seed++) {
-      const r = until(createRun(seed), (x) => x.node === 'velvet_exchange' || x.node === 'death', 'tight', seed);
-      if (r.node === 'velvet_exchange') run = r;
-    }
-    expect(run).not.toBeNull();
-    const watched = mirrorCandidates(run!);
-    expect(watched).toEqual(expect.arrayContaining(['isolde_morn', 'ravel_croft', 'vesa_kael']));
-    expect(watched).not.toContain('margrave_noct'); // not yet seen at any table
-    const court = runCommand(run!, { kind: 'leaveShop', to: 'mirror_audience' });
-    expect(() => runCommand(court, { kind: 'event', take: true, rival: 'margrave_noct' })).toThrow();
-    const studied = runCommand(court, { kind: 'event', take: true, rival: 'vesa_kael' });
-    expect(studied.flags).toContain('mirror:vesa_kael');
-    expect(() => runCommand(studied, { kind: 'event', take: true, rival: 'isolde_morn' })).toThrow(/one rival/);
-    const seen = runCommand(studied, { kind: 'advance' });
-    expect(seen.node).toBe('velvet_arena');
-    expect(playerChips(seen)).toBe(run!.accounts.you); // now seated at the Arena with the same chips
-
-    const bargain = runCommand(run!, { kind: 'leaveShop', to: 'secret_bargain' });
-    const marked = runCommand(bargain, { kind: 'event', take: true });
-    expect(marked.characters.you.reputation.notoriety).toBe(run!.characters.you.reputation.notoriety + 1);
-    expect(marked.table!.table.magic.notices.some((n) => n.text.includes('whispered contract'))).toBe(true);
-  }, 120_000);
 });
 
 describe('the Cinder continuation (design v0.7 §10)', () => {

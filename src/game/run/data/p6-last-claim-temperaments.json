@@ -1,0 +1,174 @@
+{
+  "schema": "p6-v0.8",
+  "inherit": [
+    "v0.5 claimant history modifiers",
+    "v0.6 debtor history modifiers",
+    "one saved roll and one counteroffer",
+    "hard-veto overrides clamp",
+    "mutual financial feasibility"
+  ],
+  "clamp_non_veto": [
+    0.05,
+    0.9
+  ],
+  "rules": "Numbers are calibration proposals; no RNG reroll or minting; for claims on new act NPCs endowment =10 from actual own wallet, remaining funder balance must be >=1. Split-pot adjudicator unchanged.",
+  "profiles": [
+    {
+      "id": "isolde_morn",
+      "claimant_base": 0.58,
+      "pact_preference": {
+        "mercy": 0.1,
+        "debt": 0.05,
+        "service": -0.22
+      },
+      "debtor_acceptance": {
+        "mercy": 0.85,
+        "debt": 0.65,
+        "service": 0.05
+      },
+      "debtor_priority": [
+        "mercy",
+        "debt"
+      ],
+      "hard_veto": [
+        "service"
+      ],
+      "endowment": 10,
+      "funder": "own_wallet"
+    },
+    {
+      "id": "ravel_croft",
+      "claimant_base": 0.32,
+      "pact_preference": {
+        "mercy": -0.12,
+        "debt": 0.12,
+        "service": 0.08
+      },
+      "debtor_acceptance": {
+        "mercy": 0.65,
+        "debt": 0.5,
+        "service": 0.3
+      },
+      "debtor_priority": [
+        "debt",
+        "mercy",
+        "service"
+      ],
+      "hard_veto": [],
+      "endowment": 10,
+      "funder": "own_wallet"
+    },
+    {
+      "id": "vesa_kael",
+      "claimant_base": 0.44,
+      "pact_preference": {
+        "mercy": -0.1,
+        "debt": 0.15,
+        "service": 0.03
+      },
+      "debtor_acceptance": {
+        "mercy": 0.72,
+        "debt": 0.75,
+        "service": 0.22
+      },
+      "debtor_priority": [
+        "debt",
+        "mercy",
+        "service"
+      ],
+      "hard_veto": [],
+      "endowment": 10,
+      "funder": "own_wallet"
+    },
+    {
+      "id": "witness_arden",
+      "claimant_base": 0.57,
+      "pact_preference": {
+        "mercy": 0.08,
+        "debt": 0.14,
+        "service": -0.2
+      },
+      "debtor_acceptance": {
+        "mercy": 0.82,
+        "debt": 0.8,
+        "service": 0.1
+      },
+      "debtor_priority": [
+        "debt",
+        "mercy"
+      ],
+      "hard_veto": [
+        "service"
+      ],
+      "endowment": 10,
+      "funder": "own_wallet"
+    },
+    {
+      "id": "livia_shade",
+      "claimant_base": 0.63,
+      "pact_preference": {
+        "mercy": 0.12,
+        "debt": 0.02,
+        "service": -0.12
+      },
+      "debtor_acceptance": {
+        "mercy": 0.84,
+        "debt": 0.65,
+        "service": 0.25
+      },
+      "debtor_priority": [
+        "mercy",
+        "debt",
+        "service"
+      ],
+      "hard_veto": [],
+      "endowment": 10,
+      "funder": "own_wallet"
+    },
+    {
+      "id": "margrave_noct",
+      "claimant_base": 0.39,
+      "pact_preference": {
+        "mercy": -0.12,
+        "debt": 0.2,
+        "service": 0.08
+      },
+      "debtor_acceptance": {
+        "mercy": 0.72,
+        "debt": 0.58,
+        "service": 0.0
+      },
+      "debtor_priority": [
+        "debt",
+        "mercy"
+      ],
+      "hard_veto": [
+        "service"
+      ],
+      "endowment": 10,
+      "funder": "own_wallet"
+    },
+    {
+      "id": "aurelia_ash",
+      "claimant_base": 0.69,
+      "pact_preference": {
+        "mercy": 0.14,
+        "debt": 0.05,
+        "service": -0.18
+      },
+      "debtor_acceptance": {
+        "mercy": 0.9,
+        "debt": 0.78,
+        "service": 0.08
+      },
+      "debtor_priority": [
+        "mercy",
+        "debt",
+        "service"
+      ],
+      "hard_veto": [],
+      "endowment": 10,
+      "funder": "own_wallet"
+    }
+  ]
+}

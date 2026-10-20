@@ -1,0 +1,181 @@
+{
+  "schema": "p6-v0.8",
+  "act": "ACT_III_CROWN_TABLE",
+  "funding": {
+    "account": "p6_external_ledger_crown",
+    "initial": 1280,
+    "exactly_once": "p6_act3_ingress_v0.8",
+    "opponents": [
+      {
+        "id": "dame_neris",
+        "wallet": 165,
+        "vpip_target": 0.24,
+        "pfr_target": 0.15,
+        "magic": "Thorn/Veil"
+      },
+      {
+        "id": "copper_saint",
+        "wallet": 155,
+        "vpip_target": 0.31,
+        "pfr_target": 0.22,
+        "magic": "Ember/Thorn"
+      },
+      {
+        "id": "master_fen",
+        "wallet": 145,
+        "vpip_target": 0.39,
+        "pfr_target": 0.15,
+        "magic": "Mirror/Veil"
+      },
+      {
+        "id": "archivist_sorn",
+        "wallet": 170,
+        "vpip_target": 0.26,
+        "pfr_target": 0.18,
+        "magic": "Veil/Mirror"
+      },
+      {
+        "id": "captain_rusk",
+        "wallet": 145,
+        "vpip_target": 0.36,
+        "pfr_target": 0.25,
+        "magic": "Ember/Thorn"
+      },
+      {
+        "id": "ledger_regent",
+        "wallet": 220,
+        "vpip_target": 0.26,
+        "pfr_target": 0.2,
+        "magic": "Mirror/Thorn"
+      },
+      {
+        "id": "the_uncrowned",
+        "wallet": 190,
+        "vpip_target": 0.34,
+        "pfr_target": 0.21,
+        "magic": "Ember/Veil"
+      }
+    ],
+    "merchant_oran": 90,
+    "sum_opponents": 1190,
+    "sum_total": 1280
+  },
+  "nodes": [
+    {
+      "id": "crown_writ",
+      "type": "story",
+      "entry_from": [
+        "act2_victory",
+        "act2_living_exile_via_petition",
+        "cinder_free_via_petition",
+        "undercircuit_conditional_writ"
+      ],
+      "description": "Read current stack, debts, Magic, world state; no chip transfer; petition fee is 1 Favor only from permitted routes, floored at -3. Entry with fewer than 24 chips offers Undercircuit recovery route before high blinds; no free chips.",
+      "next": "coronet_table"
+    },
+    {
+      "id": "coronet_table",
+      "type": "contract_table",
+      "name": "The Ashen Coronet",
+      "seat_ids": [
+        "player",
+        "dame_neris",
+        "copper_saint",
+        "master_fen"
+      ],
+      "sb": 4,
+      "bb": 8,
+      "hands": 8,
+      "win": "top two, chips>=1",
+      "living_failure": "Keeper Audit exactly once then continue",
+      "reward": "choose one non-owned relic or an evolution token; no Lifechips",
+      "next": "crown_archive"
+    },
+    {
+      "id": "crown_archive",
+      "type": "event",
+      "name": "The Silver Archive",
+      "choices": [
+        {
+          "id": "study",
+          "effect": "Choose one next-table rival and see up to twelve public archived hands; no hidden cards"
+        },
+        {
+          "id": "resonate",
+          "effect": "Gain +1 Resonance for one owned unevolved spell with resonance<2; gain +1 Notoriety; no chips"
+        }
+      ],
+      "next": "royal_exchange"
+    },
+    {
+      "id": "royal_exchange",
+      "type": "shop",
+      "name": "The Royal Exchange",
+      "merchant": "merchant_oran",
+      "initial_wallet": 90,
+      "offers": "three seeded non-owned relics, including rare only by normal weighting; no refills or chip mint",
+      "next": "seals_table"
+    },
+    {
+      "id": "seals_table",
+      "type": "contract_table",
+      "name": "The Table of Seals",
+      "seat_ids": [
+        "player",
+        "archivist_sorn",
+        "captain_rusk"
+      ],
+      "sb": 4,
+      "bb": 8,
+      "hands": 8,
+      "win": "top two, chips>=1",
+      "living_failure": "Keeper Audit once then continue",
+      "reward": "one evolution token (or +1 Resonance fallback); no chips",
+      "next": "crown_table"
+    },
+    {
+      "id": "crown_table",
+      "type": "boss_table",
+      "name": "The Crown Table",
+      "seat_ids": [
+        "player",
+        "ledger_regent",
+        "the_uncrowned"
+      ],
+      "blind_schedule": [
+        {
+          "hands": "1-6",
+          "sb": 4,
+          "bb": 8
+        },
+        {
+          "hands": "7-12",
+          "sb": 5,
+          "bb": 10
+        }
+      ],
+      "hands": 12,
+      "win": "highest stack including tie OR top two with net profit >= max(20,ceil(0.2*entry_stack)); player>=1",
+      "living_failure": "the_unchosen_road",
+      "zero": "last_claim",
+      "next_win": "the_ledger_unbound"
+    },
+    {
+      "id": "the_ledger_unbound",
+      "type": "ending",
+      "description": "End current character route as alive; choose petition for reforming Ledger law or claiming its authority; no mechanics fabricate Lifechips; record narrative allegiance only."
+    },
+    {
+      "id": "the_unchosen_road",
+      "type": "ending",
+      "description": "Character survives, keeps all real chips and debts; high society closes, next prestige route may open in later updates; not death."
+    }
+  ],
+  "rules": [
+    "No free player chip endowments at act transitions",
+    "Incoming funded wallets use one-time external-ledger debit; no within-perimeter minting",
+    "NPC previously dead remains dead, new names fully distinct",
+    "All existing P0-P5 poker rules apply",
+    "If entry stack is low, allow finite optional Undercircuit recovery; no forced unavoidable blind loss without warning"
+  ]
+}

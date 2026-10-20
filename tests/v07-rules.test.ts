@@ -81,8 +81,7 @@ describe('Circuit rewards (design v0.7 §05)', () => {
     expect(after.player.magic.relics).not.toContain('ashen_signet');
     expect(after.accounts.you).toBe(chips);
     const all = createRun(6);
-    all.player.magic.relics = RELIC_IDS.slice(0, 5) as RelicId[];
-    all.player.magic.relics.push(RELIC_IDS[5]); // out-of-band: every relic owned
+    all.player.magic.relics = [...RELIC_IDS] as RelicId[]; // out-of-band: every relic owned
     expect(rewardOffers(all, 'contract_2')).toEqual([{ kind: 'evolution_token' }]);
   });
 

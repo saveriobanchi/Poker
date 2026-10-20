@@ -1,0 +1,51 @@
+{
+  "schema": "p6-v0.8",
+  "baseline": "P5 reports: skilled Act I victory 18.5%; Act II victory 13.8%; final death 52.1% from initial run. Act I death 22.3%; extra 29.8 pp among initial runs, not conditional Act II entrant mortality.",
+  "required_cohorts": [
+    "all starting runs",
+    "actual Act II entrants",
+    "Act II survivors",
+    "Fallen entrants",
+    "Undercircuit entrants",
+    "Act III entrants"
+  ],
+  "policies": [
+    "skilled",
+    "tight",
+    "maniac",
+    "passive"
+  ],
+  "test_plan": {
+    "seeds_per_policy": 2000,
+    "matched_seed_baseline": true,
+    "report_ci_95": true,
+    "track": [
+      "victory and death per phase with conditional denominators",
+      "large shove call profitability",
+      "VPIP/PFR and equity calibration",
+      "spell choice usage and incremental EV",
+      "proportion evolving any spell",
+      "relic acquisition and rarity source",
+      "whisper uptake and utility",
+      "claim acceptance by character and pact",
+      "progression route completion",
+      "funded external ingress unique keys",
+      "NPC debt actually repaid",
+      "chip and poker deck and Aether invariants"
+    ]
+  },
+  "design_targets_not_guarantees": {
+    "skilled_outperforms_tight_final_act_clear": true,
+    "maniac_underperforms_skilled": true,
+    "skilled_conditional_act2_death": {
+      "lower": 0.2,
+      "upper": 0.35
+    },
+    "full_three_act_skilled_clear_exploratory": {
+      "lower": 0.08,
+      "upper": 0.2
+    },
+    "no_free_chip_reward": true
+  },
+  "rule": "Do not tune by dealing favorable cards or secretly re-ranking hands. If conditional deaths too high, improve observable choices, rewards and encounter structure before raising hidden mercy rates."
+}
