@@ -29,6 +29,7 @@ import { humanSeat, type HumanCommand, type KeyValueStore, sessionStatus, tableS
 import { type ClaimCommand, roles } from './game/world';
 import { ClaimScreen } from './ui/claimScreen';
 import { Controls } from './ui/controls';
+import { legacyIntro, loadLegacy, recordEnding, saveLegacy } from './game/run/legacy';
 import { describeAction } from './ui/format';
 import { attunePanel, evolutionPanel, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
 import { Sound } from './ui/sound';
@@ -93,6 +94,7 @@ class Game {
     newRun: () => this.newRun(),
     continueFallen: () => this.continueFallen(),
     rerender: () => this.refresh(),
+    legacyIntro: () => legacyIntro(loadLegacy(this.store)),
   };
   private timer: number | undefined;
   private prefs: Prefs = { fast: false, muted: false };
@@ -146,6 +148,8 @@ class Game {
     }
     this.run = next;
     this.save();
+    // Archive a finished character in the world testament (never carried into a new run).
+    if (ENDINGS.includes(next.node)) saveLegacy(this.store, recordEnding(loadLegacy(this.store), next));
     this.refresh();
   }
 
@@ -178,7 +182,7 @@ class Game {
     if (!run) {
       this.handInfo.textContent = 'The Last Wager';
       this.showScreen();
-      renderTitle(this.screen, this.hasFallenArchive(), this.screens);
+      renderTitle(this.screen, this.hasFallenArchive(), this.screens, loadLegacy(this.store).entries);
       return;
     }
     if (!run.table) {

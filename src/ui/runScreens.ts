@@ -8,12 +8,15 @@ import { allCards, type SpellCard } from '../game/magic/spellbook';
 import { COVENANTS, type RelicId, RELICS, SLOT_LIMITS } from '../game/magic/relics';
 import { type BaseSpellId, EVOLUTIONS, isBaseSpell, SPELLS, type SpellId } from '../game/magic/spells';
 import { PROFILES } from '../game/ai/profiles';
+import type { LegacyEntry } from '../game/run/legacy';
+import { merchantLine } from '../game/run/merchants';
 import {
   activeDuty,
   ACT2_LEDGER,
   ARCHIVE_RIVALS,
   canRecover,
   CROWN_LEDGER,
+  EPILOGUE_FATES,
   playerOverdue,
   resonanceTargets,
   UNDER_LEDGER,
@@ -46,6 +49,8 @@ export interface ScreenHandlers {
   continueFallen(): void;
   /** Re-renders after a purely local UI choice (no game state change). */
   rerender(): void;
+  /** Story variation from the world testament, for a new character's arrival (never chips). */
+  legacyIntro(): string | null;
 }
 
 type Child = Node | string | null | false | undefined;
@@ -288,8 +293,9 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
     return h(
       'div',
       { class: `offer${o.sold ? ' sold' : ''}` },
-      h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${def.name}`), h('span', { class: 'price' }, `${o.price}`)),
+      h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${def.name}`, def.rarity !== 'common' ? h('span', { class: `rarity ${def.rarity}` }, def.rarity) : null), h('span', { class: 'price' }, `${o.price}`)),
       h('p', { class: 'offer-text' }, def.effect),
+      owned ? h('p', { class: 'warning-text' }, 'You already carry this relic.') : relics.length >= SLOT_LIMITS.relics && !o.sold ? h('p', { class: 'warning-text' }, `Your ${SLOT_LIMITS.relics} relic slots are full: a purchase is refused.`) : null,
       o.sold
         ? h('span', { class: 'muted' }, 'Sold')
         : h('div', { class: 'offer-foot' }, h('span', { class: 'muted' }, `You would keep ${chips - o.price}`), btn('Buy', () => cb.command({ kind: 'buy', offer: i }), 'primary small', owned)),
@@ -336,6 +342,7 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
   return screen(
     run,
     royal ? 'The Royal Exchange' : velvet ? 'The Velvet Exchange' : 'Selene’s Lantern',
+    h('p', { class: 'merchant-line' }, merchantLine(run, s.merchant)),
     h(
       'p',
       { class: 'lede' },
@@ -444,6 +451,21 @@ const CHAPTER_TEXT: Record<string, [string, string[], string]> = {
   act2_living_exile: ['The Mask Falls', ['You leave the Gilded Circuit alive but unhonored, with every Lifechip you still hold.', 'A Crown Writ can still be had — by petition, for one point of Favor.'], 'Petition for a Writ'],
 };
 
+const FATE_LABEL: Record<string, string> = {
+  retire: 'Retire from the tables',
+  keep_wagering_in_future_content: 'Keep wagering, somewhere else',
+  honor_contract: 'Honor the contract',
+  seek_liberation_in_future_content: 'Seek liberation, in time',
+  reform: 'Reform the Ledger’s law',
+  claim: 'Claim the Ledger’s authority',
+};
+const FATE_TEXT: Record<string, string> = {
+  retire: 'You retire. Your Lifechips and debts are archived exactly as they stand.',
+  keep_wagering_in_future_content: 'You mean to keep wagering. A later road may open; this character is archived, alive.',
+  honor_contract: 'You honor your contract under the low lanterns.',
+  seek_liberation_in_future_content: 'You will seek liberation. A later, finite Cinder sequel may tell how.',
+};
+
 const ENDING_TEXT: Record<string, [string, string[]]> = {
   the_ledger_unbound: ['The Ledger Unbound', ['You won the Crown Table. The Ledger itself waits on your word.', 'Your Wagerer keeps exactly the Lifechips, debts and favors they hold. Nothing here is minted.']],
   the_unchosen_road: ['The Unchosen Road', ['High society closes its doors, but you walk away alive with every Lifechip and every debt you carry.', 'A later road of prestige may open in time. This is not death.']],
@@ -479,6 +501,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'Wagerer’s Arrival',
+        cb.legacyIntro() ? h('p', { class: 'muted' }, cb.legacyIntro()!) : null,
         h('p', { class: 'lede' }, 'You arrive in the Lantern district with 100 Lifechips and a beginner’s Spellbook. Three tables stand between you and the Ledger. Chips are life: lose them all and a Last Claim decides your fate.'),
         h('ol', { class: 'plan' }, h('li', {}, 'The Ash Table — finish in the top two within 8 hands.'), h('li', {}, 'Selene’s Lantern — relics for real Lifechips.'), h('li', {}, 'The Lantern Circuit — top two within 8 hands.'), h('li', {}, 'The Bailiff’s Ledger — first after 12 hands, or second with a real profit.')),
         spellbookPanel(run),
@@ -632,7 +655,11 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
         h('p', { class: 'lede' }, run.flags.includes('bound_writ') ? 'A conditional writ: you may sit at the Crown Table, but your obligations stand, and the herald will say so.' : 'The Writ is read aloud. Your stack, debts and spells come with you; nothing is given.'),
         ingress ? h('section', { class: 'record' }, h('h3', {}, 'The Ledger’s audit'), h('p', {}, `${ingress.amount} Lifechips enter once from the Crown Ledger, by name as each newcomer sits. You receive none of them.`)) : null,
         h('ol', { class: 'plan' }, h('li', {}, 'The Ashen Coronet — top two within 8 hands (4/8).'), h('li', {}, 'The Silver Archive — a dossier or an attunement.'), h('li', {}, 'The Royal Exchange — relics for real Lifechips.'), h('li', {}, 'The Table of Seals — top two within 8 hands.'), h('li', {}, 'The Crown Table — first, or second with a real profit, after 12 hands (4/8 then 5/10).')),
-        recover ? h('p', { class: 'warning-text' }, `You hold fewer than 24 Lifechips. The blinds here are 4/8. You may take the Undercircuit once first.`) : null,
+        recover
+          ? h('p', { class: 'warning-text' }, `You hold fewer than 24 Lifechips. The blinds here are 4/8. You may take the Undercircuit once first.`)
+          : run.accounts.you < 24
+            ? h('p', { class: 'warning-text' }, `You hold fewer than 24 Lifechips against 4/8 blinds. The Undercircuit has already been walked; there is no second recovery.`)
+            : null,
         debtLines(run),
         h(
           'div',
@@ -687,6 +714,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'Matron Wisp',
+        h('p', { class: 'merchant-line' }, merchantLine(run, WISP_ID)),
         h('p', { class: 'lede' }, `Matron Wisp buys one relic at half its shop value, from her own purse of ${wallet} Lifechips.`),
         sold || !relics.length
           ? h('p', { class: 'muted' }, sold ? 'You have already sold to Matron Wisp.' : 'You carry no relic she would buy.')
@@ -743,6 +771,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'The Broker Understairs',
+        h('p', { class: 'merchant-line' }, merchantLine(run, BROKER_ID)),
         h('p', { class: 'lede' }, `Broker Osric buys one relic at half its shop value, from his own purse of ${wallet} Lifechips. He lends nothing and rescues no one.`),
         h('p', { class: 'muted' }, `His purse came once from the Cinder ledger (${run.accounts[CINDER_LEDGER] ?? 0} held back for replacements at the Ember Steps).`),
         sold || !relics.length
@@ -850,10 +879,17 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       break;
     default: {
       const [title, lines] = ENDING_TEXT[run.node] ?? ['The road goes on', []];
+      const fates = EPILOGUE_FATES[run.node] ?? [];
+      const fate = run.flags.find((f) => f.startsWith('fate:'))?.slice(5);
       content = screen(
         run,
         title,
         ...lines.map((l) => h('p', { class: 'lede' }, l)),
+        fates.length
+          ? fate
+            ? h('p', { class: 'lede outcome-win' }, FATE_TEXT[fate] ?? fate)
+            : h('section', { class: 'record' }, h('h3', {}, 'Epilogue'), h('div', { class: 'actions' }, ...fates.map((f) => btn(FATE_LABEL[f] ?? f, () => cb.command({ kind: 'fate', choice: f })))))
+          : null,
         run.results.length ? h('ol', { class: 'plan' }, ...run.results.map((r) => h('li', {}, `${TABLE_NODES[r.node].label}: ${r.outcome.replace('_', ' ')} (${r.net >= 0 ? '+' : ''}${r.net})`))) : null,
         h('div', { class: 'actions' }, btn('Begin a new run', () => cb.newRun(), 'primary')),
       );
@@ -864,7 +900,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
 }
 
 /** Title screen when no run is saved; offers a P3 Fallen continuation when one exists. */
-export function renderTitle(root: HTMLElement, hasFallen: boolean, cb: ScreenHandlers): void {
+export function renderTitle(root: HTMLElement, hasFallen: boolean, cb: ScreenHandlers, testament: LegacyEntry[] = []): void {
   root.replaceChildren(
     h(
       'div',
@@ -879,6 +915,15 @@ export function renderTitle(root: HTMLElement, hasFallen: boolean, cb: ScreenHan
         hasFallen ? btn('Continue your Fallen Wagerer', () => cb.continueFallen()) : null,
       ),
       hasFallen ? h('p', { class: 'muted' }, 'A Wagerer who survived a Last Claim in the previous build waits at the Registry Below, with the exact Lifechips and covenant they left with.') : null,
+      testament.length
+        ? h(
+            'section',
+            { class: 'record testament' },
+            h('h3', {}, 'World testament'),
+            h('ol', { class: 'plan' }, ...testament.slice(-5).reverse().map((e) => h('li', {}, `${ENDING_TEXT[e.ending]?.[0] ?? e.ending}${e.fate ? ` · ${FATE_LABEL[e.fate] ?? e.fate}` : ''} · ${e.lifechips} Lifechips · ${e.tablesPlayed} tables`))),
+            h('p', { class: 'muted' }, 'Archived characters keep what they hold. A new Wagerer inherits nothing but the story.'),
+          )
+        : null,
     ),
   );
 }

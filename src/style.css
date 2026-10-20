@@ -1078,3 +1078,31 @@ button.branch {
   font-size: 14px;
   line-height: 1.4;
 }
+
+.merchant-line {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--gold-light);
+}
+
+.rarity {
+  margin-left: 8px;
+  font-family: var(--ui);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  vertical-align: middle;
+}
+
+.rarity.uncommon {
+  color: #9fc7b5;
+}
+
+.rarity.rare {
+  color: #d3a9ff;
+}

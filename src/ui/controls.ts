@@ -295,7 +295,7 @@ export class Controls {
     this.choice.replaceChildren(
       label,
       ...magic.myHand.map((c) => button(SPELLS[c.spell].name, () => this.cb.onSigil(c.uid), 'choice')),
-      button('Keep my draw', () => this.cb.onSigil(null), 'choice ghost'),
+      button('Keep — consumes Sigil for this table', () => this.cb.onSigil(null), 'choice ghost'),
     );
     this.choice.hidden = false;
   }
