@@ -32,6 +32,9 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
   archive, a royal shop and a three-seat boss), the Undercircuit with conditional
   writs, the rare Fateweaver's Sigil, Act II rewards and Last Claim temperaments,
   and phase-conditional balance reports over 2,000 runs per policy.
+- **P7 — Closure and measurement:** done. v0.9 rulings, Act III personalities,
+  merchant voices, epilogues and a world testament (no chips carried), an offline
+  paired spell-EV study, and a mobile pass (pot odds, reduced motion, small screens).
 
 ```sh
 npm install
@@ -39,6 +42,7 @@ npm run dev        # play at http://localhost:5173 (also reachable from a phone 
 npm test           # unit tests, AI tests, 10,000-hand simulation
 npm run simulate   # 1,000 seeded whole runs → docs/reports/p4-simulation.json
 npm run balance    # seed batches per policy with cohorts and 95% intervals → docs/reports/balance-*.json
+npm run spell-ev   # offline paired cast-vs-skip spell value with bootstrap intervals → docs/reports/spell-ev-*.json
 npm run build      # production build in dist/
 npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
@@ -84,6 +88,7 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P7
+## Next: P8
 
-To be decided with ChatGPT after `docs/briefs/006-report-for-chatgpt.md`.
+To be decided with ChatGPT after `docs/briefs/007-report-for-chatgpt.md`. Human
+playtesting on real phones is the open item no simulation can replace.

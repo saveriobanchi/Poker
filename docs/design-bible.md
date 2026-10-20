@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.8**
+**Canonical World, Gameplay & Production Blueprint — v0.9**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4–v0.8 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4–v0.9 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -49,6 +49,15 @@ Status: Working design baseline, dated 18 October 2026 (v0.4–v0.8 amendments b
 > Claim temperaments; Act III, the Crown Table; the Undercircuit; and phase-conditional
 > balance reporting. Data lives in `src/game/run/data/p6-*.json`; art in
 > [`art-brief-p6.md`](art-brief-p6.md).
+
+> **v0.9 amendments (20 October 2026).** [`design-decisions-v0.9.md`](design-decisions-v0.9.md)
+> settles the twelve P6 decisions (Sigil keep, archival dossiers, Whisper disclosure, the
+> Cinder Pass, Writ fee idempotency, the Undercircuit path past Act II, falls during Act
+> III, the low-stack offer), adds Act III Last Claim temperaments and the Regent's Second
+> Reflection, merchant personalities, epilogue fates and a cross-run world testament that
+> never carries chips, plus an offline counterfactual spell-EV protocol. Data:
+> `src/game/run/data/p7-*.json`; art: [`art-production-p7.md`](art-production-p7.md);
+> QA: [`mobile-qa-p7.md`](mobile-qa-p7.md).
 
 ---
 

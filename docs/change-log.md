@@ -1,5 +1,44 @@
 # Change log
 
+## 2026-10-20 — Design v0.9 + P7: Closure and measurement
+
+**Design (ChatGPT's v0.9 hand-off):** `docs/design-decisions-v0.9.md`, the five
+`src/game/run/data/p7-*.json` files, `docs/art-production-p7.md` and
+`docs/mobile-qa-p7.md`. The bible is bumped to v0.9.
+
+**Rules**
+- **Sigil:** "Keep" consumes the table's Sigil and draws nothing; it cannot be
+  reopened.
+- **Dossiers:** each one stores its seed (fixed on arrival) and the public action
+  records its figures are recomputed from.
+- **Cinder Pass:** waives one Crown Writ petition fee, once, and nothing else.
+- **Last Claims:** Act III rivals have their own temperaments.
+- **Ledger Regent:** carries one Second Reflection.
+- **Table of Seals:** reports when no spell is a valid reward target.
+- **Living endings:** each records one epilogue fate.
+
+**New**
+- **World testament (`legacy.ts`):** a separate store archiving each finished
+  character. A new run never reads it, so no chips, inventory or odds carry over.
+  The title screen lists it, and a new arrival hears one line about a predecessor.
+- **Merchant voices (`merchants.ts`):** dialogue only. Shops show rarity badges
+  and warnings for relics already owned or full slots.
+- **Offline spell value (`spellEv.ts`, `npm run spell-ev`):**
+  - Method: paired cast vs skip from the same cloned legal state, with common
+    policy randomness and bootstrap 95% intervals by spell, street and depth.
+  - Result: 317,781 pairs, 0 incompatible continuations.
+  - Analysis only, never shown in game.
+- **Mobile:**
+  - A pot-odds line when facing a bet.
+  - Reduce motion: follows the system setting, with a HUD toggle.
+  - Tap-to-read spell details.
+  - A tighter panel on short phones; the spell row fits at 320 px.
+
+**Fix**
+- A bound character who had already walked the Undercircuit and fell again was
+  routed back to the Underlamp. The no-replay guard refused it; the character now
+  ends at The Low Lanterns Remain. Found by the spell-EV study.
+
 ## 2026-10-20 — Design v0.8 + P6: Act III and the Undercircuit
 
 **Design (ChatGPT's v0.8 hand-off):** `docs/design-decisions-v0.8.md`, the six
