@@ -44,7 +44,7 @@ if (!isMainThread) {
     }),
   );
   const endings = ['slice_victory', 'slice_exile', 'fallen_unlocked', 'death'];
-  const finals = ['act2_victory', 'act2_living_exile', 'undercircuit_entry', 'death'];
+  const finals = ['the_ledger_unbound', 'the_unchosen_road', 'under_living_end', 'death'];
   const summary: Record<string, unknown> = {};
   for (const p of POLICIES) {
     const n = results.reduce((a, r) => a + r.policies[p].runs, 0);
@@ -64,6 +64,29 @@ if (!isMainThread) {
       fin[e] = { k, rate: +(k / n).toFixed(4), ci95: wilson(k, n) };
     }
     row.final = fin;
+    // Phase-conditional cohorts (design v0.8 balance plan): denominators are the cohort's entrants.
+    const cohorts: Record<string, unknown> = {};
+    for (const c of Object.keys(results[0].policies[p].cohorts)) {
+      const n2 = results.reduce((a, r) => a + r.policies[p].cohorts[c as keyof (typeof r.policies)[string]['cohorts']].n, 0);
+      const died = results.reduce((a, r) => a + r.policies[p].cohorts[c as keyof (typeof r.policies)[string]['cohorts']].died, 0);
+      const cleared = results.reduce((a, r) => a + r.policies[p].cohorts[c as keyof (typeof r.policies)[string]['cohorts']].cleared, 0);
+      cohorts[c] = {
+        n: n2,
+        diedHere: n2 ? { rate: +(died / n2).toFixed(4), ci95: wilson(died, n2) } : null,
+        cleared: n2 ? { rate: +(cleared / n2).toFixed(4), ci95: wilson(cleared, n2) } : null,
+      };
+    }
+    row.cohorts = cohorts;
+    const sum = (f: (r: SimulationReport) => Record<string, number>) =>
+      results.reduce((a, r) => {
+        for (const [k, v] of Object.entries(f(r))) a[k] = (a[k] ?? 0) + v;
+        return a;
+      }, {} as Record<string, number>);
+    row.deathsByPhase = sum((r) => r.policies[p].deathsByPhase);
+    row.relics = sum((r) => r.policies[p].relics);
+    row.evolvedAny = +(results.reduce((a, r) => a + r.policies[p].evolvedAny, 0) / n).toFixed(4);
+    row.whisper = sum((r) => r.policies[p].whisper);
+    row.repaid = sum((r) => r.policies[p].repaid);
     summary[p] = row;
   }
   const claims = results.reduce(
@@ -81,11 +104,24 @@ if (!isMainThread) {
     summary,
     claims,
     invariantChecks: results.reduce((a, r) => a + r.invariantChecks, 0),
+    ingressViolations: results.reduce((a, r) => a + r.ingressViolations, 0),
+    shoveCalls: results.reduce((a, r) => ({ n: a.n + r.shoveCalls.n, won: a.won + r.shoveCalls.won, net: a.net + r.shoveCalls.net }), { n: 0, won: 0, net: 0 }),
+    claimsByCharacter: results.reduce(
+      (a, r) => {
+        for (const [who, o] of Object.entries(r.claimsByCharacter)) for (const [k, v] of Object.entries(o)) (a[who] ??= {})[k] = (a[who][k] ?? 0) + v;
+        return a;
+      },
+      {} as Record<string, Record<string, number>>,
+    ),
+    playerCasts: results.reduce((a, r) => {
+      for (const [k, v] of Object.entries(r.playerCasts)) a[k] = (a[k] ?? 0) + v;
+      return a;
+    }, {} as Record<string, number>),
     aiCastsPer100Hands: +(results.reduce((a, r) => a + r.aiCastsPer100Hands, 0) / batches).toFixed(1),
     seconds: +((performance.now() - t0) / 1000).toFixed(1),
   };
   mkdirSync('docs/reports', { recursive: true });
   writeFileSync(`docs/reports/balance-${label}.json`, JSON.stringify(out, null, 2) + '\n');
-  console.log(JSON.stringify(out.summary, (k, v) => (k === 'ci95' ? `${v[0]}–${v[1]}` : v)));
+  console.log(JSON.stringify(Object.fromEntries(Object.entries(out.summary).map(([p, r]) => [p, (r as { cohorts: unknown }).cohorts])), (k, v) => (k === 'ci95' ? `${v[0]}–${v[1]}` : v)));
   console.log(`${batches * perPolicy * POLICIES.length} runs in ${out.seconds}s`);
 }

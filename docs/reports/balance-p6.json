@@ -1,0 +1,1032 @@
+{
+  "label": "p6",
+  "batches": 10,
+  "perPolicyPerBatch": 200,
+  "seeds": "simulateRuns(seed = 1000 + batch); world k shared by all policies",
+  "summary": {
+    "skilled": {
+      "n": 2000,
+      "slice_victory": {
+        "k": 424,
+        "rate": 0.212,
+        "ci95": [
+          0.1946,
+          0.2305
+        ],
+        "batchSd": 0.0307
+      },
+      "slice_exile": {
+        "k": 896,
+        "rate": 0.448,
+        "ci95": [
+          0.4263,
+          0.4699
+        ],
+        "batchSd": 0.0275
+      },
+      "fallen_unlocked": {
+        "k": 267,
+        "rate": 0.1335,
+        "ci95": [
+          0.1193,
+          0.1491
+        ],
+        "batchSd": 0.0206
+      },
+      "death": {
+        "k": 413,
+        "rate": 0.2065,
+        "ci95": [
+          0.1893,
+          0.2248
+        ],
+        "batchSd": 0.0252
+      },
+      "final": {
+        "the_ledger_unbound": {
+          "k": 230,
+          "rate": 0.115,
+          "ci95": [
+            0.1018,
+            0.1297
+          ]
+        },
+        "the_unchosen_road": {
+          "k": 383,
+          "rate": 0.1915,
+          "ci95": [
+            0.1749,
+            0.2093
+          ]
+        },
+        "under_living_end": {
+          "k": 45,
+          "rate": 0.0225,
+          "ci95": [
+            0.0169,
+            0.03
+          ]
+        },
+        "death": {
+          "k": 1342,
+          "rate": 0.671,
+          "ci95": [
+            0.6501,
+            0.6912
+          ]
+        }
+      },
+      "cohorts": {
+        "all": {
+          "n": 2000,
+          "diedHere": {
+            "rate": 0.671,
+            "ci95": [
+              0.6501,
+              0.6912
+            ]
+          },
+          "cleared": {
+            "rate": 0.115,
+            "ci95": [
+              0.1018,
+              0.1297
+            ]
+          }
+        },
+        "act2_entrants": {
+          "n": 1492,
+          "diedHere": {
+            "rate": 0.1977,
+            "ci95": [
+              0.1783,
+              0.2187
+            ]
+          },
+          "cleared": {
+            "rate": 0.2024,
+            "ci95": [
+              0.1828,
+              0.2236
+            ]
+          }
+        },
+        "act2_survivors": {
+          "n": 784,
+          "diedHere": {
+            "rate": 0.2589,
+            "ci95": [
+              0.2295,
+              0.2907
+            ]
+          },
+          "cleared": {
+            "rate": 0.2832,
+            "ci95": [
+              0.2527,
+              0.3157
+            ]
+          }
+        },
+        "fallen_entrants": {
+          "n": 866,
+          "diedHere": {
+            "rate": 0.3476,
+            "ci95": [
+              0.3166,
+              0.3799
+            ]
+          },
+          "cleared": {
+            "rate": 0.2194,
+            "ci95": [
+              0.1931,
+              0.2482
+            ]
+          }
+        },
+        "under_entrants": {
+          "n": 304,
+          "diedHere": {
+            "rate": 0.1908,
+            "ci95": [
+              0.1506,
+              0.2387
+            ]
+          },
+          "cleared": {
+            "rate": 0.6612,
+            "ci95": [
+              0.6063,
+              0.7121
+            ]
+          }
+        },
+        "act3_entrants": {
+          "n": 983,
+          "diedHere": {
+            "rate": 0.3337,
+            "ci95": [
+              0.3049,
+              0.3637
+            ]
+          },
+          "cleared": {
+            "rate": 0.234,
+            "ci95": [
+              0.2086,
+              0.2614
+            ]
+          }
+        }
+      },
+      "deathsByPhase": {
+        "fallen": 301,
+        "act1": 360,
+        "act2": 295,
+        "act3": 328,
+        "under": 58
+      },
+      "relics": {
+        "reward:common": 2090,
+        "shop:uncommon": 1835,
+        "shop:common": 3558,
+        "reward:uncommon": 594,
+        "shop:rare": 200,
+        "reward:rare": 109
+      },
+      "evolvedAny": 0.921,
+      "whisper": {
+        "offered": 0,
+        "accepted": 0
+      },
+      "repaid": {
+        "player": 413,
+        "npcVoluntary": 549
+      }
+    },
+    "passive": {
+      "n": 2000,
+      "slice_victory": {
+        "k": 45,
+        "rate": 0.0225,
+        "ci95": [
+          0.0169,
+          0.03
+        ],
+        "batchSd": 0.0079
+      },
+      "slice_exile": {
+        "k": 39,
+        "rate": 0.0195,
+        "ci95": [
+          0.0143,
+          0.0265
+        ],
+        "batchSd": 0.0083
+      },
+      "fallen_unlocked": {
+        "k": 391,
+        "rate": 0.1955,
+        "ci95": [
+          0.1787,
+          0.2135
+        ],
+        "batchSd": 0.0415
+      },
+      "death": {
+        "k": 1525,
+        "rate": 0.7625,
+        "ci95": [
+          0.7434,
+          0.7806
+        ],
+        "batchSd": 0.0439
+      },
+      "final": {
+        "the_ledger_unbound": {
+          "k": 0,
+          "rate": 0,
+          "ci95": [
+            0,
+            0.0019
+          ]
+        },
+        "the_unchosen_road": {
+          "k": 0,
+          "rate": 0,
+          "ci95": [
+            0,
+            0.0019
+          ]
+        },
+        "under_living_end": {
+          "k": 13,
+          "rate": 0.0065,
+          "ci95": [
+            0.0038,
+            0.0111
+          ]
+        },
+        "death": {
+          "k": 1987,
+          "rate": 0.9935,
+          "ci95": [
+            0.9889,
+            0.9962
+          ]
+        }
+      },
+      "cohorts": {
+        "all": {
+          "n": 2000,
+          "diedHere": {
+            "rate": 0.9935,
+            "ci95": [
+              0.9889,
+              0.9962
+            ]
+          },
+          "cleared": {
+            "rate": 0,
+            "ci95": [
+              0,
+              0.0019
+            ]
+          }
+        },
+        "act2_entrants": {
+          "n": 166,
+          "diedHere": {
+            "rate": 0.6446,
+            "ci95": [
+              0.5692,
+              0.7134
+            ]
+          },
+          "cleared": {
+            "rate": 0.006,
+            "ci95": [
+              0.0011,
+              0.0333
+            ]
+          }
+        },
+        "act2_survivors": {
+          "n": 4,
+          "diedHere": {
+            "rate": 1,
+            "ci95": [
+              0.5101,
+              1
+            ]
+          },
+          "cleared": {
+            "rate": 0,
+            "ci95": [
+              0,
+              0.4899
+            ]
+          }
+        },
+        "fallen_entrants": {
+          "n": 1096,
+          "diedHere": {
+            "rate": 0.8431,
+            "ci95": [
+              0.8203,
+              0.8634
+            ]
+          },
+          "cleared": {
+            "rate": 0.0119,
+            "ci95": [
+              0.0069,
+              0.0202
+            ]
+          }
+        },
+        "under_entrants": {
+          "n": 88,
+          "diedHere": {
+            "rate": 0.5,
+            "ci95": [
+              0.3977,
+              0.6023
+            ]
+          },
+          "cleared": {
+            "rate": 0.3523,
+            "ci95": [
+              0.2606,
+              0.4563
+            ]
+          }
+        },
+        "act3_entrants": {
+          "n": 37,
+          "diedHere": {
+            "rate": 0.973,
+            "ci95": [
+              0.8618,
+              0.9952
+            ]
+          },
+          "cleared": {
+            "rate": 0,
+            "ci95": [
+              0,
+              0.0941
+            ]
+          }
+        }
+      },
+      "deathsByPhase": {
+        "fallen": 924,
+        "act1": 876,
+        "act2": 107,
+        "under": 44,
+        "act3": 36
+      },
+      "relics": {
+        "reward:common": 477,
+        "reward:uncommon": 97,
+        "reward:rare": 17
+      },
+      "evolvedAny": 0.0005,
+      "whisper": {
+        "offered": 30,
+        "accepted": 0
+      },
+      "repaid": {
+        "player": 748,
+        "npcVoluntary": 16
+      }
+    },
+    "maniac": {
+      "n": 2000,
+      "slice_victory": {
+        "k": 215,
+        "rate": 0.1075,
+        "ci95": [
+          0.0947,
+          0.1218
+        ],
+        "batchSd": 0.0252
+      },
+      "slice_exile": {
+        "k": 91,
+        "rate": 0.0455,
+        "ci95": [
+          0.0372,
+          0.0555
+        ],
+        "batchSd": 0.0123
+      },
+      "fallen_unlocked": {
+        "k": 460,
+        "rate": 0.23,
+        "ci95": [
+          0.2121,
+          0.249
+        ],
+        "batchSd": 0.0176
+      },
+      "death": {
+        "k": 1234,
+        "rate": 0.617,
+        "ci95": [
+          0.5955,
+          0.6381
+        ],
+        "batchSd": 0.032
+      },
+      "final": {
+        "the_ledger_unbound": {
+          "k": 34,
+          "rate": 0.017,
+          "ci95": [
+            0.0122,
+            0.0237
+          ]
+        },
+        "the_unchosen_road": {
+          "k": 19,
+          "rate": 0.0095,
+          "ci95": [
+            0.0061,
+            0.0148
+          ]
+        },
+        "under_living_end": {
+          "k": 17,
+          "rate": 0.0085,
+          "ci95": [
+            0.0053,
+            0.0136
+          ]
+        },
+        "death": {
+          "k": 1930,
+          "rate": 0.965,
+          "ci95": [
+            0.956,
+            0.9722
+          ]
+        }
+      },
+      "cohorts": {
+        "all": {
+          "n": 2000,
+          "diedHere": {
+            "rate": 0.965,
+            "ci95": [
+              0.956,
+              0.9722
+            ]
+          },
+          "cleared": {
+            "rate": 0.017,
+            "ci95": [
+              0.0122,
+              0.0237
+            ]
+          }
+        },
+        "act2_entrants": {
+          "n": 445,
+          "diedHere": {
+            "rate": 0.4539,
+            "ci95": [
+              0.4083,
+              0.5004
+            ]
+          },
+          "cleared": {
+            "rate": 0.1461,
+            "ci95": [
+              0.1163,
+              0.1819
+            ]
+          }
+        },
+        "act2_survivors": {
+          "n": 98,
+          "diedHere": {
+            "rate": 0.5,
+            "ci95": [
+              0.4029,
+              0.5971
+            ]
+          },
+          "cleared": {
+            "rate": 0.3163,
+            "ci95": [
+              0.2327,
+              0.4138
+            ]
+          }
+        },
+        "fallen_entrants": {
+          "n": 1057,
+          "diedHere": {
+            "rate": 0.6982,
+            "ci95": [
+              0.6699,
+              0.7251
+            ]
+          },
+          "cleared": {
+            "rate": 0.0293,
+            "ci95": [
+              0.0207,
+              0.0413
+            ]
+          }
+        },
+        "under_entrants": {
+          "n": 151,
+          "diedHere": {
+            "rate": 0.298,
+            "ci95": [
+              0.2308,
+              0.3752
+            ]
+          },
+          "cleared": {
+            "rate": 0.5894,
+            "ci95": [
+              0.5097,
+              0.6647
+            ]
+          }
+        },
+        "act3_entrants": {
+          "n": 210,
+          "diedHere": {
+            "rate": 0.7,
+            "ci95": [
+              0.6349,
+              0.7579
+            ]
+          },
+          "cleared": {
+            "rate": 0.1619,
+            "ci95": [
+              0.1182,
+              0.2177
+            ]
+          }
+        }
+      },
+      "deathsByPhase": {
+        "act3": 147,
+        "act1": 798,
+        "fallen": 738,
+        "act2": 202,
+        "under": 45
+      },
+      "relics": {
+        "reward:common": 1062,
+        "reward:uncommon": 272,
+        "reward:rare": 32
+      },
+      "evolvedAny": 0.035,
+      "whisper": {
+        "offered": 215,
+        "accepted": 215
+      },
+      "repaid": {
+        "player": 1635,
+        "npcVoluntary": 62
+      }
+    },
+    "tight": {
+      "n": 2000,
+      "slice_victory": {
+        "k": 353,
+        "rate": 0.1765,
+        "ci95": [
+          0.1604,
+          0.1938
+        ],
+        "batchSd": 0.0293
+      },
+      "slice_exile": {
+        "k": 1054,
+        "rate": 0.527,
+        "ci95": [
+          0.5051,
+          0.5488
+        ],
+        "batchSd": 0.0357
+      },
+      "fallen_unlocked": {
+        "k": 253,
+        "rate": 0.1265,
+        "ci95": [
+          0.1126,
+          0.1418
+        ],
+        "batchSd": 0.0254
+      },
+      "death": {
+        "k": 340,
+        "rate": 0.17,
+        "ci95": [
+          0.1542,
+          0.1871
+        ],
+        "batchSd": 0.0261
+      },
+      "final": {
+        "the_ledger_unbound": {
+          "k": 94,
+          "rate": 0.047,
+          "ci95": [
+            0.0386,
+            0.0572
+          ]
+        },
+        "the_unchosen_road": {
+          "k": 322,
+          "rate": 0.161,
+          "ci95": [
+            0.1455,
+            0.1778
+          ]
+        },
+        "under_living_end": {
+          "k": 98,
+          "rate": 0.049,
+          "ci95": [
+            0.0404,
+            0.0594
+          ]
+        },
+        "death": {
+          "k": 1486,
+          "rate": 0.743,
+          "ci95": [
+            0.7234,
+            0.7617
+          ]
+        }
+      },
+      "cohorts": {
+        "all": {
+          "n": 2000,
+          "diedHere": {
+            "rate": 0.743,
+            "ci95": [
+              0.7234,
+              0.7617
+            ]
+          },
+          "cleared": {
+            "rate": 0.047,
+            "ci95": [
+              0.0386,
+              0.0572
+            ]
+          }
+        },
+        "act2_entrants": {
+          "n": 1552,
+          "diedHere": {
+            "rate": 0.239,
+            "ci95": [
+              0.2185,
+              0.2609
+            ]
+          },
+          "cleared": {
+            "rate": 0.1134,
+            "ci95": [
+              0.0986,
+              0.1301
+            ]
+          }
+        },
+        "act2_survivors": {
+          "n": 657,
+          "diedHere": {
+            "rate": 0.382,
+            "ci95": [
+              0.3457,
+              0.4198
+            ]
+          },
+          "cleared": {
+            "rate": 0.14,
+            "ci95": [
+              0.1156,
+              0.1687
+            ]
+          }
+        },
+        "fallen_entrants": {
+          "n": 968,
+          "diedHere": {
+            "rate": 0.2851,
+            "ci95": [
+              0.2576,
+              0.3144
+            ]
+          },
+          "cleared": {
+            "rate": 0.2211,
+            "ci95": [
+              0.1961,
+              0.2483
+            ]
+          }
+        },
+        "under_entrants": {
+          "n": 489,
+          "diedHere": {
+            "rate": 0.2413,
+            "ci95": [
+              0.2055,
+              0.2812
+            ]
+          },
+          "cleared": {
+            "rate": 0.5521,
+            "ci95": [
+              0.5078,
+              0.5956
+            ]
+          }
+        },
+        "act3_entrants": {
+          "n": 878,
+          "diedHere": {
+            "rate": 0.4704,
+            "ci95": [
+              0.4376,
+              0.5035
+            ]
+          },
+          "cleared": {
+            "rate": 0.1071,
+            "ci95": [
+              0.0883,
+              0.1293
+            ]
+          }
+        }
+      },
+      "deathsByPhase": {
+        "act1": 308,
+        "fallen": 276,
+        "act2": 371,
+        "act3": 413,
+        "under": 118
+      },
+      "relics": {
+        "reward:common": 2121,
+        "reward:uncommon": 710,
+        "reward:rare": 103
+      },
+      "evolvedAny": 0.1285,
+      "whisper": {
+        "offered": 1173,
+        "accepted": 0
+      },
+      "repaid": {
+        "player": 347,
+        "npcVoluntary": 565
+      }
+    }
+  },
+  "claims": {
+    "survival:mercy": 3221,
+    "death:acceptedFate": 3539,
+    "death:claimedLife": 4233,
+    "death:refused": 4896,
+    "survival:debt": 2707,
+    "survival:service": 135,
+    "death:declinedCounter": 84,
+    "death:noBargain": 4
+  },
+  "invariantChecks": 2565076,
+  "ingressViolations": 0,
+  "shoveCalls": {
+    "n": 15192,
+    "won": 8609,
+    "net": 276348
+  },
+  "claimsByCharacter": {
+    "eldric_vale": {
+      "survival:mercy": 265,
+      "death:refused": 421,
+      "death:claimedLife": 295,
+      "survival:debt": 86
+    },
+    "dock_runner": {
+      "death:acceptedFate": 1254,
+      "death:claimedLife": 392,
+      "death:refused": 129,
+      "survival:debt": 73,
+      "survival:mercy": 34
+    },
+    "sister_rill": {
+      "survival:mercy": 268,
+      "survival:debt": 130,
+      "death:claimedLife": 250,
+      "death:refused": 445
+    },
+    "night_clerk": {
+      "death:acceptedFate": 910,
+      "death:claimedLife": 387,
+      "death:refused": 186,
+      "survival:debt": 117,
+      "survival:mercy": 27,
+      "death:noBargain": 4
+    },
+    "ravel_croft": {
+      "death:claimedLife": 159,
+      "death:acceptedFate": 158,
+      "survival:debt": 347,
+      "death:refused": 229,
+      "survival:mercy": 14,
+      "death:declinedCounter": 3
+    },
+    "isolde_morn": {
+      "death:claimedLife": 130,
+      "survival:debt": 21,
+      "death:refused": 92,
+      "survival:mercy": 143,
+      "death:acceptedFate": 84
+    },
+    "vesa_kael": {
+      "death:claimedLife": 150,
+      "survival:mercy": 117,
+      "death:acceptedFate": 116,
+      "survival:debt": 161,
+      "death:refused": 153,
+      "death:declinedCounter": 2
+    },
+    "livia_shade": {
+      "death:claimedLife": 94,
+      "survival:mercy": 276,
+      "death:acceptedFate": 33,
+      "death:refused": 75,
+      "death:declinedCounter": 9
+    },
+    "witness_arden": {
+      "death:claimedLife": 104,
+      "survival:mercy": 189,
+      "survival:debt": 51,
+      "death:acceptedFate": 36,
+      "death:refused": 60
+    },
+    "margrave_noct": {
+      "death:claimedLife": 70,
+      "survival:debt": 218,
+      "death:refused": 98,
+      "death:acceptedFate": 16,
+      "survival:mercy": 13,
+      "death:declinedCounter": 1
+    },
+    "aurelia_ash": {
+      "death:claimedLife": 73,
+      "death:refused": 91,
+      "survival:mercy": 280,
+      "survival:debt": 42,
+      "death:acceptedFate": 25
+    },
+    "master_fen": {
+      "death:refused": 190,
+      "survival:mercy": 74,
+      "death:claimedLife": 55,
+      "survival:debt": 69,
+      "death:acceptedFate": 181
+    },
+    "captain_rusk": {
+      "death:acceptedFate": 70,
+      "death:refused": 105,
+      "death:claimedLife": 51,
+      "survival:debt": 39,
+      "survival:mercy": 58
+    },
+    "vesper": {
+      "death:refused": 730,
+      "death:claimedLife": 290,
+      "survival:debt": 447,
+      "survival:mercy": 86,
+      "survival:service": 135,
+      "death:declinedCounter": 12
+    },
+    "oracle": {
+      "survival:debt": 625,
+      "death:claimedLife": 420,
+      "survival:mercy": 38,
+      "death:refused": 359,
+      "death:declinedCounter": 21
+    },
+    "bailiff_sable": {
+      "death:refused": 456,
+      "survival:debt": 50,
+      "survival:mercy": 357,
+      "death:claimedLife": 214
+    },
+    "the_uncrowned": {
+      "survival:mercy": 74,
+      "death:acceptedFate": 27,
+      "survival:debt": 35,
+      "death:claimedLife": 39,
+      "death:refused": 109
+    },
+    "mara_quill": {
+      "survival:debt": 29,
+      "death:refused": 352,
+      "survival:mercy": 286,
+      "death:claimedLife": 286
+    },
+    "copper_saint": {
+      "survival:mercy": 59,
+      "death:claimedLife": 55,
+      "survival:debt": 44,
+      "death:acceptedFate": 153,
+      "death:refused": 134
+    },
+    "dame_neris": {
+      "death:refused": 102,
+      "death:claimedLife": 57,
+      "death:acceptedFate": 86,
+      "survival:mercy": 43,
+      "survival:debt": 41
+    },
+    "corvin": {
+      "death:claimedLife": 357,
+      "death:refused": 158,
+      "survival:mercy": 384,
+      "survival:debt": 18,
+      "death:declinedCounter": 36
+    },
+    "ledger_regent": {
+      "death:acceptedFate": 21,
+      "survival:mercy": 69,
+      "death:claimedLife": 41,
+      "survival:debt": 17,
+      "death:refused": 85
+    },
+    "stone_crier": {
+      "death:refused": 22,
+      "death:acceptedFate": 120,
+      "death:claimedLife": 46,
+      "survival:mercy": 4,
+      "survival:debt": 17
+    },
+    "copper_runner": {
+      "death:acceptedFate": 134,
+      "death:claimedLife": 62,
+      "death:refused": 25,
+      "survival:debt": 13,
+      "survival:mercy": 5
+    },
+    "archivist_sorn": {
+      "death:claimedLife": 57,
+      "survival:mercy": 51,
+      "death:refused": 65,
+      "death:acceptedFate": 34,
+      "survival:debt": 10
+    },
+    "cinder_mason": {
+      "death:claimedLife": 46,
+      "death:refused": 2,
+      "death:acceptedFate": 37,
+      "survival:debt": 3
+    },
+    "ash_porter": {
+      "death:refused": 11,
+      "death:claimedLife": 53,
+      "death:acceptedFate": 33,
+      "survival:debt": 4,
+      "survival:mercy": 1
+    },
+    "adjudicator": {
+      "survival:mercy": 6,
+      "death:acceptedFate": 11,
+      "death:refused": 12
+    }
+  },
+  "playerCasts": {
+    "cinder_challenge": 3334,
+    "briar_lock": 10349,
+    "unmask": 6433,
+    "fate_exchange": 4483,
+    "twin_oracle": 5055,
+    "thorn_lattice": 6188,
+    "second_reflection": 156,
+    "ravenous_eye": 336,
+    "red_oath": 11,
+    "quiet_briars": 917,
+    "marked_fate": 29,
+    "ember_echo": 92
+  },
+  "aiCastsPer100Hands": 22.6,
+  "seconds": 267.8
+}
