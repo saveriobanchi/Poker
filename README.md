@@ -28,13 +28,17 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
   the Gilded Circuit (three tables, a merchant, two events) continues Act I; the
   Fallen continue through the Broker, the Ember Steps and the Oathbreaker Hearing.
   New actors are funded through audited external-ledger ingress; old saves migrate.
+- **P6 — Act III and the Undercircuit:** done. The Crown Table (two contracts, an
+  archive, a royal shop and a three-seat boss), the Undercircuit with conditional
+  writs, the rare Fateweaver's Sigil, Act II rewards and Last Claim temperaments,
+  and phase-conditional balance reports over 2,000 runs per policy.
 
 ```sh
 npm install
 npm run dev        # play at http://localhost:5173 (also reachable from a phone on the same Wi-Fi)
 npm test           # unit tests, AI tests, 10,000-hand simulation
 npm run simulate   # 1,000 seeded whole runs → docs/reports/p4-simulation.json
-npm run balance    # 10 seed batches × 100 runs per policy, with 95% intervals → docs/reports/balance-*.json
+npm run balance    # seed batches per policy with cohorts and 95% intervals → docs/reports/balance-*.json
 npm run build      # production build in dist/
 npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
@@ -80,7 +84,6 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P6
+## Next: P7
 
-To be decided with ChatGPT after `docs/briefs/005-report-for-chatgpt.md`: the
-Undercircuit, what follows the Crown Inquest, and the painted portraits.
+To be decided with ChatGPT after `docs/briefs/006-report-for-chatgpt.md`.

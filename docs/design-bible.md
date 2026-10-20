@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.7**
+**Canonical World, Gameplay & Production Blueprint — v0.8**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4–v0.7 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4–v0.8 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -41,6 +41,14 @@ Status: Working design baseline, dated 18 October 2026 (v0.4–v0.7 amendments b
 > the Cinder continuation; audited external ingress for new actors; and the P5
 > portrait briefs ([`art-brief-p5.md`](art-brief-p5.md)). Data lives in
 > `src/game/run/data/p5-*.json`.
+
+> **v0.8 amendments (20 October 2026).** [`design-decisions-v0.8.md`](design-decisions-v0.8.md)
+> adds: the Whispered Contract reward; the Court of Mirrors dossier; Ember Steps Favor
+> and the Cinder Pass; Crown Writs for freed and bound survivors; Act II rewards and the
+> rare Fateweaver's Sigil; NPC repayments at every boundary with estates; Act II Last
+> Claim temperaments; Act III, the Crown Table; the Undercircuit; and phase-conditional
+> balance reporting. Data lives in `src/game/run/data/p6-*.json`; art in
+> [`art-brief-p6.md`](art-brief-p6.md).
 
 ---
 

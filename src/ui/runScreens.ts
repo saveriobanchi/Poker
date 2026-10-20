@@ -11,6 +11,13 @@ import { PROFILES } from '../game/ai/profiles';
 import {
   activeDuty,
   ACT2_LEDGER,
+  ARCHIVE_RIVALS,
+  canRecover,
+  CROWN_LEDGER,
+  playerOverdue,
+  resonanceTargets,
+  UNDER_LEDGER,
+  WISP_ID,
   attuneOptions,
   BROKER_ID,
   brokerPrice,
@@ -85,10 +92,37 @@ const ACT2_TRAIL: { id: NodeId; label: string; short: string }[] = [
   { id: 'crown_inquest', label: 'The Crown Inquest', short: 'Inquest' },
 ];
 
+const ACT3_TRAIL: { id: NodeId; label: string; short: string }[] = [
+  { id: 'crown_writ', label: 'The Crown Writ', short: 'Writ' },
+  { id: 'coronet_table', label: 'The Ashen Coronet', short: 'Coronet' },
+  { id: 'crown_archive', label: 'The Silver Archive', short: 'Archive' },
+  { id: 'royal_exchange', label: 'The Royal Exchange', short: 'Exchange' },
+  { id: 'seals_table', label: 'The Table of Seals', short: 'Seals' },
+  { id: 'crown_table', label: 'The Crown Table', short: 'Crown' },
+];
+const UNDER_TRAIL: { id: NodeId; label: string; short: string }[] = [
+  { id: 'under_declaration', label: 'The Underledger', short: 'Underledger' },
+  { id: 'under_broker', label: 'Matron Wisp', short: 'Wisp' },
+  { id: 'underlamp_table', label: 'The Underlamp Table', short: 'Underlamp' },
+  { id: 'under_hearing', label: 'The Petition of Cinders', short: 'Petition' },
+];
+const ACT3_NODES = new Set<NodeId>(['the_ledger_unbound', 'the_unchosen_road', ...ACT3_TRAIL.map((n) => n.id)]);
+const UNDER_NODES = new Set<NodeId>(['under_living_end', 'undercircuit_entry', ...UNDER_TRAIL.map((n) => n.id)]);
+
 const ACT2_NODES = new Set<NodeId>(['act2_petition', 'act2_victory', 'act2_living_exile', ...ACT2_TRAIL.map((n) => n.id), 'secret_bargain']);
-const FALLEN_NODES = new Set<NodeId>(['fallen_unlocked', 'undercircuit_entry', ...FALLEN_TRAIL.map((n) => n.id)]);
+const FALLEN_NODES = new Set<NodeId>(['fallen_unlocked', ...FALLEN_TRAIL.map((n) => n.id)]);
 /** Screens that share a trail slot with another node. */
-const SLOT_ALIAS: Partial<Record<NodeId, NodeId>> = { secret_bargain: 'mirror_audience', act2_petition: 'gilded_gate', fallen_unlocked: 'fallen_audience', undercircuit_entry: 'oath_hearing' };
+const SLOT_ALIAS: Partial<Record<NodeId, NodeId>> = {
+  secret_bargain: 'mirror_audience',
+  act2_petition: 'gilded_gate',
+  fallen_unlocked: 'fallen_audience',
+  undercircuit_entry: 'under_declaration',
+  act2_victory: 'crown_inquest',
+  act2_living_exile: 'crown_inquest',
+  the_ledger_unbound: 'crown_table',
+  the_unchosen_road: 'crown_table',
+  under_living_end: 'under_hearing',
+};
 
 
 /** Node the trail should highlight: result/reward/audit screens belong to the table just played. */
@@ -99,6 +133,8 @@ function trailPosition(run: RunState): NodeId {
 
 function trailFor(run: RunState) {
   const at = trailPosition(run);
+  if (ACT3_NODES.has(at) || ACT3_NODES.has(run.node)) return ACT3_TRAIL;
+  if (UNDER_NODES.has(at) || UNDER_NODES.has(run.node)) return UNDER_TRAIL;
   if (ACT2_NODES.has(at) || ACT2_NODES.has(run.node)) return ACT2_TRAIL;
   if (FALLEN_NODES.has(at) || FALLEN_NODES.has(run.node)) return FALLEN_TRAIL;
   return MAIN_TRAIL;
@@ -108,7 +144,7 @@ function trail(run: RunState): HTMLElement {
   const nodes = trailFor(run);
   const at = trailPosition(run);
   const idx = nodes.findIndex((n) => n.id === at);
-  const ended = ['slice_victory', 'slice_exile', 'fallen_unlocked', 'act2_victory', 'act2_living_exile', 'undercircuit_entry', 'death'].includes(run.node);
+  const ended = ['slice_victory', 'slice_exile', 'fallen_unlocked', 'act2_victory', 'act2_living_exile', 'the_ledger_unbound', 'the_unchosen_road', 'under_living_end', 'death'].includes(run.node);
   const played = new Set<NodeId>(run.results.map((r) => r.node as NodeId));
   const outcome = new Map<NodeId, string>(run.results.map((r) => [r.node, r.outcome]));
   const list = h('ol', { class: 'trail', 'aria-label': 'Route' });
@@ -281,7 +317,10 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
     );
   }
   const velvet = s.id === 'velvet_exchange';
-  const exits = velvet
+  const royal = s.id === 'royal_exchange';
+  const exits = royal
+    ? h('div', { class: 'actions' }, btn(`Go to ${TABLE_NODES.seals_table.label}`, () => cb.command({ kind: 'leaveShop', to: 'seals_table' }), 'primary'))
+    : velvet
     ? h(
         'div',
         { class: 'actions' },
@@ -296,11 +335,13 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
       );
   return screen(
     run,
-    velvet ? 'The Velvet Exchange' : 'Selene’s Lantern',
+    royal ? 'The Royal Exchange' : velvet ? 'The Velvet Exchange' : 'Selene’s Lantern',
     h(
       'p',
       { class: 'lede' },
-      velvet
+      royal
+        ? `Oran of the Royal Exchange keeps ${run.accounts[s.merchant]} Lifechips from the Crown Ledger. Rare relics appear only rarely. Every price is a real transfer.`
+        : velvet
         ? `Elin of the Velvet Exchange keeps ${run.accounts[s.merchant]} Lifechips, newly arrived from the outer Ledger. Every price is a real transfer.`
         : `Selene of the Lantern Market keeps ${run.accounts.selene} Lifechips in her strongbox. Every price is a real transfer.`,
     ),
@@ -399,25 +440,34 @@ const CHAPTER_TEXT: Record<string, [string, string[], string]> = {
   slice_victory: ['The Ledger Opens', ['You took the Bailiff’s Ledger. Act One is cleared and your survivor keeps every Lifechip won.', 'A published invitation awaits you at the Gilded Gate: Favor +1, no chips.'], 'Accept the invitation'],
   slice_exile: ['Exiled from the Circuit', ['You survived the Bailiff’s Ledger but did not take it. You leave the Circuit alive, with every Lifechip you still hold.', 'The Gilded Circuit can still be entered — by petition.'], 'Petition the Ledger'],
   fallen_unlocked: ['The Fallen Road Opens', ['You survived the Coal Table and stood before the Audience of the Bound.', 'The Cinder road goes on, down the stairs to the Broker Understairs.'], 'Take the stairs down'],
+  act2_victory: ['A Crown of Brass', ['You won the Crown Inquest. Act Two is cleared, and your Wagerer keeps every Lifechip, debt and favor.', 'A Crown Writ invites you to the Crown Table — no fee, no chips.'], 'Answer the Writ'],
+  act2_living_exile: ['The Mask Falls', ['You leave the Gilded Circuit alive but unhonored, with every Lifechip you still hold.', 'A Crown Writ can still be had — by petition, for one point of Favor.'], 'Petition for a Writ'],
 };
 
 const ENDING_TEXT: Record<string, [string, string[]]> = {
-  act2_victory: ['A Crown of Brass', ['You won the Crown Inquest. Act Two is cleared; your Wagerer is preserved with every Lifechip, debt and favor they hold.']],
-  act2_living_exile: ['The Mask Falls', ['You leave the Gilded Circuit alive but unhonored. Your Wagerer is preserved with every Lifechip they still hold.']],
-  undercircuit_entry: ['The Undercircuit', ['Still bound by your covenant, you descend into the Undercircuit with your obligations intact.', 'The low-tier road below opens in a later expansion. No Lifechips are given and no prestige returns on its own.']],
+  the_ledger_unbound: ['The Ledger Unbound', ['You won the Crown Table. The Ledger itself waits on your word.', 'Your Wagerer keeps exactly the Lifechips, debts and favors they hold. Nothing here is minted.']],
+  the_unchosen_road: ['The Unchosen Road', ['High society closes its doors, but you walk away alive with every Lifechip and every debt you carry.', 'A later road of prestige may open in time. This is not death.']],
+  under_living_end: ['The Low Lanterns Remain', ['You live on under the low lanterns with your exact Lifechips and obligations, archived for a later continuation.', 'No funds are given and no status resets.']],
   death: ['The Run Has Ended', ['The Ledger closed your account. Death concludes this character’s story; a new Wagerer may take up the cards.']],
 };
 
-function mirrorReport(run: RunState, id: string): HTMLElement {
-  const o = run.observed[id];
-  const pct = (k: number) => `${Math.round((100 * k) / Math.max(1, o.hands))}%`;
+/** A public dossier (design v0.8 §02): counts over a small recorded sample, with the sample size shown. */
+function dossierReport(run: RunState): HTMLElement | null {
+  const d = run.dossier;
+  if (!d) return null;
+  const w = d.witnessed;
   return h(
     'section',
     { class: 'record' },
-    h('h3', {}, `The reflection of ${run.characters[id].name}`),
-    h('p', {}, `Over ${o.hands} hands you watched: played ${pct(o.vpip)} of hands, raised first ${pct(o.pfr)}, shoved ${o.shoves} time${o.shoves === 1 ? '' : 's'}.`),
-    h('p', {}, PROFILES[id] ? `The Court calls them “${PROFILES[id].title.toLowerCase()}”.` : ''),
+    h('h3', {}, `Dossier: ${PROFILES[d.rival]?.name ?? d.rival}`),
+    h('p', {}, `In ${d.hands} recorded public hands: played ${d.vpip}, raised first ${d.pfr}, shoved ${d.shoves}. A small sample, not a lifetime record.`),
+    w ? h('p', {}, `You also watched them for ${w.hands} hands: played ${w.vpip}, raised first ${w.pfr}, shoved ${w.shoves}.`) : null,
+    h('p', { class: 'muted' }, 'Only public actions were recorded. No hidden card is ever shown. The dossier lasts for the next table.'),
   );
+}
+
+function spellPicker(run: RunState, onPick: (uid: string) => void): HTMLElement {
+  return h('div', { class: 'choice-row' }, ...uniqueBySpell(resonanceTargets(run)).map((c) => btn(`${SPELLS[c.spell].name} (${c.resonance ?? 0}→${(c.resonance ?? 0) + 1})`, () => onPick(c.uid), 'small')));
 }
 
 /** Renders the screen for the run's current (non-table) node. */
@@ -471,7 +521,9 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
           ...run.reward!.map((o, i) =>
             o.kind === 'relic'
               ? h('button', { type: 'button', class: 'offer pick', 'data-i': String(i) }, h('span', { class: 'offer-name' }, `◈ ${RELICS[o.relic].name}`), h('span', { class: 'offer-text' }, RELICS[o.relic].effect))
-              : h('button', { type: 'button', class: 'offer pick', 'data-i': String(i) }, h('span', { class: 'offer-name' }, '✦ Evolution token'), h('span', { class: 'offer-text' }, 'Evolve one base spell that has at least 1 Resonance early; if none has any, attune one (+1 Resonance) instead.')),
+              : o.kind === 'resonance'
+                ? h('div', { class: 'offer' }, h('span', { class: 'offer-name' }, '✦ Attune a spell'), h('span', { class: 'offer-text' }, '+1 Resonance to one unevolved spell (max 2).'), spellPicker(run, (uid) => cb.command({ kind: 'reward', index: i, uid })))
+                : h('button', { type: 'button', class: 'offer pick', 'data-i': String(i) }, h('span', { class: 'offer-name' }, '✦ Evolution token'), h('span', { class: 'offer-text' }, 'Evolve one base spell that has at least 1 Resonance early; if none has any, attune one (+1 Resonance) instead.')),
           ),
         ),
         spellbookPanel(run),
@@ -494,7 +546,9 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       break;
     case 'slice_victory':
     case 'slice_exile':
-    case 'fallen_unlocked': {
+    case 'fallen_unlocked':
+    case 'act2_victory':
+    case 'act2_living_exile': {
       const [title, lines, go] = CHAPTER_TEXT[run.node];
       content = screen(
         run,
@@ -544,10 +598,10 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'The Court of Mirrors',
-        h('p', { class: 'lede' }, 'The mirrors replay what you have already seen at the tables — one rival only. They show habits, never hidden cards.'),
+        h('p', { class: 'lede' }, 'The mirrors hold a dossier on one rival of the Velvet Arena — public hands only. They show habits, never hidden cards.'),
         chosen
-          ? mirrorReport(run, chosen)
-          : h('div', { class: 'choice-row' }, ...candidates.map((id) => btn(run.characters[id].name, () => cb.command({ kind: 'event', take: true, rival: id }), 'small'))),
+          ? dossierReport(run)
+          : h('div', { class: 'choice-row' }, ...candidates.map((id) => btn(PROFILES[id]?.name ?? id, () => cb.command({ kind: 'event', take: true, rival: id }), 'small'))),
         h(
           'div',
           { class: 'actions' },
@@ -562,15 +616,126 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'The Whispered Contract',
-        h('p', { class: 'lede' }, 'A masked broker offers a contract in a whisper. Its mark shows: Notoriety +1, and a public tell glows on your sleeve in the first hand of the next table. No Lifechips change hands.'),
+        h('p', { class: 'lede' }, 'A masked broker offers a contract in a whisper: one spell grows stronger, but the Arena learns one of your spells in its first hand, and your Notoriety rises. No Lifechips change hands.'),
+        resonanceTargets(run).length
+          ? h('section', { class: 'record' }, h('h3', {}, 'Accept, and attune one spell (+1 Resonance, max 2)'), spellPicker(run, (uid) => cb.command({ kind: 'event', take: true, uid })))
+          : h('section', { class: 'record' }, h('p', {}, 'No spell can be attuned: you would begin the Arena with +1 Aether instead (never above 3).'), btn('Accept the whisper', () => cb.command({ kind: 'event', take: true }), 'primary')),
+        h('div', { class: 'actions' }, btn('Decline', () => cb.command({ kind: 'event', take: false }))),
+      );
+      break;
+    case 'crown_writ': {
+      const ingress = run.perimeter.expansions.find((e) => e.account === CROWN_LEDGER);
+      const recover = canRecover(run);
+      content = screen(
+        run,
+        'The Crown Writ',
+        h('p', { class: 'lede' }, run.flags.includes('bound_writ') ? 'A conditional writ: you may sit at the Crown Table, but your obligations stand, and the herald will say so.' : 'The Writ is read aloud. Your stack, debts and spells come with you; nothing is given.'),
+        ingress ? h('section', { class: 'record' }, h('h3', {}, 'The Ledger’s audit'), h('p', {}, `${ingress.amount} Lifechips enter once from the Crown Ledger, by name as each newcomer sits. You receive none of them.`)) : null,
+        h('ol', { class: 'plan' }, h('li', {}, 'The Ashen Coronet — top two within 8 hands (4/8).'), h('li', {}, 'The Silver Archive — a dossier or an attunement.'), h('li', {}, 'The Royal Exchange — relics for real Lifechips.'), h('li', {}, 'The Table of Seals — top two within 8 hands.'), h('li', {}, 'The Crown Table — first, or second with a real profit, after 12 hands (4/8 then 5/10).')),
+        recover ? h('p', { class: 'warning-text' }, `You hold fewer than 24 Lifechips. The blinds here are 4/8. You may take the Undercircuit once first.`) : null,
+        debtLines(run),
         h(
           'div',
           { class: 'actions' },
-          btn('Accept the whisper', () => cb.command({ kind: 'event', take: true }), 'primary'),
-          btn('Decline', () => cb.command({ kind: 'event', take: false })),
+          btn(`Sit at ${TABLE_NODES.coronet_table.label}`, () => cb.command({ kind: 'advance' }), 'primary'),
+          recover ? btn('Take the Undercircuit first', () => cb.command({ kind: 'recover' })) : null,
         ),
       );
       break;
+    }
+    case 'crown_archive': {
+      const done = run.flags.includes('archive_done');
+      content = screen(
+        run,
+        'The Silver Archive',
+        h('p', { class: 'lede' }, 'The Archive keeps public hands of the Table of Seals — or it can lend one spell a little of its memory.'),
+        done
+          ? dossierReport(run) ?? h('p', { class: 'muted' }, 'Your spell has drawn on the Archive.')
+          : h(
+              'div',
+              { class: 'offers' },
+              h('section', { class: 'record' }, h('h3', {}, 'Study a rival'), h('div', { class: 'choice-row' }, ...ARCHIVE_RIVALS.map((id) => btn(PROFILES[id]?.name ?? id, () => cb.command({ kind: 'archive', choice: 'study', rival: id }), 'small')))),
+              resonanceTargets(run).length
+                ? h('section', { class: 'record' }, h('h3', {}, 'Resonate (+1 Resonance, +1 Notoriety)'), spellPicker(run, (uid) => cb.command({ kind: 'archive', choice: 'resonate', uid })))
+                : null,
+            ),
+        done ? h('div', { class: 'actions' }, btn('Go to the Royal Exchange', () => cb.command({ kind: 'advance' }), 'primary')) : null,
+      );
+      break;
+    }
+    case 'royal_exchange':
+      content = shop(run, cb);
+      break;
+    case 'undercircuit_entry':
+    case 'under_declaration': {
+      content = screen(
+        run,
+        'The Underledger',
+        h('p', { class: 'lede' }, 'Below the Cinder stairs the Underledger reads out who you owe and what you hold. Nothing is cleared here.'),
+        run.accounts[UNDER_LEDGER] !== undefined ? h('p', { class: 'muted' }, `The Underground Ledger brought 102 Lifechips once, for Matron Wisp and the Underlamp regulars.`) : null,
+        covenantRecord(run),
+        dutyLines(run),
+        debtLines(run),
+        h('div', { class: 'actions' }, btn('Go to Matron Wisp', () => cb.command({ kind: 'advance' }), 'primary')),
+      );
+      break;
+    }
+    case 'under_broker': {
+      const relics = run.player.magic.relics ?? [];
+      const sold = run.flags.includes('wisp_sold');
+      const wallet = run.accounts[WISP_ID] ?? 0;
+      content = screen(
+        run,
+        'Matron Wisp',
+        h('p', { class: 'lede' }, `Matron Wisp buys one relic at half its shop value, from her own purse of ${wallet} Lifechips.`),
+        sold || !relics.length
+          ? h('p', { class: 'muted' }, sold ? 'You have already sold to Matron Wisp.' : 'You carry no relic she would buy.')
+          : h('div', { class: 'offers' }, ...relics.map((r) => h('div', { class: 'offer' }, h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${RELICS[r].name}`), h('span', { class: 'price' }, String(brokerPrice(r)))), h('div', { class: 'offer-foot' }, h('span', { class: 'muted' }, `Shop value ${RELICS[r].price}`), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet))))),
+        h('div', { class: 'actions' }, btn(`Sit at ${TABLE_NODES.underlamp_table.label}`, () => cb.command({ kind: 'advance' }), 'primary')),
+      );
+      break;
+    }
+    case 'under_hearing': {
+      const free = playerIsFree(run);
+      const eligible = run.flags.includes('under_writ_eligible');
+      const overdue = playerOverdue(run);
+      const done = run.flags.includes('act3_entered');
+      const line = done
+        ? 'High society is behind you. The low lanterns are where your story rests.'
+        : free
+          ? 'You owe nothing binding. You may petition for a Crown Writ.'
+          : eligible && !overdue
+            ? 'You finished in the top two and owe nothing overdue: a conditional writ may be granted. Your obligations stand.'
+            : overdue
+              ? 'An overdue debt bars any writ. The low lanterns remain.'
+              : 'Without a top-two finish at the Underlamp, no writ is granted. The low lanterns remain.';
+      content = screen(
+        run,
+        'The Petition of Cinders',
+        h('p', { class: 'lede' }, 'No obligation is forgiven here.'),
+        covenantRecord(run),
+        dutyLines(run),
+        debtLines(run),
+        h('p', { class: 'lede' }, line),
+        h('div', { class: 'actions' }, btn(done || (!free && !(eligible && !overdue)) ? 'Stay under the low lanterns' : 'Take the Writ', () => cb.command({ kind: 'advance' }), 'primary')),
+      );
+      break;
+    }
+    case 'the_ledger_unbound': {
+      const chosen = run.flags.find((f) => f.startsWith('allegiance:'));
+      const [title, lines] = ENDING_TEXT.the_ledger_unbound;
+      content = screen(
+        run,
+        title,
+        ...lines.map((l) => h('p', { class: 'lede' }, l)),
+        chosen
+          ? h('p', { class: 'lede outcome-win' }, chosen === 'allegiance:reform' ? 'You petition to reform the Ledger’s law.' : 'You claim the Ledger’s authority.')
+          : h('div', { class: 'actions' }, btn('Petition to reform its law', () => cb.command({ kind: 'allegiance', choice: 'reform' })), btn('Claim its authority', () => cb.command({ kind: 'allegiance', choice: 'claim' }))),
+        h('ol', { class: 'plan' }, ...run.results.map((r) => h('li', {}, `${TABLE_NODES[r.node].label}: ${r.outcome.replace('_', ' ')} (${r.net >= 0 ? '+' : ''}${r.net})`))),
+        h('div', { class: 'actions' }, btn('Begin a new run', () => cb.newRun(), 'primary')),
+      );
+      break;
+    }
     case 'cinder_broker': {
       const relics = run.player.magic.relics ?? [];
       const sold = run.flags.includes('broker_sold');
@@ -612,9 +777,11 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
           'p',
           { class: `lede ${free ? 'outcome-win' : ''}` },
           free
-            ? run.flags.includes('act2_entered')
-              ? 'Your covenant is discharged. Unbound, you may leave — but the Circuit you once walked will not take you back.'
-              : 'Your covenant is discharged. You may climb the Stairs Above to the Gilded Gate as one of the Unbound Fallen.'
+            ? run.flags.includes('act3_entered')
+              ? 'Your covenant is discharged. Unbound, you leave high society behind — alive.'
+              : run.flags.includes('act2_entered')
+                ? 'Your covenant is discharged. The Circuit will not take you back, but you may petition for a Crown Writ (Favor −1).'
+                : 'Your covenant is discharged. You may climb the Stairs Above to the Gilded Gate as one of the Unbound Fallen.'
             : 'You are still bound. The stairs lead down, to the Undercircuit, with every obligation intact.',
         ),
         h('div', { class: 'actions' }, btn(free ? 'Climb the Stairs Above' : 'Descend to the Undercircuit', () => cb.command({ kind: 'advance' }), 'primary')),

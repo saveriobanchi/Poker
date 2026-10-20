@@ -1071,3 +1071,10 @@ button.branch {
   color: var(--crimson);
   padding: 4px 0;
 }
+
+.warning-text {
+  margin: 0;
+  color: #e3a07a;
+  font-size: 14px;
+  line-height: 1.4;
+}

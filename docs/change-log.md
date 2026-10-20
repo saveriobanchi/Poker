@@ -1,5 +1,43 @@
 # Change log
 
+## 2026-10-20 — Design v0.8 + P6: Act III and the Undercircuit
+
+**Design (ChatGPT's v0.8 hand-off):** `docs/design-decisions-v0.8.md`, the six
+`src/game/run/data/p6-*.json` files and `docs/art-brief-p6.md`. The bible is bumped
+to v0.8.
+
+**Rule changes**
+- **Whispered Contract:** +1 Resonance to an unevolved spell below 2 (otherwise +1
+  Aether at the next table), +1 Notoriety, and one drawn spell named publicly in the
+  Arena's first hand.
+- **Court of Mirrors:** a seeded 12-hand public dossier on Witness Arden or Livia
+  Shade, shown at the Arena only.
+- **Act II rewards:** Salon (relic or +1 Resonance) and Arena (relic or token).
+- **Fateweaver's Sigil:** a rare relic (38) with a once-per-table private spell
+  rearrangement, a public tell and replay support.
+- **Ember Steps:** finishing top two gives Favor +1 and a Cinder Pass.
+- **NPC debt:** voluntary payments at every boundary, with estates for dead creditors.
+- **Last Claim:** temperaments for the seven Act II rivals.
+
+**New content**
+- **Act III, the Crown Table:** the Crown Writ (invitation, petition or conditional
+  entry, with an optional one-time Undercircuit recovery for short stacks), the Ashen
+  Coronet, the Silver Archive, the Royal Exchange, the Table of Seals and the Crown
+  Table. Endings: The Ledger Unbound (with a recorded allegiance) and The Unchosen
+  Road. The Crown ledger ingress (1,280) happens once.
+- **The Undercircuit:** the Underledger (102 ingress, once), Matron Wisp, the
+  Underlamp Table and the Petition of Cinders, ending in a conditional writ or The
+  Low Lanterns Remain. No obligation is forgiven.
+- **Characters:** nine new characters; the seven Act III rivals are calibrated.
+- **Saves:** save v3 migration; P5 endings become chapters.
+- **Balance:** `npm run balance` reports phase-conditional cohorts with their own
+  denominators, shove-call results, claims by character, relics by source and
+  rarity, Whisper uptake, and debt repaid (`docs/reports/balance-p6.json`).
+
+**Fixes**
+- A table can never be entered twice. This closes an Act III re-entry path for a
+  player who fell there, found by simulation.
+
 ## 2026-10-19 — Design v0.7 + P5: Act II and the Cinder road
 
 **Design (ChatGPT's v0.7 hand-off):** `docs/design-decisions-v0.7.md`, the four
