@@ -76,6 +76,8 @@ function randomSeed(): number {
 interface Prefs {
   fast: boolean;
   muted: boolean;
+  /** Undefined until the player chooses: follows the system's reduced-motion setting. */
+  reduceMotion?: boolean;
 }
 
 class Game {
@@ -108,6 +110,7 @@ class Game {
       /* keep defaults */
     }
     this.sound.muted = this.prefs.muted;
+    this.scene.reduceMotion = this.reduceMotion();
     this.controls = new Controls({
       onAction: (action) => this.human({ kind: 'act', action }),
       onCast: (uid, params) => this.human({ kind: 'cast', uid, params }),
@@ -121,6 +124,7 @@ class Game {
     if (this.run?.table) this.flash('Your table was restored exactly where you left it.');
     document.getElementById('btn-speed')!.addEventListener('click', () => this.toggleSpeed());
     document.getElementById('btn-sound')!.addEventListener('click', () => this.toggleSound());
+    document.getElementById('btn-motion')!.addEventListener('click', () => this.toggleMotion());
     document.getElementById('btn-new')!.addEventListener('click', () => this.confirmNewRun());
     this.evolveButton.addEventListener('click', () => {
       this.evolveOpen = true;
@@ -399,9 +403,28 @@ class Game {
     this.refresh();
   }
 
+  private reduceMotion(): boolean {
+    if (this.prefs.reduceMotion !== undefined) return this.prefs.reduceMotion;
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch {
+      return false;
+    }
+  }
+
+  private toggleMotion(): void {
+    this.prefs.reduceMotion = !this.reduceMotion();
+    this.scene.reduceMotion = this.prefs.reduceMotion;
+    document.body.classList.toggle('reduce-motion', this.prefs.reduceMotion);
+    this.savePrefs();
+    this.updateHudButtons();
+    this.flash(this.prefs.reduceMotion ? 'Reduced motion on.' : 'Reduced motion off.');
+  }
+
   private toggleSound(): void {
     this.prefs.muted = !this.prefs.muted;
     this.sound.muted = this.prefs.muted;
+    this.scene.reduceMotion = this.reduceMotion();
     this.sound.unlock();
     this.savePrefs();
     this.updateHudButtons();
@@ -412,6 +435,9 @@ class Game {
     speed.textContent = this.prefs.fast ? '⏩' : '▶';
     speed.setAttribute('aria-label', this.prefs.fast ? 'Fast play' : 'Normal speed');
     speed.setAttribute('aria-pressed', String(this.prefs.fast));
+    const motion = document.getElementById('btn-motion')!;
+    motion.setAttribute('aria-pressed', String(this.reduceMotion()));
+    document.body.classList.toggle('reduce-motion', this.reduceMotion());
     const sound = document.getElementById('btn-sound')!;
     sound.textContent = this.prefs.muted ? '🔇' : '🔊';
     sound.setAttribute('aria-pressed', String(!this.prefs.muted));

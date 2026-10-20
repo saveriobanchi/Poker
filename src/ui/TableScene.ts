@@ -68,6 +68,8 @@ export class TableScene extends Phaser.Scene {
   private shownBoard = 0;
   private ready = false;
   private masks: Phaser.GameObjects.Graphics[] = [];
+  /** Reduce motion (system setting or the HUD toggle): no pulses, flips or slides; tells stay readable. */
+  reduceMotion = false;
 
   constructor() {
     super('table');
@@ -155,7 +157,7 @@ export class TableScene extends Phaser.Scene {
       }
       const card = this.card(x, y, board[i], 1);
       this.root!.add(card);
-      if (i >= this.shownBoard) {
+      if (i >= this.shownBoard && !this.reduceMotion) {
         card.setAlpha(0).setScale(0.7);
         this.tweens.add({ targets: card, alpha: 1, scale: 1, duration: 280, delay: (i - this.shownBoard) * 120, ease: 'Back.Out' });
       }
@@ -181,7 +183,7 @@ export class TableScene extends Phaser.Scene {
     plate.fillStyle(0x231a18, 0.94).fillRoundedRect(left, py - 23, w, 46, 12);
     plate.lineStyle(active ? 2.5 : 1, active ? 0xf3d27a : 0x856b3e, 1).strokeRoundedRect(left, py - 23, w, 46, 12);
     r.add(plate);
-    if (active) this.tweens.add({ targets: plate, alpha: 0.6, duration: 650, yoyo: true, repeat: -1 });
+    if (active && !this.reduceMotion) this.tweens.add({ targets: plate, alpha: 0.6, duration: 650, yoyo: true, repeat: -1 });
 
     const cx = left + 24;
     const key = `portrait-${model.portraits[seat]}`;
@@ -301,7 +303,7 @@ export class TableScene extends Phaser.Scene {
         fontStyle: '600',
       }).setOrigin(0.5);
       r.add(text);
-      if (label.win) this.tweens.add({ targets: text, y: ty - 6, duration: 500, yoyo: true, repeat: 1, ease: 'Sine.InOut' });
+      if (label.win && !this.reduceMotion) this.tweens.add({ targets: text, y: ty - 6, duration: 500, yoyo: true, repeat: 1, ease: 'Sine.InOut' });
     }
   }
 
@@ -333,7 +335,8 @@ export class TableScene extends Phaser.Scene {
     const arc = this.add.graphics();
     arc.lineStyle(3, color, 1).strokeCircle(px - L.plateWidth / 2 + 24, py, 24);
     this.fx!.add(arc);
-    this.tweens.add({ targets: arc, alpha: 0, scale: 1.04, duration: 900, onComplete: () => arc.destroy() });
+    if (this.reduceMotion) this.time.delayedCall(900, () => arc.destroy());
+    else this.tweens.add({ targets: arc, alpha: 0, scale: 1.04, duration: 900, onComplete: () => arc.destroy() });
 
     const who = model.names[e.seat];
     const target = e.target !== undefined ? ` → ${model.names[e.target]}` : '';
@@ -346,6 +349,10 @@ export class TableScene extends Phaser.Scene {
       fontStyle: '600',
     }).setOrigin(0.5);
     this.fx!.add(banner);
+    if (this.reduceMotion) {
+      this.time.delayedCall(1700, () => banner.destroy());
+      return;
+    }
     banner.setAlpha(0);
     this.tweens.add({
       targets: banner,

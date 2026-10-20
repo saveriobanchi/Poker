@@ -50,6 +50,14 @@ export class Controls {
   private readonly aether = el<HTMLSpanElement>('aether');
   private readonly spellRow = el<HTMLDivElement>('spell-row');
   private readonly choice = el<HTMLDivElement>('spell-choice');
+  private readonly odds = el<HTMLParagraphElement>('odds');
+  private readonly info = el<HTMLDivElement>('spell-info');
+  private infoOpen = false;
+  private lastInfo: { magic: MagicView; deciding: boolean } | null = null;
+  private readonly infoToggle = button('ⓘ', () => {
+    this.infoOpen = !this.infoOpen;
+    if (this.lastInfo) this.renderInfo(this.lastInfo.magic, this.lastInfo.deciding);
+  }, 'spell-info-toggle');
 
   private legal: LegalActions | null = null;
   private view: PublicView | null = null;
@@ -60,6 +68,8 @@ export class Controls {
   private confirmTimer: number | undefined;
 
   constructor(private readonly cb: ControlsCallbacks) {
+    this.infoToggle.setAttribute('aria-label', 'Spell details');
+    this.spellRow.append(this.infoToggle);
     this.fold.addEventListener('click', () => this.legal && this.cb.onAction({ type: 'fold' }));
     this.call.addEventListener('click', () => {
       if (!this.legal || !this.view) return;
@@ -117,6 +127,7 @@ export class Controls {
     this.legal = null;
     this.cinderUid = null;
     this.choice.hidden = true;
+    this.odds.hidden = true;
     this.pass.hidden = true;
     this.next.hidden = true;
     this.actionRow.hidden = false;
@@ -162,6 +173,14 @@ export class Controls {
     else if (legal.callAmount >= me.stack) this.call.textContent = `All-in ${legal.callAmount}`;
     else this.call.textContent = `Call ${legal.callAmount}`;
 
+    // Pot odds, stated plainly (mobile QA v0.9): what the call costs against what it can win.
+    if (!legal.canCheck) {
+      const pot = view.seats.reduce((sum, p) => sum + p.totalCommitted, 0);
+      const call = Math.min(legal.callAmount, me.stack);
+      const need = Math.round((100 * call) / (pot + call));
+      this.odds.textContent = `Pot ${pot} · to call ${call} · you need about ${need}% to break even`;
+      this.odds.hidden = false;
+    }
     const r = legal.raise;
     this.raise.disabled = !r;
     this.raiseRow.hidden = !r;
@@ -216,6 +235,7 @@ export class Controls {
     this.aether.textContent = '◆'.repeat(a) + '◇'.repeat(Math.max(0, 3 - a));
     this.aether.setAttribute('aria-label', `Aether ${a} of 3`);
     this.spellRow.hidden = magic.myHand.length === 0 && !magic.castThisHand[me];
+    this.renderInfo(magic, names !== null);
     const castable = new Map(magic.options.map((o) => [o.spell, o]));
     this.spells.replaceChildren(
       ...magic.myHand.map((card) => {
@@ -242,6 +262,24 @@ export class Controls {
         return b;
       }),
     );
+  }
+
+  /** Tap-to-read spell list (phones have no hover): cost, effect and whether it can be cast now. */
+  private renderInfo(magic: MagicView, deciding: boolean): void {
+    this.lastInfo = { magic, deciding };
+    const castable = new Set(magic.options.map((o) => o.uid));
+    this.infoToggle.setAttribute('aria-expanded', String(this.infoOpen));
+    this.infoToggle.classList.toggle('open', this.infoOpen);
+    this.info.replaceChildren(
+      ...magic.myHand.map((c) => {
+        const def = SPELLS[c.spell];
+        const row = document.createElement('p');
+        const status = castable.has(c.uid) ? 'castable now' : deciding ? 'not castable in this window' : 'waiting';
+        row.textContent = `${DISCIPLINE_GLYPH[def.discipline]} ${def.name} · ${def.cost} Aether · ${status}. ${def.effect}`;
+        return row;
+      }),
+    );
+    this.info.hidden = !this.infoOpen || magic.myHand.length === 0;
   }
 
   private onSpell(uid: string, spell: SpellId, targets: number[], names: string[]): void {

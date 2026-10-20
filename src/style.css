@@ -191,7 +191,7 @@ button.confirm {
 #spells {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 6px;
 }
 
@@ -1105,4 +1105,98 @@ button.branch {
 
 .rarity.rare {
   color: #d3a9ff;
+}
+
+#odds {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gold-light);
+  text-align: center;
+}
+
+#spell-info {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--muted);
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+#spell-info p {
+  margin: 4px 0;
+}
+
+.spell-info-toggle {
+  flex: 0 0 auto;
+  min-height: 36px;
+  width: 36px;
+  padding: 0;
+  font-size: 16px;
+  border-radius: 50%;
+  border-color: rgba(133, 107, 62, 0.6);
+}
+
+.spell-info-toggle.open {
+  background: rgba(201, 162, 74, 0.25);
+}
+
+/* Short phones (iPhone SE class): keep the table visible by tightening the panel. */
+@media (max-height: 700px) {
+  #panel {
+    gap: 5px;
+    padding: 6px 10px 8px;
+  }
+
+  #panel button:not(.spell):not(.spell-info-toggle) {
+    min-height: 40px;
+    font-size: 15px;
+  }
+
+  #raise-presets button {
+    min-height: 32px;
+    font-size: 13px;
+  }
+
+  #relic-strip,
+  #odds {
+    font-size: 11px;
+  }
+
+  #ticker {
+    font-size: 15px;
+    min-height: 0;
+  }
+
+  button.spell {
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #claim {
+    animation: none;
+  }
+}
+
+body.reduce-motion #claim {
+  animation: none;
+}
+
+body.reduce-motion * {
+  transition: none !important;
+}
+
+#spells {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+button.spell {
+  min-width: 0;
+  overflow: hidden;
+}
+
+button.spell .spell-name {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
