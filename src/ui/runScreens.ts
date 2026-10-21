@@ -49,8 +49,8 @@ export interface ScreenHandlers {
   continueFallen(): void;
   /** Re-renders after a purely local UI choice (no game state change). */
   rerender(): void;
-  /** Story variation from the world testament, for a new character's arrival (never chips). */
-  legacyIntro(): string | null;
+  /** Story from the presentation layer (background, one prose variant); never chips or odds. */
+  story(): { title: string; intro: string; echo: string | null; gossip: string | null };
 }
 
 type Child = Node | string | null | false | undefined;
@@ -501,7 +501,8 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'Wagerer’s Arrival',
-        cb.legacyIntro() ? h('p', { class: 'muted' }, cb.legacyIntro()!) : null,
+        h('section', { class: 'record' }, h('h3', {}, cb.story().title), h('p', {}, cb.story().intro)),
+        cb.story().echo ? h('p', { class: 'muted' }, cb.story().echo!) : null,
         h('p', { class: 'lede' }, 'You arrive in the Lantern district with 100 Lifechips and a beginner’s Spellbook. Three tables stand between you and the Ledger. Chips are life: lose them all and a Last Claim decides your fate.'),
         h('ol', { class: 'plan' }, h('li', {}, 'The Ash Table — finish in the top two within 8 hands.'), h('li', {}, 'Selene’s Lantern — relics for real Lifechips.'), h('li', {}, 'The Lantern Circuit — top two within 8 hands.'), h('li', {}, 'The Bailiff’s Ledger — first after 12 hands, or second with a real profit.')),
         spellbookPanel(run),
@@ -699,6 +700,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
         run,
         'The Underledger',
         h('p', { class: 'lede' }, 'Below the Cinder stairs the Underledger reads out who you owe and what you hold. Nothing is cleared here.'),
+        cb.story().gossip && !run.results.some((r) => r.node === 'fallen_low_table') ? h('p', { class: 'merchant-line' }, cb.story().gossip!) : null,
         run.accounts[UNDER_LEDGER] !== undefined ? h('p', { class: 'muted' }, `The Underground Ledger brought 102 Lifechips once, for Matron Wisp and the Underlamp regulars.`) : null,
         covenantRecord(run),
         dutyLines(run),
@@ -858,6 +860,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
         run,
         'The Registry Below',
         h('p', { class: 'lede' }, 'Beneath the Lantern Market the Registry binds your rank to Fallen. Nothing is given here; your rescue was recorded once, at the Last Claim.'),
+        cb.story().gossip ? h('p', { class: 'merchant-line' }, cb.story().gossip!) : null,
         covenantRecord(run),
         dutyLines(run),
         debtLines(run),
@@ -926,4 +929,54 @@ export function renderTitle(root: HTMLElement, hasFallen: boolean, cb: ScreenHan
         : null,
     ),
   );
+}
+
+/**
+ * New-run setup when the testament has unlocked choices: a background (words
+ * only) and a card back (only once its art exists). Starting Lifechips, cards
+ * and every random draw are the same whatever is chosen.
+ */
+export function renderNewRunPicker(
+  root: HTMLElement,
+  backgrounds: { id: string; title: string; intro: string }[],
+  backs: { id: string; title: string; unlocked: boolean; artReady: boolean }[],
+  onStart: (background: string, back: string) => void,
+): void {
+  let background = backgrounds[0].id;
+  let back = 'standard';
+  const draw = () => {
+    root.replaceChildren(
+      h(
+        'div',
+        { class: 'screen-inner' },
+        h('h2', {}, 'A New Wagerer'),
+        h('p', { class: 'lede' }, 'Choose who arrives. It changes the story you are told, never your Lifechips, your cards or your odds: every Wagerer starts with 100 Lifechips and the same Spellbook.'),
+        h(
+          'div',
+          { class: 'offers' },
+          ...backgrounds.map((b) => {
+            const el = h('button', { type: 'button', class: `offer pick${b.id === background ? ' chosen' : ''}`, 'aria-pressed': String(b.id === background) }, h('span', { class: 'offer-name' }, b.title), h('span', { class: 'offer-text' }, b.intro));
+            el.addEventListener('click', () => ((background = b.id), draw()));
+            return el;
+          }),
+        ),
+        h(
+          'section',
+          { class: 'record' },
+          h('h3', {}, 'Card back (every face-down card at the table)'),
+          h(
+            'div',
+            { class: 'choice-row' },
+            ...backs.map((b) => {
+              const usable = b.unlocked && b.artReady;
+              const label = `${b.id === back ? '✓ ' : ''}${b.title}${!b.unlocked ? ' · locked' : !b.artReady ? ' · art pending' : ''}`;
+              return btn(label, () => ((back = b.id), draw()), 'small', !usable);
+            }),
+          ),
+        ),
+        h('div', { class: 'actions' }, btn('Begin', () => onStart(background, back), 'primary')),
+      ),
+    );
+  };
+  draw();
 }

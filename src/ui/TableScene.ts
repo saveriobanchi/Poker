@@ -60,6 +60,15 @@ const LAYOUT_4: SeatLayout[] = [
 const LAYOUT_3 = [LAYOUT_4[0], LAYOUT_4[1], LAYOUT_4[3]];
 const LAYOUT_2 = [LAYOUT_4[0], LAYOUT_4[2]];
 
+/** Runtime portrait files available (public/assets/portraits/index.json), set before the game boots. */
+export const PORTRAIT_FILES: string[] = ['wagerer', 'vesper', 'oracle', 'corvin', 'adjudicator'];
+
+/** Portrait file for a character id, or null for a monogram. */
+export function portraitFor(id: string): string | null {
+  const file = id === 'you' ? 'wagerer' : id.replace(/_/g, '-');
+  return PORTRAIT_FILES.includes(file) ? file : null;
+}
+
 export class TableScene extends Phaser.Scene {
   private root?: Phaser.GameObjects.Container;
   private fx?: Phaser.GameObjects.Container;
@@ -80,7 +89,8 @@ export class TableScene extends Phaser.Scene {
     this.load.image('felt', 'assets/felt.webp');
     this.load.image('chip', 'assets/lifechip.png');
     this.load.image('dealer', 'assets/dealer-button.png');
-    for (const id of ['vesper', 'oracle', 'corvin', 'wagerer']) this.load.image(`portrait-${id}`, `assets/portraits/${id}.webp`);
+    // Only portraits packed by scripts/check-art.py are listed; everyone else keeps a gold monogram.
+    for (const id of PORTRAIT_FILES) this.load.image(`portrait-${id}`, `assets/portraits/${id}.webp`);
   }
 
   create(): void {

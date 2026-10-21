@@ -9,8 +9,12 @@ import { CHAPTER_ENDS, ENDINGS, PLAYER_ID, type RunState } from './run';
 export const LEGACY_KEY = 'lastWager.legacy.v1';
 
 export interface LegacyEntry {
+  /** Stable character id (design v1.0 §09): one testament per character, appended once. */
+  id?: string;
   /** Run seed: one entry per character. */
   seed: number;
+  /** The character survived a Last Claim at some point (unlocks Cinder gossip). */
+  fell?: boolean;
   ending: string;
   /** Epilogue fate or Ledger allegiance chosen, if any. */
   fate: string | null;
@@ -45,11 +49,24 @@ export function saveLegacy(store: Store, legacy: Legacy): void {
   store.setItem(LEGACY_KEY, JSON.stringify(legacy));
 }
 
-/** Archives a finished run once (idempotent by seed); later fate choices update its entry. */
+export const characterId = (run: RunState) => `wagerer-${run.seed}`;
+
+/**
+ * Archives a finished character once (append-once by character id). A repeated
+ * commit adds nothing; the one final fate may be filled in later, never changed.
+ */
 export function recordEnding(legacy: Legacy, run: RunState): Legacy {
   if (!ENDINGS.includes(run.node)) return legacy;
   const fate = run.flags.find((f) => f.startsWith('fate:'))?.slice(5) ?? null;
+  const id = characterId(run);
+  const existing = legacy.entries.find((e) => (e.id ?? `wagerer-${e.seed}`) === id);
+  if (existing) {
+    if (existing.fate !== null || fate === null) return legacy;
+    return { version: 1, entries: legacy.entries.map((e) => (e === existing ? { ...e, fate } : e)) };
+  }
   const entry: LegacyEntry = {
+    id,
+    fell: run.results.some((r) => r.outcome === 'fallen'),
     seed: run.seed,
     ending: run.node,
     fate,
@@ -58,7 +75,7 @@ export function recordEnding(legacy: Legacy, run: RunState): Legacy {
     tablesPlayed: run.results.length,
     debtsOutstanding: run.contracts.filter((k) => k.debtor === PLAYER_ID && k.status !== 'cleared' && k.pact !== 'mercy').length,
   };
-  return { version: 1, entries: [...legacy.entries.filter((e) => e.seed !== run.seed), entry] };
+  return { version: 1, entries: [...legacy.entries, entry] };
 }
 
 const ENDING_MEMORY: Record<string, string> = {

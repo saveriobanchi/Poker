@@ -1200,3 +1200,8 @@ button.spell .spell-name {
   max-width: 100%;
   overflow-wrap: anywhere;
 }
+
+.offer.chosen {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 2px rgba(243, 210, 122, 0.35);
+}

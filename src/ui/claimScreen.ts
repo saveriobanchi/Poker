@@ -4,6 +4,7 @@
  * (art bible addendum v0.2). Irreversible choices need a review/confirm step.
  */
 import { PROFILES } from '../game/ai/profiles';
+import { portraitFor } from './TableScene';
 import type { TableSession } from '../game/table/session';
 import { type Claim, type ClaimCommand, currentClaim, pactOptions, type Pact, roles } from '../game/world';
 import { outlook } from '../game/world/rules';
@@ -22,7 +23,6 @@ import {
 
 type Review = { kind: 'pact'; pact: Pact } | { kind: 'fate' } | { kind: 'claimLife' } | { kind: 'declineCounter' } | null;
 
-const PORTRAIT: Record<string, string> = { you: 'wagerer', vesper: 'vesper', oracle: 'oracle', corvin: 'corvin', ledger: 'adjudicator' };
 
 function h<K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text = ''): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -104,9 +104,10 @@ export class ClaimScreen {
     const profile = PROFILES[otherId];
     const audience = h('div', 'audience');
     let img: HTMLElement;
-    if (PORTRAIT[otherId] || otherId === 'ledger') {
+    const file = otherId === 'ledger' ? 'adjudicator' : portraitFor(otherId);
+    if (file) {
       const pic = h('img');
-      pic.src = `assets/portraits/${PORTRAIT[otherId] ?? 'adjudicator'}.webp`;
+      pic.src = `assets/portraits/${file}.webp`;
       pic.alt = otherName;
       img = pic;
     } else {

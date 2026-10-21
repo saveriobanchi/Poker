@@ -31,15 +31,14 @@ import { ClaimScreen } from './ui/claimScreen';
 import { Controls } from './ui/controls';
 import { legacyIntro, loadLegacy, recordEnding, saveLegacy } from './game/run/legacy';
 import { describeAction } from './ui/format';
-import { attunePanel, evolutionPanel, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
+import { attunePanel, evolutionPanel, renderNewRunPicker, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
+import { type BackId, type BackgroundId, BACKGROUNDS, backgroundIntro, backStates, choosePresentation, cinderGossip, loadPresentation, savePresentation, unlockedBackgrounds } from './game/run/presentation';
 import { Sound } from './ui/sound';
-import { RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
+import { PORTRAIT_FILES, portraitFor, RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
 const PREFS_KEY = 'lastWager.prefs.v1';
 /** P3 archives of a Fallen Wagerer (kept by the previous build), importable once into a P4 run. */
 const P3_FALLEN_KEYS = ['lastWager.fallen.v1', 'lastWager.table.v3', 'lastWager.table.v4'];
-/** Painted portraits available now; other characters show a provisional monogram. */
-const PORTRAITS: Record<string, string> = { you: 'wagerer', vesper: 'vesper', oracle: 'oracle', corvin: 'corvin' };
 
 /** localStorage can throw (private mode, blocked storage): fall back to memory. */
 function safeStore(): KeyValueStore {
@@ -96,7 +95,12 @@ class Game {
     newRun: () => this.newRun(),
     continueFallen: () => this.continueFallen(),
     rerender: () => this.refresh(),
-    legacyIntro: () => legacyIntro(loadLegacy(this.store)),
+    story: () => {
+      const legacy = loadLegacy(this.store);
+      const p = this.run ? loadPresentation(this.store, this.run.seed) : null;
+      const bg = backgroundIntro(p);
+      return { ...bg, echo: p?.variant === 'arrival_echo' ? legacyIntro(legacy) : null, gossip: cinderGossip(p, legacy) };
+    },
   };
   private timer: number | undefined;
   private prefs: Prefs = { fast: false, muted: false };
@@ -238,7 +242,7 @@ class Game {
       view,
       magic,
       names,
-      portraits: s.seats.map((x) => PORTRAITS[x.id] ?? x.id),
+      portraits: s.seats.map((x) => portraitFor(x.id) ?? x.id),
       humanSeat: me,
       handNumber: s.handNumber,
       freshEvents,
@@ -376,7 +380,18 @@ class Game {
 
   private newRun(): void {
     this.evolveOpen = false;
-    this.set(createRun(randomSeed()));
+    const legacy = loadLegacy(this.store);
+    const bgs = unlockedBackgrounds(legacy);
+    const backs = backStates(legacy);
+    const start = (background: BackgroundId, back: BackId) => {
+      // The run is created exactly as always; the presentation is stored beside it, never inside it.
+      const run = createRun(randomSeed());
+      savePresentation(this.store, choosePresentation(run.seed, legacy, background, back));
+      this.set(run);
+    };
+    if (bgs.length === 1 && !backs.some((b) => b.id !== 'standard' && b.unlocked)) return start('unmarked', 'standard');
+    this.showScreen();
+    renderNewRunPicker(this.screen, BACKGROUNDS.filter((b) => bgs.includes(b.id)), backs, (bg, back) => start(bg as BackgroundId, back as BackId));
   }
 
   private continueFallen(): void {
@@ -456,6 +471,14 @@ await document.fonts.ready;
 await Promise.all(
   ['600 16px Cinzel', '500 16px Inter', '600 16px Inter', '600 16px "Cormorant Garamond"'].map((f) => document.fonts.load(f).catch(() => undefined)),
 );
+
+// Portraits that passed the art gate (scripts/check-art.py --pack); the built-in list is the fallback.
+try {
+  const list = (await (await fetch('assets/portraits/index.json')).json()) as string[];
+  if (Array.isArray(list)) PORTRAIT_FILES.splice(0, PORTRAIT_FILES.length, ...list);
+} catch {
+  /* offline first load: keep the built-in list */
+}
 
 const scene = new TableScene();
 new Phaser.Game({
