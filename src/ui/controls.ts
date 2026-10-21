@@ -6,6 +6,7 @@ import type { CastParams, MagicView } from '../game/magic/table';
 import { SPELLS, type SpellId } from '../game/magic/spells';
 import type { LegalActions, PlayerAction, PublicView } from '../game/rules/engine';
 import { rankLabel, suitGlyph } from './format';
+import { pt } from './playtest';
 import { DISCIPLINE_COLOR, DISCIPLINE_GLYPH } from './theme';
 
 export interface ControlsCallbacks {
@@ -56,6 +57,7 @@ export class Controls {
   private lastInfo: { magic: MagicView; deciding: boolean } | null = null;
   private readonly infoToggle = button('ⓘ', () => {
     this.infoOpen = !this.infoOpen;
+    if (this.infoOpen) pt()?.record('spell_info_open');
     if (this.lastInfo) this.renderInfo(this.lastInfo.magic, this.lastInfo.deciding);
   }, 'spell-info-toggle');
 
@@ -99,11 +101,12 @@ export class Controls {
   /** Second-tap confirmation for irreversible all-ins (art bible §8). Returns true when confirmed. */
   private confirm(kind: 'call' | 'raise', b: HTMLButtonElement, prompt: string): boolean {
     if (this.confirming === kind) {
-      this.clearConfirm();
+      this.clearConfirm(false);
       return true;
     }
     this.clearConfirm();
     this.confirming = kind;
+    pt()?.record('allin_confirm_shown', { kind });
     b.dataset.label = b.textContent ?? '';
     b.textContent = prompt;
     b.classList.add('confirm');
@@ -111,8 +114,10 @@ export class Controls {
     return false;
   }
 
-  private clearConfirm(): void {
+  /** `abandoned`: the prompt lapsed or another control was used instead of the second tap. */
+  private clearConfirm(abandoned = true): void {
     window.clearTimeout(this.confirmTimer);
+    if (abandoned && this.confirming) pt()?.record('allin_confirm_cancelled', { kind: this.confirming });
     for (const b of [this.call, this.raise]) {
       if (b.classList.contains('confirm')) {
         b.textContent = b.dataset.label ?? b.textContent;
@@ -357,7 +362,10 @@ export class Controls {
     this.choice.replaceChildren(
       label,
       ...options.map(([text, fn]) => button(text, fn, 'choice')),
-      button('Cancel', () => (this.choice.hidden = true), 'choice ghost'),
+      button('Cancel', () => {
+        pt()?.record('cancel_choice', { prompt });
+        this.choice.hidden = true;
+      }, 'choice ghost'),
     );
     this.choice.hidden = false;
   }

@@ -1205,3 +1205,112 @@ button.spell .spell-name {
   border-color: var(--gold-light);
   box-shadow: 0 0 0 2px rgba(243, 210, 122, 0.35);
 }
+
+/* Touch targets (design v1.0 §10): every HUD control reaches 44px. */
+#hud button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Opt-in playtest panel and check-ins (design v1.0 §11). */
+.modal.playtest {
+  text-align: left;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+
+.modal.playtest .small {
+  font-family: var(--ui);
+  font-size: 14px;
+}
+
+.modal.playtest label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--ui);
+  font-size: 15px;
+}
+
+.modal.playtest textarea {
+  font: 16px var(--ui);
+  border: 1px solid var(--gold-muted);
+  border-radius: 8px;
+  padding: 6px;
+  background: #fffaf0;
+  color: var(--ink);
+}
+
+.feedback-scale {
+  display: flex;
+  gap: 6px;
+}
+
+.feedback-scale button {
+  flex: 1;
+  min-height: 44px;
+}
+
+.feedback-scale button.picked {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+/* Exact transfer lines in shops and buybacks (design v1.0 §10). */
+.transfer {
+  font-family: var(--ui);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  flex: 1 1 auto;
+}
+
+.transfer.short {
+  color: #ff9a8a;
+}
+
+.offer > .transfer {
+  display: block;
+  margin-top: 6px;
+}
+
+/* 44px touch targets where the layout allows (design v1.0 §10). */
+#raise-presets button,
+button.small {
+  min-height: 44px;
+}
+
+#raise-slider {
+  height: 44px;
+}
+
+.spell-info-toggle {
+  min-height: 44px;
+  width: 44px;
+}
+
+/* Narrow phones (320px): spell names break between words, never inside one. */
+@media (max-width: 360px) {
+  button.spell {
+    padding: 3px 4px;
+    border-left-width: 4px;
+  }
+
+  button.spell .spell-name {
+    font-size: 11.5px;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+  #aether {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .spell-info-toggle {
+    width: 38px;
+  }
+}

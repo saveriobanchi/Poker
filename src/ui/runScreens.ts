@@ -9,7 +9,7 @@ import { COVENANTS, type RelicId, RELICS, SLOT_LIMITS } from '../game/magic/reli
 import { type BaseSpellId, EVOLUTIONS, isBaseSpell, SPELLS, type SpellId } from '../game/magic/spells';
 import { PROFILES } from '../game/ai/profiles';
 import type { LegacyEntry } from '../game/run/legacy';
-import { merchantLine } from '../game/run/merchants';
+import { MERCHANTS, merchantLine } from '../game/run/merchants';
 import {
   activeDuty,
   ACT2_LEDGER,
@@ -281,6 +281,22 @@ function screen(run: RunState, title: string, ...body: Child[]): HTMLElement {
 let rethreadUid: string | null = null;
 let replaceRelic: RelicId | null = null;
 /** Handlers of the screen being rendered (set by renderRunScreen). */
+/** Exact transfer, current stack and what remains (design v1.0 §10): every sale and buyback says all three. */
+function transferLine(run: RunState, amount: number, counterparty: string, direction: 'pay' | 'receive'): HTMLElement {
+  const chips = playerChips(run);
+  const name = MERCHANTS[counterparty]?.name ?? counterparty;
+  const after = direction === 'pay' ? chips - amount : chips + amount;
+  const text =
+    direction === 'pay'
+      ? after < 0
+        ? `You pay ${amount} to ${name}. You hold ${chips}: not enough.`
+        : `You pay ${amount} to ${name}. You hold ${chips} → ${after} remain.`
+      : (run.accounts[counterparty] ?? 0) < amount
+        ? `${name} cannot pay ${amount}: their purse holds ${run.accounts[counterparty] ?? 0}.`
+        : `${name} pays you ${amount} from their own purse. You hold ${chips} → ${after}.`;
+  return h('span', { class: `transfer${after < 0 ? ' short' : ''}` }, text);
+}
+
 let currentHandlers: ScreenHandlers;
 
 function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
@@ -298,7 +314,7 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
       owned ? h('p', { class: 'warning-text' }, 'You already carry this relic.') : relics.length >= SLOT_LIMITS.relics && !o.sold ? h('p', { class: 'warning-text' }, `Your ${SLOT_LIMITS.relics} relic slots are full: a purchase is refused.`) : null,
       o.sold
         ? h('span', { class: 'muted' }, 'Sold')
-        : h('div', { class: 'offer-foot' }, h('span', { class: 'muted' }, `You would keep ${chips - o.price}`), btn('Buy', () => cb.command({ kind: 'buy', offer: i }), 'primary small', owned)),
+        : h('div', { class: 'offer-foot' }, transferLine(run, o.price, s.merchant, 'pay'), btn('Buy', () => cb.command({ kind: 'buy', offer: i }), 'primary small', owned || chips < o.price)),
     );
   });
   const base = allCards(playerBook(run)).filter((c) => isBaseSpell(c.spell));
@@ -319,6 +335,7 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
       { class: 'rethread' },
       h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, '⟲ Spell Rethread'), h('span', { class: 'price' }, String(RETHREAD_PRICE))),
       h('p', { class: 'offer-text' }, 'Replace one owned base spell with a different starter spell. Its Resonance resets.'),
+      h('div', { class: 'offer-foot' }, transferLine(run, RETHREAD_PRICE, s.merchant, 'pay')),
       h('div', { class: 'choice-row' }, ...uniqueBySpell(base).map((c) => btn(SPELLS[c.spell].name, () => ((rethreadUid = c.uid), cb.rerender()), 'small'))),
     );
   }
@@ -720,7 +737,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
         h('p', { class: 'lede' }, `Matron Wisp buys one relic at half its shop value, from her own purse of ${wallet} Lifechips.`),
         sold || !relics.length
           ? h('p', { class: 'muted' }, sold ? 'You have already sold to Matron Wisp.' : 'You carry no relic she would buy.')
-          : h('div', { class: 'offers' }, ...relics.map((r) => h('div', { class: 'offer' }, h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${RELICS[r].name}`), h('span', { class: 'price' }, String(brokerPrice(r)))), h('div', { class: 'offer-foot' }, h('span', { class: 'muted' }, `Shop value ${RELICS[r].price}`), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet))))),
+          : h('div', { class: 'offers' }, ...relics.map((r) => h('div', { class: 'offer' }, h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${RELICS[r].name}`), h('span', { class: 'price' }, String(brokerPrice(r)))), h('p', { class: 'offer-text' }, `Shop value ${RELICS[r].price}; half is paid.`), h('div', { class: 'offer-foot' }, transferLine(run, brokerPrice(r), WISP_ID, 'receive'), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet))))),
         h('div', { class: 'actions' }, btn(`Sit at ${TABLE_NODES.underlamp_table.label}`, () => cb.command({ kind: 'advance' }), 'primary')),
       );
       break;
@@ -786,7 +803,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
                   'div',
                   { class: 'offer' },
                   h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${RELICS[r].name}`), h('span', { class: 'price' }, String(brokerPrice(r)))),
-                  h('div', { class: 'offer-foot' }, h('span', { class: 'muted' }, `Shop value ${RELICS[r].price}`), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet)),
+                  h('p', { class: 'offer-text' }, `Shop value ${RELICS[r].price}; half is paid.`), h('div', { class: 'offer-foot' }, transferLine(run, brokerPrice(r), BROKER_ID, 'receive'), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet)),
                 ),
               ),
             ),

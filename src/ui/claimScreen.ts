@@ -5,6 +5,7 @@
  */
 import { PROFILES } from '../game/ai/profiles';
 import { portraitFor } from './TableScene';
+import { pt } from './playtest';
 import type { TableSession } from '../game/table/session';
 import { type Claim, type ClaimCommand, currentClaim, pactOptions, type Pact, roles } from '../game/world';
 import { outlook } from '../game/world/rules';
@@ -148,7 +149,7 @@ export class ClaimScreen {
         return [
           h('p', 'warning', debtorIsYou ? 'Declining means accepting your fate. Your run ends.' : `Declining means ${w.characters[claim.debtor].name} is claimed by the Ledger.`),
           btn('Confirm: decline', () => this.command({ kind: 'answerCounter', accept: false }), 'danger'),
-          btn('Back', () => this.rerender(session, null), 'ghost'),
+          btn('Back', () => (pt()?.record('claim_review_back'), this.rerender(session, null)), 'ghost'),
         ];
       }
       return [
@@ -170,7 +171,7 @@ export class ClaimScreen {
         return [
           h('p', 'warning', 'Accept Fate: the Ledger closes your account and this run ends. This cannot be undone.'),
           btn('Confirm: accept fate', () => this.command({ kind: 'acceptFate' }), 'danger'),
-          btn('Back', () => this.rerender(session, null), 'ghost'),
+          btn('Back', () => (pt()?.record('claim_review_back'), this.rerender(session, null)), 'ghost'),
         ];
       }
       if (r.kind === 'claimLife') {
@@ -178,7 +179,7 @@ export class ClaimScreen {
         return [
           h('p', 'warning', `Claim ${name}’s life. ${name} leaves this world’s story; your Dread will rise and others will remember.`),
           btn(`Confirm: claim ${name}’s life`, () => this.command({ kind: 'claimLife' }), 'danger'),
-          btn('Back', () => this.rerender(session, null), 'ghost'),
+          btn('Back', () => (pt()?.record('claim_review_back'), this.rerender(session, null)), 'ghost'),
         ];
       }
       if (r.kind === 'pact') {
@@ -189,7 +190,7 @@ export class ClaimScreen {
           h('p', 'outlook', `Outlook: ${outlookLine(o.outlook!)}`),
           h('p', 'muted', 'They may accept, refuse, or answer once with different terms.'),
           btn('Seal the offer', () => this.command({ kind: 'propose', pact: o.pact }), 'primary'),
-          btn('Back', () => this.rerender(session, null), 'ghost'),
+          btn('Back', () => (pt()?.record('claim_review_back'), this.rerender(session, null)), 'ghost'),
         ];
       }
     }

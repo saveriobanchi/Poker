@@ -33,6 +33,7 @@ import { legacyIntro, loadLegacy, recordEnding, saveLegacy } from './game/run/le
 import { describeAction } from './ui/format';
 import { attunePanel, evolutionPanel, renderNewRunPicker, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
 import { type BackId, type BackgroundId, BACKGROUNDS, backgroundIntro, backStates, choosePresentation, cinderGossip, loadPresentation, savePresentation, unlockedBackgrounds } from './game/run/presentation';
+import { loadPlaytestLog, Playtest, playtestEnabled, pt, setPlaytest, summarizePlaytest } from './ui/playtest';
 import { Sound } from './ui/sound';
 import { PORTRAIT_FILES, portraitFor, RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
@@ -123,6 +124,7 @@ class Game {
       onSigil: (uid) => this.human({ kind: 'sigil', uid }),
       onNextHand: () => this.nextHand(),
     });
+    this.startPlaytest();
     this.run = loadRun(this.store);
     this.animatedEvents = this.run?.table?.table.magic.events.length ?? 0;
     if (this.run?.table) this.flash('Your table was restored exactly where you left it.');
@@ -137,6 +139,136 @@ class Game {
     window.addEventListener('pointerdown', () => this.sound.unlock(), { passive: true });
     this.updateHudButtons();
     this.refresh();
+  }
+
+  /** Opt-in usability instrumentation (`?playtest=1`): local only, exported by hand. */
+  private startPlaytest(): void {
+    if (!playtestEnabled(location.search, this.store)) return;
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    const p = new Playtest(this.store, () => performance.now(), `${innerWidth}x${innerHeight}@${devicePixelRatio}`, nav?.type === 'reload', new Date().toISOString());
+    setPlaytest(p);
+    window.addEventListener('error', (e) => p.record('error', { message: String(e.message).slice(0, 200) }));
+    window.addEventListener('unhandledrejection', (e) => p.record('error', { message: String(e.reason).slice(0, 200) }));
+    document.addEventListener('visibilitychange', () => p.record(document.hidden ? 'hidden' : 'visible'));
+    // A tap on a disabled control is a measurable "I expected that to work" moment.
+    document.addEventListener(
+      'pointerdown',
+      (e) => {
+        const b = (e.target as HTMLElement).closest?.('button');
+        if (b && (b as HTMLButtonElement).disabled) p.record('disabled_tap', { control: (b.id || b.className || b.textContent || '').slice(0, 40) });
+      },
+      { capture: true, passive: true },
+    );
+    const btn = document.getElementById('btn-playtest')!;
+    btn.hidden = false;
+    btn.addEventListener('click', () => this.showPlaytestPanel());
+    window.setInterval(() => this.maybeFeedback(), 30_000);
+  }
+
+  private modal(build: (box: HTMLDivElement, close: () => void) => void): void {
+    const overlay = document.getElementById('overlay')!;
+    const box = document.createElement('div');
+    box.className = 'modal playtest';
+    const close = () => {
+      overlay.hidden = true;
+      overlay.replaceChildren();
+    };
+    build(box, close);
+    overlay.replaceChildren(box);
+    overlay.hidden = false;
+  }
+
+  private showPlaytestPanel(): void {
+    const p = pt();
+    if (!p) return;
+    this.modal((box, close) => {
+      const s = summarizePlaytest(loadPlaytestLog(this.store));
+      const h = document.createElement('h2');
+      h.textContent = 'Playtest log';
+      const info = document.createElement('p');
+      info.className = 'small';
+      info.textContent = `${Math.round(p.minutes())} min this session · ${s.pageLoads} page loads (${s.reloads} reloads) · ${s.decisions} decisions · ${s.errors} errors. Stored only on this device.`;
+      const mk = (label: string, fn: () => void, cls = '') => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = label;
+        b.className = `wide ${cls}`;
+        b.addEventListener('click', fn);
+        return b;
+      };
+      box.append(
+        h,
+        info,
+        mk('Download JSON', () => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob([p.export()], { type: 'application/json' }));
+          a.download = `last-wager-playtest-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.json`;
+          a.click();
+        }, 'primary'),
+        mk('Feedback now', () => this.showFeedback(Math.round(p.minutes()))),
+        mk('Clear log', () => {
+          if (window.confirm('Delete the stored playtest log on this device?')) p.clear();
+          close();
+        }),
+        mk('Close', close),
+      );
+    });
+  }
+
+  private maybeFeedback(): void {
+    const m = pt()?.dueFeedback();
+    if (m !== null && m !== undefined) this.showFeedback(m);
+  }
+
+  /** The 15- and 45-minute checkpoints (design v1.0 §11): enjoyment, comprehension and confusion, in the tester's words. */
+  private showFeedback(minute: number): void {
+    this.modal((box, close) => {
+      const h = document.createElement('h2');
+      h.textContent = `Check-in · ${minute} min`;
+      const scale = document.createElement('div');
+      scale.className = 'feedback-scale';
+      let enjoyment = 0;
+      for (let i = 1; i <= 5; i++) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = String(i);
+        b.setAttribute('aria-label', `Enjoyment ${i} of 5`);
+        b.addEventListener('click', () => {
+          enjoyment = i;
+          scale.querySelectorAll('button').forEach((x, j) => x.classList.toggle('picked', j === i - 1));
+        });
+        scale.append(b);
+      }
+      const ask = (q: string) => {
+        const label = document.createElement('label');
+        label.textContent = q;
+        const t = document.createElement('textarea');
+        t.rows = 2;
+        label.append(t);
+        return [label, t] as const;
+      };
+      const [l1, chips] = ask('In your own words: what are your Lifechips, and what happens if they run out?');
+      const [l2, confused] = ask('What confused or annoyed you so far?');
+      const lead = document.createElement('p');
+      lead.textContent = 'How much are you enjoying it? (1 = not at all, 5 = a lot)';
+      const save = document.createElement('button');
+      save.type = 'button';
+      save.className = 'primary wide';
+      save.textContent = 'Save answers';
+      save.addEventListener('click', () => {
+        pt()?.record('feedback', { minute, enjoyment: enjoyment || null, lifechips: chips.value.slice(0, 500), confused: confused.value.slice(0, 500) });
+        close();
+      });
+      const skip = document.createElement('button');
+      skip.type = 'button';
+      skip.className = 'wide';
+      skip.textContent = 'Skip';
+      skip.addEventListener('click', () => {
+        pt()?.record('feedback', { minute, skipped: true });
+        close();
+      });
+      box.append(h, lead, scale, l1, l2, save, skip);
+    });
   }
 
   private save(): void {
@@ -154,6 +286,7 @@ class Game {
       this.animatedEvents = 0;
       this.sound.shuffle();
     }
+    if (this.run?.node !== next.node) pt()?.record('screen', { node: next.node });
     this.run = next;
     this.save();
     // Archive a finished character in the world testament (never carried into a new run).
@@ -272,6 +405,7 @@ class Game {
     switch (status) {
       case 'humanWindow':
         this.ticker.textContent = `${spellText ? spellText + ' ' : notice ? notice.text + ' ' : ''}The ${t.hand.street} opens. Cast an opening spell?`;
+        pt()?.turnShown();
         this.controls.showWindow(view, magic, names);
         break;
       case 'humanSigil':
@@ -284,6 +418,7 @@ class Game {
         break;
       case 'humanToAct':
         this.ticker.textContent = `${spellText || lastText} Your move.`.trim();
+        pt()?.turnShown();
         this.controls.showTurn(view, magic, names);
         break;
       case 'aiToAct': {
@@ -362,6 +497,7 @@ class Game {
     if (!s) return;
     const status = sessionStatus(s);
     if (status !== 'humanToAct' && status !== 'humanWindow' && status !== 'humanChoice' && status !== 'humanSigil') return;
+    pt()?.acted(command.kind === 'act' ? command.action.type : command.kind);
     try {
       this.set(runHuman(this.run!, command));
     } catch (e) {
