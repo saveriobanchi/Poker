@@ -1,5 +1,5 @@
 /**
- * Usage: npm run balance [-- batches perPolicy label]
+ * Usage: npm run balance [-- batches perPolicy label [seedBase]]
  * Plays `batches` independent seed batches (shared seeds across policies) in
  * parallel worker threads and writes docs/reports/balance-<label>.json with
  * per-policy ending rates, Wilson 95% intervals and batch spread (design v0.7 §01).
@@ -21,12 +21,14 @@ function wilson(k: number, n: number): [number, number] {
 }
 
 if (!isMainThread) {
-  const { batch, perPolicy } = workerData as { batch: number; perPolicy: number };
-  parentPort!.postMessage(simulateRuns(perPolicy * POLICIES.length, 1000 + batch));
+  const { batch, perPolicy, seedBase } = workerData as { batch: number; perPolicy: number; seedBase: number };
+  parentPort!.postMessage(simulateRuns(perPolicy * POLICIES.length, seedBase + batch));
 } else {
   const batches = Number(process.argv[2] ?? 10);
   const perPolicy = Number(process.argv[3] ?? 100);
   const label = process.argv[4] ?? 'current';
+  // 1000 reproduces every earlier report's seeds; another base gives novel seeds.
+  const seedBase = Number(process.argv[5] ?? 1000);
   const t0 = performance.now();
   const queue = Array.from({ length: batches }, (_, b) => b);
   const results: SimulationReport[] = [];
@@ -35,7 +37,7 @@ if (!isMainThread) {
     Array.from({ length: Math.min(batches, availableParallelism()) }, async () => {
       for (let b = queue.shift(); b !== undefined; b = queue.shift()) {
         results[b] = await new Promise<SimulationReport>((resolve, reject) => {
-          const w = new Worker(self, { workerData: { batch: b, perPolicy } });
+          const w = new Worker(self, { workerData: { batch: b, perPolicy, seedBase } });
           w.once('message', resolve);
           w.once('error', reject);
         });
@@ -102,7 +104,7 @@ if (!isMainThread) {
     label,
     batches,
     perPolicyPerBatch: perPolicy,
-    seeds: `simulateRuns(seed = 1000 + batch); world k shared by all policies`,
+    seeds: `simulateRuns(seed = ${seedBase} + batch); world k shared by all policies`,
     summary,
     claims,
     invariantChecks: results.reduce((a, r) => a + r.invariantChecks, 0),

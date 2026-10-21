@@ -91,3 +91,16 @@ describe('World Testament fairness (design v1.0 §04, §09)', () => {
     expect(JSON.stringify(createRun(8))).toBe(JSON.stringify(createRun(8)));
   });
 });
+
+describe('World Testament isolation (structural)', () => {
+  it('no rules, AI, magic, table or run module imports the testament or presentation layer', async () => {
+    const { readdirSync, readFileSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    const walk = (d: string): string[] => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
+    const allowed = new Set(['src/game/run/legacy.ts', 'src/game/run/presentation.ts']);
+    const offenders = walk('src/game')
+      .filter((f) => f.endsWith('.ts') && !allowed.has(f))
+      .filter((f) => /from '\.\/(legacy|presentation)'|from '\.\.\/run\/(legacy|presentation)'/.test(readFileSync(f, 'utf8')));
+    expect(offenders).toEqual([]);
+  });
+});

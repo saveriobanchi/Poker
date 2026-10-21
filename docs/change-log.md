@@ -1,5 +1,61 @@
 # Change log
 
+## 2026-10-21 — Design v1.0 + P8: Depth, character and honest measurement
+
+**Design (ChatGPT's v1.0 hand-off):** `docs/design-decisions-v1.0.md` and the six
+`src/game/run/data/p8-*.json` files. The bible is bumped to v1.0.
+
+**Rules**
+- **Dossier shoves:** "large shove" is now the AI's own predicate (`isLargeShove`
+  in `reads.ts`): a bet or raise to at least 50% of the start-of-hand stack. Raw
+  actions keep all-in calls and raises apart. P7 dossiers keep the figures they
+  were saved with.
+- **Act III:** unchanged, as ordered: the blinds, the payout and all seven claim
+  temperaments are as in P7.
+
+**New**
+- **World Testament unlocks (`presentation.ts`):**
+  - What unlocks: three backgrounds besides the Unmarked, two prose variants
+    (at most one per run), and two card backs that stay unusable until their
+    art passes `scripts/check-art.py`.
+  - What does not change: everything is stored apart from the run. `createRun`
+    and the engine never import it (tested structurally), so every background
+    plays a byte-identical seeded run.
+- **Mixed-aggressive policy:** a looser, more aggressive driver than skilled. It
+  semi-bluffs draws and caps oversized shoves. It is used in the balance run and
+  as a downstream policy for spell value.
+- **Full-table spell value (`tableEv.ts`, `npm run table-ev`):**
+  - Method: cast vs skip from one persisted run state; both arms play to the
+    end of the current table with common policy randomness. Endpoints are
+    table net, death, table win, Aether left, later casts and turnover.
+  - Intervals: cluster bootstrap over source runs.
+- **Playtest instrumentation (`?playtest=1`):**
+  - The log stays on the device and records interface events only.
+  - It includes 15- and 45-minute check-ins and a JSON export.
+  - Protocol: `docs/playtest-protocol-p8.md`.
+- **Portrait gate:** `scripts/check-art.py` checks the seven portraits and the
+  card backs, writes the 64 px proof and builds the portrait list the game loads.
+  No file has been delivered, so the monograms stay.
+
+**Mobile**
+- Every sale, purchase, rethread and buyback states the exact transfer, who
+  receives it, the current stack and what remains. Buy is disabled when the
+  player cannot afford it.
+- 44 px touch targets for the HUD, raise presets, small buttons, slider and the
+  spell-info toggle. On short phones the action row stays at 40 px so it fits.
+- At 320 px spell names break between words, never inside one (P7 split
+  "Unmask" and "Challenge"). The HUD is tighter at 320 px.
+
+**Results** (full figures in report #008):
+- **P7 seeds:** the four P7 policies reproduce P7 exactly on the same seeds.
+- **Act III:** skilled mortality is 27.5% on P7 seeds and 27.9% on novel seeds.
+- **Mixed-aggressive:** it clears 13.15%, against 11.35% for skilled on the same
+  worlds (+1.8 pp, 95% CI +0.05 to +3.6).
+- **Spell value:** no spell shows end-of-table value for skilled play. Cinder
+  Challenge is +0.64 Lifechips per decision (95% CI +0.04 to +1.26) for
+  mixed-aggressive play only.
+- **Human playtests:** not conducted yet.
+
 ## 2026-10-20 — Design v0.9 + P7: Closure and measurement
 
 **Design (ChatGPT's v0.9 hand-off):** `docs/design-decisions-v0.9.md`, the five

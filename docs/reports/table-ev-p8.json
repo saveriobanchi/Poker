@@ -1,0 +1,2429 @@
+{
+  "label": "p8",
+  "batches": 20,
+  "sourceRunsPerBatch": 25,
+  "sourceRuns": 500,
+  "downstreamPolicies": [
+    "skilled",
+    "tight",
+    "mixed_aggressive"
+  ],
+  "note": "end-of-table player net (and death, win, Aether, later casts, turnover), cast minus skip, from the same persisted pre-cast run state with common policy randomness; one decision per spell per source hand; intervals are cluster bootstraps over source runs; offline only",
+  "pairs": 123126,
+  "incompatible": 0,
+  "bySpellPolicy": {
+    "briar_lock|mixed_aggressive": {
+      "n": 7444,
+      "clusters": 496,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.094,
+        "ci95": [
+          -0.704,
+          0.571
+        ],
+        "clusters": 496
+      },
+      "handNetDiff": {
+        "mean": 0.175,
+        "ci95": [
+          -0.124,
+          0.456
+        ],
+        "clusters": 496
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.001,
+          0.006
+        ],
+        "clusters": 496
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.006,
+          0.006
+        ],
+        "clusters": 496
+      },
+      "aetherDiff": {
+        "mean": -0.131,
+        "ci95": [
+          -0.152,
+          -0.109
+        ],
+        "clusters": 496
+      },
+      "laterSpellsDiff": {
+        "mean": -0.491,
+        "ci95": [
+          -0.517,
+          -0.467
+        ],
+        "clusters": 496
+      },
+      "turnoverDiff": {
+        "mean": -0.435,
+        "ci95": [
+          -0.985,
+          0.119
+        ],
+        "clusters": 496
+      },
+      "deathRateCast": 0.0614,
+      "deathRateSkip": 0.0592,
+      "divergent": 5882,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "briar_lock|skilled": {
+      "n": 7444,
+      "clusters": 496,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.212,
+        "ci95": [
+          -0.745,
+          0.299
+        ],
+        "clusters": 496
+      },
+      "handNetDiff": {
+        "mean": -0.028,
+        "ci95": [
+          -0.224,
+          0.185
+        ],
+        "clusters": 496
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.003
+        ],
+        "clusters": 496
+      },
+      "winDiff": {
+        "mean": -0.006,
+        "ci95": [
+          -0.011,
+          0.001
+        ],
+        "clusters": 496
+      },
+      "aetherDiff": {
+        "mean": -0.134,
+        "ci95": [
+          -0.155,
+          -0.113
+        ],
+        "clusters": 496
+      },
+      "laterSpellsDiff": {
+        "mean": -0.46,
+        "ci95": [
+          -0.486,
+          -0.439
+        ],
+        "clusters": 496
+      },
+      "turnoverDiff": {
+        "mean": -0.348,
+        "ci95": [
+          -0.794,
+          0.067
+        ],
+        "clusters": 496
+      },
+      "deathRateCast": 0.0446,
+      "deathRateSkip": 0.0451,
+      "divergent": 5801,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "briar_lock|tight": {
+      "n": 7444,
+      "clusters": 496,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.141,
+        "ci95": [
+          -0.235,
+          0.499
+        ],
+        "clusters": 496
+      },
+      "handNetDiff": {
+        "mean": 0.048,
+        "ci95": [
+          -0.14,
+          0.256
+        ],
+        "clusters": 496
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ],
+        "clusters": 496
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.004
+        ],
+        "clusters": 496
+      },
+      "aetherDiff": {
+        "mean": -0.384,
+        "ci95": [
+          -0.408,
+          -0.36
+        ],
+        "clusters": 496
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 496
+      },
+      "turnoverDiff": {
+        "mean": 0.112,
+        "ci95": [
+          -0.175,
+          0.401
+        ],
+        "clusters": 496
+      },
+      "deathRateCast": 0.0545,
+      "deathRateSkip": 0.0536,
+      "divergent": 4072,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "cinder_challenge|mixed_aggressive": {
+      "n": 5060,
+      "clusters": 497,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.64,
+        "ci95": [
+          0.039,
+          1.259
+        ],
+        "clusters": 497
+      },
+      "handNetDiff": {
+        "mean": 0.283,
+        "ci95": [
+          -0.048,
+          0.628
+        ],
+        "clusters": 497
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.003
+        ],
+        "clusters": 497
+      },
+      "winDiff": {
+        "mean": 0.006,
+        "ci95": [
+          0,
+          0.012
+        ],
+        "clusters": 497
+      },
+      "aetherDiff": {
+        "mean": -0.039,
+        "ci95": [
+          -0.059,
+          -0.02
+        ],
+        "clusters": 497
+      },
+      "laterSpellsDiff": {
+        "mean": -0.287,
+        "ci95": [
+          -0.31,
+          -0.264
+        ],
+        "clusters": 497
+      },
+      "turnoverDiff": {
+        "mean": 0.364,
+        "ci95": [
+          -0.165,
+          0.877
+        ],
+        "clusters": 497
+      },
+      "deathRateCast": 0.0751,
+      "deathRateSkip": 0.0761,
+      "divergent": 2260,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "cinder_challenge|skilled": {
+      "n": 5060,
+      "clusters": 497,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.227,
+        "ci95": [
+          -0.758,
+          0.304
+        ],
+        "clusters": 497
+      },
+      "handNetDiff": {
+        "mean": 0.098,
+        "ci95": [
+          -0.243,
+          0.438
+        ],
+        "clusters": 497
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.007,
+          0
+        ],
+        "clusters": 497
+      },
+      "winDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.004,
+          0.008
+        ],
+        "clusters": 497
+      },
+      "aetherDiff": {
+        "mean": -0.037,
+        "ci95": [
+          -0.057,
+          -0.017
+        ],
+        "clusters": 497
+      },
+      "laterSpellsDiff": {
+        "mean": -0.275,
+        "ci95": [
+          -0.297,
+          -0.253
+        ],
+        "clusters": 497
+      },
+      "turnoverDiff": {
+        "mean": 0.043,
+        "ci95": [
+          -0.391,
+          0.502
+        ],
+        "clusters": 497
+      },
+      "deathRateCast": 0.0522,
+      "deathRateSkip": 0.0557,
+      "divergent": 2380,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "cinder_challenge|tight": {
+      "n": 5060,
+      "clusters": 497,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.128,
+        "ci95": [
+          -0.372,
+          0.091
+        ],
+        "clusters": 497
+      },
+      "handNetDiff": {
+        "mean": 0.054,
+        "ci95": [
+          -0.06,
+          0.164
+        ],
+        "clusters": 497
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "clusters": 497
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.002
+        ],
+        "clusters": 497
+      },
+      "aetherDiff": {
+        "mean": -0.226,
+        "ci95": [
+          -0.242,
+          -0.21
+        ],
+        "clusters": 497
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 497
+      },
+      "turnoverDiff": {
+        "mean": 0.074,
+        "ci95": [
+          -0.087,
+          0.238
+        ],
+        "clusters": 497
+      },
+      "deathRateCast": 0.0532,
+      "deathRateSkip": 0.052,
+      "divergent": 2168,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "ember_echo|mixed_aggressive": {
+      "n": 2353,
+      "clusters": 181,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.104,
+        "ci95": [
+          -1.868,
+          1.618
+        ],
+        "clusters": 181
+      },
+      "handNetDiff": {
+        "mean": -0.593,
+        "ci95": [
+          -1.471,
+          0.268
+        ],
+        "clusters": 181
+      },
+      "deathDiff": {
+        "mean": 0.004,
+        "ci95": [
+          0,
+          0.008
+        ],
+        "clusters": 181
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.007,
+          0.008
+        ],
+        "clusters": 181
+      },
+      "aetherDiff": {
+        "mean": -0.063,
+        "ci95": [
+          -0.095,
+          -0.028
+        ],
+        "clusters": 181
+      },
+      "laterSpellsDiff": {
+        "mean": -0.233,
+        "ci95": [
+          -0.269,
+          -0.199
+        ],
+        "clusters": 181
+      },
+      "turnoverDiff": {
+        "mean": -0.664,
+        "ci95": [
+          -1.833,
+          0.49
+        ],
+        "clusters": 181
+      },
+      "deathRateCast": 0.0718,
+      "deathRateSkip": 0.068,
+      "divergent": 881,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "ember_echo|skilled": {
+      "n": 2353,
+      "clusters": 181,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.371,
+        "ci95": [
+          -1.909,
+          1.08
+        ],
+        "clusters": 181
+      },
+      "handNetDiff": {
+        "mean": -0.463,
+        "ci95": [
+          -1.274,
+          0.214
+        ],
+        "clusters": 181
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.003
+        ],
+        "clusters": 181
+      },
+      "winDiff": {
+        "mean": -0.005,
+        "ci95": [
+          -0.013,
+          0.003
+        ],
+        "clusters": 181
+      },
+      "aetherDiff": {
+        "mean": -0.045,
+        "ci95": [
+          -0.078,
+          -0.008
+        ],
+        "clusters": 181
+      },
+      "laterSpellsDiff": {
+        "mean": -0.24,
+        "ci95": [
+          -0.273,
+          -0.204
+        ],
+        "clusters": 181
+      },
+      "turnoverDiff": {
+        "mean": -0.386,
+        "ci95": [
+          -1.383,
+          0.662
+        ],
+        "clusters": 181
+      },
+      "deathRateCast": 0.0548,
+      "deathRateSkip": 0.0561,
+      "divergent": 936,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "ember_echo|tight": {
+      "n": 2353,
+      "clusters": 181,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.115,
+        "ci95": [
+          -0.77,
+          0.581
+        ],
+        "clusters": 181
+      },
+      "handNetDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.264,
+          0.283
+        ],
+        "clusters": 181
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ],
+        "clusters": 181
+      },
+      "winDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.007
+        ],
+        "clusters": 181
+      },
+      "aetherDiff": {
+        "mean": -0.161,
+        "ci95": [
+          -0.185,
+          -0.139
+        ],
+        "clusters": 181
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 181
+      },
+      "turnoverDiff": {
+        "mean": 0.119,
+        "ci95": [
+          -0.345,
+          0.611
+        ],
+        "clusters": 181
+      },
+      "deathRateCast": 0.0476,
+      "deathRateSkip": 0.0467,
+      "divergent": 677,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "fate_exchange|mixed_aggressive": {
+      "n": 10534,
+      "clusters": 498,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.308,
+        "ci95": [
+          -1.315,
+          0.641
+        ],
+        "clusters": 498
+      },
+      "handNetDiff": {
+        "mean": 0.508,
+        "ci95": [
+          -0.131,
+          1.185
+        ],
+        "clusters": 498
+      },
+      "deathDiff": {
+        "mean": 0.004,
+        "ci95": [
+          0,
+          0.008
+        ],
+        "clusters": 498
+      },
+      "winDiff": {
+        "mean": -0.005,
+        "ci95": [
+          -0.012,
+          0.002
+        ],
+        "clusters": 498
+      },
+      "aetherDiff": {
+        "mean": -0.236,
+        "ci95": [
+          -0.256,
+          -0.216
+        ],
+        "clusters": 498
+      },
+      "laterSpellsDiff": {
+        "mean": -0.589,
+        "ci95": [
+          -0.618,
+          -0.561
+        ],
+        "clusters": 498
+      },
+      "turnoverDiff": {
+        "mean": 1.005,
+        "ci95": [
+          0.203,
+          1.841
+        ],
+        "clusters": 498
+      },
+      "deathRateCast": 0.0733,
+      "deathRateSkip": 0.0692,
+      "divergent": 8849,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "fate_exchange|skilled": {
+      "n": 10534,
+      "clusters": 498,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.211,
+        "ci95": [
+          -1.052,
+          0.51
+        ],
+        "clusters": 498
+      },
+      "handNetDiff": {
+        "mean": -0.06,
+        "ci95": [
+          -0.551,
+          0.474
+        ],
+        "clusters": 498
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.002,
+          0.006
+        ],
+        "clusters": 498
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.008,
+          0.006
+        ],
+        "clusters": 498
+      },
+      "aetherDiff": {
+        "mean": -0.235,
+        "ci95": [
+          -0.257,
+          -0.215
+        ],
+        "clusters": 498
+      },
+      "laterSpellsDiff": {
+        "mean": -0.567,
+        "ci95": [
+          -0.593,
+          -0.539
+        ],
+        "clusters": 498
+      },
+      "turnoverDiff": {
+        "mean": 0.609,
+        "ci95": [
+          -0.023,
+          1.28
+        ],
+        "clusters": 498
+      },
+      "deathRateCast": 0.059,
+      "deathRateSkip": 0.057,
+      "divergent": 8812,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "fate_exchange|tight": {
+      "n": 10534,
+      "clusters": 498,
+      "target": 5000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.199,
+        "ci95": [
+          -0.862,
+          0.568
+        ],
+        "clusters": 498
+      },
+      "handNetDiff": {
+        "mean": -0.289,
+        "ci95": [
+          -0.919,
+          0.316
+        ],
+        "clusters": 498
+      },
+      "deathDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.006
+        ],
+        "clusters": 498
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.006,
+          0.005
+        ],
+        "clusters": 498
+      },
+      "aetherDiff": {
+        "mean": -0.62,
+        "ci95": [
+          -0.659,
+          -0.582
+        ],
+        "clusters": 498
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 498
+      },
+      "turnoverDiff": {
+        "mean": 2.036,
+        "ci95": [
+          1.399,
+          2.66
+        ],
+        "clusters": 498
+      },
+      "deathRateCast": 0.0665,
+      "deathRateSkip": 0.0639,
+      "divergent": 6314,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "marked_fate|mixed_aggressive": {
+      "n": 55,
+      "clusters": 12,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -0.236,
+        "ci95": [
+          -4.041,
+          5.667
+        ],
+        "clusters": 12
+      },
+      "handNetDiff": {
+        "mean": -1.327,
+        "ci95": [
+          -5.607,
+          5.31
+        ],
+        "clusters": 12
+      },
+      "deathDiff": {
+        "mean": 0.036,
+        "ci95": [
+          0,
+          0.109
+        ],
+        "clusters": 12
+      },
+      "winDiff": {
+        "mean": 0.036,
+        "ci95": [
+          -0.073,
+          0.132
+        ],
+        "clusters": 12
+      },
+      "aetherDiff": {
+        "mean": 0.127,
+        "ci95": [
+          -0.095,
+          0.381
+        ],
+        "clusters": 12
+      },
+      "laterSpellsDiff": {
+        "mean": -0.073,
+        "ci95": [
+          -0.32,
+          0.22
+        ],
+        "clusters": 12
+      },
+      "turnoverDiff": {
+        "mean": 2.745,
+        "ci95": [
+          -7.875,
+          12.636
+        ],
+        "clusters": 12
+      },
+      "deathRateCast": 0.0727,
+      "deathRateSkip": 0.0364,
+      "divergent": 39,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "marked_fate|skilled": {
+      "n": 55,
+      "clusters": 12,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -1.4,
+        "ci95": [
+          -4.521,
+          1.796
+        ],
+        "clusters": 12
+      },
+      "handNetDiff": {
+        "mean": -3.491,
+        "ci95": [
+          -8.321,
+          2.478
+        ],
+        "clusters": 12
+      },
+      "deathDiff": {
+        "mean": 0.036,
+        "ci95": [
+          -0.033,
+          0.14
+        ],
+        "clusters": 12
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.105,
+          0.079
+        ],
+        "clusters": 12
+      },
+      "aetherDiff": {
+        "mean": 0.2,
+        "ci95": [
+          -0.013,
+          0.525
+        ],
+        "clusters": 12
+      },
+      "laterSpellsDiff": {
+        "mean": -0.127,
+        "ci95": [
+          -0.282,
+          0.048
+        ],
+        "clusters": 12
+      },
+      "turnoverDiff": {
+        "mean": -0.345,
+        "ci95": [
+          -2.233,
+          2.073
+        ],
+        "clusters": 12
+      },
+      "deathRateCast": 0.0909,
+      "deathRateSkip": 0.0545,
+      "divergent": 38,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "marked_fate|tight": {
+      "n": 55,
+      "clusters": 12,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -0.673,
+        "ci95": [
+          -3.286,
+          3.302
+        ],
+        "clusters": 12
+      },
+      "handNetDiff": {
+        "mean": -1.127,
+        "ci95": [
+          -5.465,
+          5.195
+        ],
+        "clusters": 12
+      },
+      "deathDiff": {
+        "mean": 0.036,
+        "ci95": [
+          -0.036,
+          0.12
+        ],
+        "clusters": 12
+      },
+      "winDiff": {
+        "mean": 0.036,
+        "ci95": [
+          -0.082,
+          0.133
+        ],
+        "clusters": 12
+      },
+      "aetherDiff": {
+        "mean": -0.036,
+        "ci95": [
+          -0.167,
+          0.068
+        ],
+        "clusters": 12
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 12
+      },
+      "turnoverDiff": {
+        "mean": -3.836,
+        "ci95": [
+          -9.043,
+          3.45
+        ],
+        "clusters": 12
+      },
+      "deathRateCast": 0.0727,
+      "deathRateSkip": 0.0364,
+      "divergent": 24,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "quiet_briars|mixed_aggressive": {
+      "n": 489,
+      "clusters": 51,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 0.663,
+        "ci95": [
+          -2.006,
+          3.246
+        ],
+        "clusters": 51
+      },
+      "handNetDiff": {
+        "mean": -0.055,
+        "ci95": [
+          -1.743,
+          1.589
+        ],
+        "clusters": 51
+      },
+      "deathDiff": {
+        "mean": -0.018,
+        "ci95": [
+          -0.035,
+          -0.002
+        ],
+        "clusters": 51
+      },
+      "winDiff": {
+        "mean": 0.008,
+        "ci95": [
+          -0.014,
+          0.034
+        ],
+        "clusters": 51
+      },
+      "aetherDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.088,
+          0.094
+        ],
+        "clusters": 51
+      },
+      "laterSpellsDiff": {
+        "mean": -0.284,
+        "ci95": [
+          -0.391,
+          -0.183
+        ],
+        "clusters": 51
+      },
+      "turnoverDiff": {
+        "mean": 1.166,
+        "ci95": [
+          -0.586,
+          3.08
+        ],
+        "clusters": 51
+      },
+      "deathRateCast": 0.1063,
+      "deathRateSkip": 0.1247,
+      "divergent": 282,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "quiet_briars|skilled": {
+      "n": 489,
+      "clusters": 51,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -0.207,
+        "ci95": [
+          -3.312,
+          2.884
+        ],
+        "clusters": 51
+      },
+      "handNetDiff": {
+        "mean": 0.315,
+        "ci95": [
+          -0.639,
+          1.278
+        ],
+        "clusters": 51
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.017,
+          0.009
+        ],
+        "clusters": 51
+      },
+      "winDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.023,
+          0.021
+        ],
+        "clusters": 51
+      },
+      "aetherDiff": {
+        "mean": -0.057,
+        "ci95": [
+          -0.138,
+          0.037
+        ],
+        "clusters": 51
+      },
+      "laterSpellsDiff": {
+        "mean": -0.278,
+        "ci95": [
+          -0.36,
+          -0.206
+        ],
+        "clusters": 51
+      },
+      "turnoverDiff": {
+        "mean": -0.268,
+        "ci95": [
+          -2.607,
+          2.099
+        ],
+        "clusters": 51
+      },
+      "deathRateCast": 0.0838,
+      "deathRateSkip": 0.0879,
+      "divergent": 277,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "quiet_briars|tight": {
+      "n": 489,
+      "clusters": 51,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 0.086,
+        "ci95": [
+          -1.109,
+          1.492
+        ],
+        "clusters": 51
+      },
+      "handNetDiff": {
+        "mean": -0.258,
+        "ci95": [
+          -0.794,
+          0.198
+        ],
+        "clusters": 51
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.006,
+          0.011
+        ],
+        "clusters": 51
+      },
+      "winDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.007,
+          0.016
+        ],
+        "clusters": 51
+      },
+      "aetherDiff": {
+        "mean": -0.07,
+        "ci95": [
+          -0.104,
+          -0.039
+        ],
+        "clusters": 51
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 51
+      },
+      "turnoverDiff": {
+        "mean": 0.254,
+        "ci95": [
+          -0.558,
+          1.131
+        ],
+        "clusters": 51
+      },
+      "deathRateCast": 0.0675,
+      "deathRateSkip": 0.0654,
+      "divergent": 154,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "ravenous_eye|mixed_aggressive": {
+      "n": 242,
+      "clusters": 46,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 0.864,
+        "ci95": [
+          -5.459,
+          7.552
+        ],
+        "clusters": 46
+      },
+      "handNetDiff": {
+        "mean": 1.587,
+        "ci95": [
+          -0.584,
+          3.767
+        ],
+        "clusters": 46
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.027,
+          0.02
+        ],
+        "clusters": 46
+      },
+      "winDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.023,
+          0.031
+        ],
+        "clusters": 46
+      },
+      "aetherDiff": {
+        "mean": -0.31,
+        "ci95": [
+          -0.475,
+          -0.137
+        ],
+        "clusters": 46
+      },
+      "laterSpellsDiff": {
+        "mean": -0.479,
+        "ci95": [
+          -0.628,
+          -0.341
+        ],
+        "clusters": 46
+      },
+      "turnoverDiff": {
+        "mean": -1.492,
+        "ci95": [
+          -6.494,
+          2.655
+        ],
+        "clusters": 46
+      },
+      "deathRateCast": 0.124,
+      "deathRateSkip": 0.1281,
+      "divergent": 241,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "ravenous_eye|skilled": {
+      "n": 242,
+      "clusters": 46,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 1.405,
+        "ci95": [
+          -2.854,
+          5.64
+        ],
+        "clusters": 46
+      },
+      "handNetDiff": {
+        "mean": 0.74,
+        "ci95": [
+          -1.066,
+          2.816
+        ],
+        "clusters": 46
+      },
+      "deathDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.009,
+          0.019
+        ],
+        "clusters": 46
+      },
+      "winDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.027,
+          0.032
+        ],
+        "clusters": 46
+      },
+      "aetherDiff": {
+        "mean": -0.413,
+        "ci95": [
+          -0.608,
+          -0.258
+        ],
+        "clusters": 46
+      },
+      "laterSpellsDiff": {
+        "mean": -0.442,
+        "ci95": [
+          -0.553,
+          -0.317
+        ],
+        "clusters": 46
+      },
+      "turnoverDiff": {
+        "mean": -1.926,
+        "ci95": [
+          -5.674,
+          1.892
+        ],
+        "clusters": 46
+      },
+      "deathRateCast": 0.1033,
+      "deathRateSkip": 0.0992,
+      "divergent": 242,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "ravenous_eye|tight": {
+      "n": 242,
+      "clusters": 46,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -0.426,
+        "ci95": [
+          -2.787,
+          1.567
+        ],
+        "clusters": 46
+      },
+      "handNetDiff": {
+        "mean": 0.38,
+        "ci95": [
+          -0.687,
+          1.962
+        ],
+        "clusters": 46
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.02,
+          0.01
+        ],
+        "clusters": 46
+      },
+      "winDiff": {
+        "mean": -0.012,
+        "ci95": [
+          -0.036,
+          0.007
+        ],
+        "clusters": 46
+      },
+      "aetherDiff": {
+        "mean": -0.554,
+        "ci95": [
+          -0.68,
+          -0.44
+        ],
+        "clusters": 46
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 46
+      },
+      "turnoverDiff": {
+        "mean": -0.335,
+        "ci95": [
+          -2.617,
+          2.559
+        ],
+        "clusters": 46
+      },
+      "deathRateCast": 0.1033,
+      "deathRateSkip": 0.1074,
+      "divergent": 242,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "red_oath|mixed_aggressive": {
+      "n": 2723,
+      "clusters": 186,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.856,
+        "ci95": [
+          -2.294,
+          0.475
+        ],
+        "clusters": 186
+      },
+      "handNetDiff": {
+        "mean": -0.741,
+        "ci95": [
+          -1.564,
+          0.049
+        ],
+        "clusters": 186
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.004
+        ],
+        "clusters": 186
+      },
+      "winDiff": {
+        "mean": -0.006,
+        "ci95": [
+          -0.015,
+          0.003
+        ],
+        "clusters": 186
+      },
+      "aetherDiff": {
+        "mean": 0.124,
+        "ci95": [
+          0.097,
+          0.154
+        ],
+        "clusters": 186
+      },
+      "laterSpellsDiff": {
+        "mean": -0.102,
+        "ci95": [
+          -0.131,
+          -0.071
+        ],
+        "clusters": 186
+      },
+      "turnoverDiff": {
+        "mean": -0.038,
+        "ci95": [
+          -1.231,
+          1.094
+        ],
+        "clusters": 186
+      },
+      "deathRateCast": 0.076,
+      "deathRateSkip": 0.0768,
+      "divergent": 1174,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "red_oath|skilled": {
+      "n": 2723,
+      "clusters": 186,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.318,
+        "ci95": [
+          -0.589,
+          1.232
+        ],
+        "clusters": 186
+      },
+      "handNetDiff": {
+        "mean": -0.331,
+        "ci95": [
+          -0.907,
+          0.288
+        ],
+        "clusters": 186
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.004,
+          0.006
+        ],
+        "clusters": 186
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.007,
+          0.007
+        ],
+        "clusters": 186
+      },
+      "aetherDiff": {
+        "mean": 0.076,
+        "ci95": [
+          0.043,
+          0.109
+        ],
+        "clusters": 186
+      },
+      "laterSpellsDiff": {
+        "mean": -0.068,
+        "ci95": [
+          -0.101,
+          -0.031
+        ],
+        "clusters": 186
+      },
+      "turnoverDiff": {
+        "mean": 0.351,
+        "ci95": [
+          -0.714,
+          1.446
+        ],
+        "clusters": 186
+      },
+      "deathRateCast": 0.0599,
+      "deathRateSkip": 0.0591,
+      "divergent": 1170,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "red_oath|tight": {
+      "n": 2723,
+      "clusters": 186,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.156,
+        "ci95": [
+          -0.831,
+          0.546
+        ],
+        "clusters": 186
+      },
+      "handNetDiff": {
+        "mean": -0.159,
+        "ci95": [
+          -0.568,
+          0.28
+        ],
+        "clusters": 186
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.002,
+          0.002
+        ],
+        "clusters": 186
+      },
+      "winDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.008
+        ],
+        "clusters": 186
+      },
+      "aetherDiff": {
+        "mean": 0.134,
+        "ci95": [
+          0.108,
+          0.16
+        ],
+        "clusters": 186
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 186
+      },
+      "turnoverDiff": {
+        "mean": 0.425,
+        "ci95": [
+          0.035,
+          0.848
+        ],
+        "clusters": 186
+      },
+      "deathRateCast": 0.0463,
+      "deathRateSkip": 0.0466,
+      "divergent": 845,
+      "cinderFamily": true,
+      "family": "cinder_challenge"
+    },
+    "second_reflection|mixed_aggressive": {
+      "n": 508,
+      "clusters": 66,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 3.933,
+        "ci95": [
+          -1.865,
+          10.039
+        ],
+        "clusters": 66
+      },
+      "handNetDiff": {
+        "mean": 1.209,
+        "ci95": [
+          -2.795,
+          5.963
+        ],
+        "clusters": 66
+      },
+      "deathDiff": {
+        "mean": 0.01,
+        "ci95": [
+          -0.014,
+          0.035
+        ],
+        "clusters": 66
+      },
+      "winDiff": {
+        "mean": -0.022,
+        "ci95": [
+          -0.049,
+          0.005
+        ],
+        "clusters": 66
+      },
+      "aetherDiff": {
+        "mean": -0.427,
+        "ci95": [
+          -0.528,
+          -0.323
+        ],
+        "clusters": 66
+      },
+      "laterSpellsDiff": {
+        "mean": -0.549,
+        "ci95": [
+          -0.689,
+          -0.424
+        ],
+        "clusters": 66
+      },
+      "turnoverDiff": {
+        "mean": 6.059,
+        "ci95": [
+          0.007,
+          11.484
+        ],
+        "clusters": 66
+      },
+      "deathRateCast": 0.0768,
+      "deathRateSkip": 0.0669,
+      "divergent": 489,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "second_reflection|skilled": {
+      "n": 508,
+      "clusters": 66,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -0.553,
+        "ci95": [
+          -5.033,
+          3.954
+        ],
+        "clusters": 66
+      },
+      "handNetDiff": {
+        "mean": 1.911,
+        "ci95": [
+          -1.018,
+          5.451
+        ],
+        "clusters": 66
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.018,
+          0.024
+        ],
+        "clusters": 66
+      },
+      "winDiff": {
+        "mean": 0.01,
+        "ci95": [
+          -0.016,
+          0.037
+        ],
+        "clusters": 66
+      },
+      "aetherDiff": {
+        "mean": -0.451,
+        "ci95": [
+          -0.583,
+          -0.322
+        ],
+        "clusters": 66
+      },
+      "laterSpellsDiff": {
+        "mean": -0.53,
+        "ci95": [
+          -0.651,
+          -0.426
+        ],
+        "clusters": 66
+      },
+      "turnoverDiff": {
+        "mean": 7.274,
+        "ci95": [
+          2.688,
+          11.393
+        ],
+        "clusters": 66
+      },
+      "deathRateCast": 0.0591,
+      "deathRateSkip": 0.0571,
+      "divergent": 487,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "second_reflection|tight": {
+      "n": 508,
+      "clusters": 66,
+      "target": 2000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -1.795,
+        "ci95": [
+          -7.538,
+          4.132
+        ],
+        "clusters": 66
+      },
+      "handNetDiff": {
+        "mean": -1.734,
+        "ci95": [
+          -6.649,
+          4.259
+        ],
+        "clusters": 66
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.012,
+          0.018
+        ],
+        "clusters": 66
+      },
+      "winDiff": {
+        "mean": -0.01,
+        "ci95": [
+          -0.034,
+          0.018
+        ],
+        "clusters": 66
+      },
+      "aetherDiff": {
+        "mean": -0.679,
+        "ci95": [
+          -0.798,
+          -0.572
+        ],
+        "clusters": 66
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 66
+      },
+      "turnoverDiff": {
+        "mean": 11.232,
+        "ci95": [
+          7.368,
+          15.445
+        ],
+        "clusters": 66
+      },
+      "deathRateCast": 0.063,
+      "deathRateSkip": 0.061,
+      "divergent": 491,
+      "cinderFamily": false,
+      "family": "fate_exchange"
+    },
+    "thorn_lattice|mixed_aggressive": {
+      "n": 4392,
+      "clusters": 353,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.133,
+        "ci95": [
+          -1.268,
+          1.584
+        ],
+        "clusters": 353
+      },
+      "handNetDiff": {
+        "mean": -0.406,
+        "ci95": [
+          -1.014,
+          0.149
+        ],
+        "clusters": 353
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.01,
+          0.001
+        ],
+        "clusters": 353
+      },
+      "winDiff": {
+        "mean": 0.008,
+        "ci95": [
+          0,
+          0.015
+        ],
+        "clusters": 353
+      },
+      "aetherDiff": {
+        "mean": -0.286,
+        "ci95": [
+          -0.321,
+          -0.25
+        ],
+        "clusters": 353
+      },
+      "laterSpellsDiff": {
+        "mean": -0.527,
+        "ci95": [
+          -0.565,
+          -0.489
+        ],
+        "clusters": 353
+      },
+      "turnoverDiff": {
+        "mean": -0.495,
+        "ci95": [
+          -1.465,
+          0.672
+        ],
+        "clusters": 353
+      },
+      "deathRateCast": 0.0758,
+      "deathRateSkip": 0.0801,
+      "divergent": 3339,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "thorn_lattice|skilled": {
+      "n": 4392,
+      "clusters": 353,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.684,
+        "ci95": [
+          -0.45,
+          1.904
+        ],
+        "clusters": 353
+      },
+      "handNetDiff": {
+        "mean": 0.135,
+        "ci95": [
+          -0.294,
+          0.571
+        ],
+        "clusters": 353
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.008,
+          0.001
+        ],
+        "clusters": 353
+      },
+      "winDiff": {
+        "mean": 0.005,
+        "ci95": [
+          -0.003,
+          0.012
+        ],
+        "clusters": 353
+      },
+      "aetherDiff": {
+        "mean": -0.23,
+        "ci95": [
+          -0.264,
+          -0.193
+        ],
+        "clusters": 353
+      },
+      "laterSpellsDiff": {
+        "mean": -0.499,
+        "ci95": [
+          -0.529,
+          -0.464
+        ],
+        "clusters": 353
+      },
+      "turnoverDiff": {
+        "mean": -0.371,
+        "ci95": [
+          -1.326,
+          0.552
+        ],
+        "clusters": 353
+      },
+      "deathRateCast": 0.0638,
+      "deathRateSkip": 0.0674,
+      "divergent": 3299,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "thorn_lattice|tight": {
+      "n": 4392,
+      "clusters": 353,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.395,
+        "ci95": [
+          -1.073,
+          0.259
+        ],
+        "clusters": 353
+      },
+      "handNetDiff": {
+        "mean": -0.355,
+        "ci95": [
+          -0.723,
+          0.013
+        ],
+        "clusters": 353
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.001
+        ],
+        "clusters": 353
+      },
+      "winDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.007,
+          0.003
+        ],
+        "clusters": 353
+      },
+      "aetherDiff": {
+        "mean": -0.564,
+        "ci95": [
+          -0.611,
+          -0.52
+        ],
+        "clusters": 353
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 353
+      },
+      "turnoverDiff": {
+        "mean": -0.155,
+        "ci95": [
+          -0.749,
+          0.417
+        ],
+        "clusters": 353
+      },
+      "deathRateCast": 0.066,
+      "deathRateSkip": 0.0672,
+      "divergent": 2042,
+      "cinderFamily": false,
+      "family": "briar_lock"
+    },
+    "twin_oracle|mixed_aggressive": {
+      "n": 2697,
+      "clusters": 294,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.364,
+        "ci95": [
+          -1.497,
+          2.228
+        ],
+        "clusters": 294
+      },
+      "handNetDiff": {
+        "mean": 0.063,
+        "ci95": [
+          -0.652,
+          0.776
+        ],
+        "clusters": 294
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.007,
+          0.005
+        ],
+        "clusters": 294
+      },
+      "winDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.007,
+          0.013
+        ],
+        "clusters": 294
+      },
+      "aetherDiff": {
+        "mean": -0.423,
+        "ci95": [
+          -0.47,
+          -0.379
+        ],
+        "clusters": 294
+      },
+      "laterSpellsDiff": {
+        "mean": -0.521,
+        "ci95": [
+          -0.569,
+          -0.476
+        ],
+        "clusters": 294
+      },
+      "turnoverDiff": {
+        "mean": -0.223,
+        "ci95": [
+          -1.742,
+          1.34
+        ],
+        "clusters": 294
+      },
+      "deathRateCast": 0.0638,
+      "deathRateSkip": 0.0649,
+      "divergent": 2693,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "twin_oracle|skilled": {
+      "n": 2697,
+      "clusters": 294,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.965,
+        "ci95": [
+          -0.501,
+          2.318
+        ],
+        "clusters": 294
+      },
+      "handNetDiff": {
+        "mean": 0.758,
+        "ci95": [
+          0.113,
+          1.42
+        ],
+        "clusters": 294
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.003,
+          0.007
+        ],
+        "clusters": 294
+      },
+      "winDiff": {
+        "mean": 0.005,
+        "ci95": [
+          -0.006,
+          0.016
+        ],
+        "clusters": 294
+      },
+      "aetherDiff": {
+        "mean": -0.442,
+        "ci95": [
+          -0.49,
+          -0.398
+        ],
+        "clusters": 294
+      },
+      "laterSpellsDiff": {
+        "mean": -0.525,
+        "ci95": [
+          -0.577,
+          -0.478
+        ],
+        "clusters": 294
+      },
+      "turnoverDiff": {
+        "mean": 0.624,
+        "ci95": [
+          -0.668,
+          1.855
+        ],
+        "clusters": 294
+      },
+      "deathRateCast": 0.0497,
+      "deathRateSkip": 0.0475,
+      "divergent": 2692,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "twin_oracle|tight": {
+      "n": 2697,
+      "clusters": 294,
+      "target": 2000,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.123,
+        "ci95": [
+          -0.835,
+          0.589
+        ],
+        "clusters": 294
+      },
+      "handNetDiff": {
+        "mean": -0.286,
+        "ci95": [
+          -0.707,
+          0.148
+        ],
+        "clusters": 294
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.003,
+          0.005
+        ],
+        "clusters": 294
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.006,
+          0.004
+        ],
+        "clusters": 294
+      },
+      "aetherDiff": {
+        "mean": -0.752,
+        "ci95": [
+          -0.824,
+          -0.689
+        ],
+        "clusters": 294
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 294
+      },
+      "turnoverDiff": {
+        "mean": -0.149,
+        "ci95": [
+          -0.857,
+          0.548
+        ],
+        "clusters": 294
+      },
+      "deathRateCast": 0.0541,
+      "deathRateSkip": 0.0534,
+      "divergent": 2679,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "unmask|mixed_aggressive": {
+      "n": 4545,
+      "clusters": 496,
+      "target": 5000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 0.074,
+        "ci95": [
+          -0.835,
+          0.966
+        ],
+        "clusters": 496
+      },
+      "handNetDiff": {
+        "mean": -0.13,
+        "ci95": [
+          -0.501,
+          0.239
+        ],
+        "clusters": 496
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.007,
+          0.004
+        ],
+        "clusters": 496
+      },
+      "winDiff": {
+        "mean": -0.005,
+        "ci95": [
+          -0.013,
+          0.004
+        ],
+        "clusters": 496
+      },
+      "aetherDiff": {
+        "mean": -0.3,
+        "ci95": [
+          -0.333,
+          -0.271
+        ],
+        "clusters": 496
+      },
+      "laterSpellsDiff": {
+        "mean": -0.617,
+        "ci95": [
+          -0.654,
+          -0.58
+        ],
+        "clusters": 496
+      },
+      "turnoverDiff": {
+        "mean": 0.285,
+        "ci95": [
+          -0.451,
+          1.054
+        ],
+        "clusters": 496
+      },
+      "deathRateCast": 0.0638,
+      "deathRateSkip": 0.0651,
+      "divergent": 4541,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "unmask|skilled": {
+      "n": 4545,
+      "clusters": 496,
+      "target": 5000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": 0.301,
+        "ci95": [
+          -0.386,
+          0.98
+        ],
+        "clusters": 496
+      },
+      "handNetDiff": {
+        "mean": 0.016,
+        "ci95": [
+          -0.301,
+          0.338
+        ],
+        "clusters": 496
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.003
+        ],
+        "clusters": 496
+      },
+      "winDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.007,
+          0.01
+        ],
+        "clusters": 496
+      },
+      "aetherDiff": {
+        "mean": -0.286,
+        "ci95": [
+          -0.319,
+          -0.252
+        ],
+        "clusters": 496
+      },
+      "laterSpellsDiff": {
+        "mean": -0.63,
+        "ci95": [
+          -0.667,
+          -0.592
+        ],
+        "clusters": 496
+      },
+      "turnoverDiff": {
+        "mean": 0.273,
+        "ci95": [
+          -0.368,
+          0.889
+        ],
+        "clusters": 496
+      },
+      "deathRateCast": 0.0458,
+      "deathRateSkip": 0.0469,
+      "divergent": 4539,
+      "cinderFamily": false,
+      "family": "unmask"
+    },
+    "unmask|tight": {
+      "n": 4545,
+      "clusters": 496,
+      "target": 5000,
+      "undersampled": true,
+      "tableNetDiff": {
+        "mean": -0.216,
+        "ci95": [
+          -0.681,
+          0.248
+        ],
+        "clusters": 496
+      },
+      "handNetDiff": {
+        "mean": -0.01,
+        "ci95": [
+          -0.277,
+          0.243
+        ],
+        "clusters": 496
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.003,
+          0.003
+        ],
+        "clusters": 496
+      },
+      "winDiff": {
+        "mean": -0.003,
+        "ci95": [
+          -0.009,
+          0.004
+        ],
+        "clusters": 496
+      },
+      "aetherDiff": {
+        "mean": -0.778,
+        "ci95": [
+          -0.821,
+          -0.735
+        ],
+        "clusters": 496
+      },
+      "laterSpellsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "clusters": 496
+      },
+      "turnoverDiff": {
+        "mean": 0.102,
+        "ci95": [
+          -0.353,
+          0.546
+        ],
+        "clusters": 496
+      },
+      "deathRateCast": 0.0524,
+      "deathRateSkip": 0.0526,
+      "divergent": 4529,
+      "cinderFamily": false,
+      "family": "unmask"
+    }
+  },
+  "seconds": 1149.2
+}

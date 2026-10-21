@@ -1314,3 +1314,23 @@ button.small {
     width: 38px;
   }
 }
+
+/* iPhone 13-class heights (600–700px) have room for full 44px action controls. */
+@media (max-height: 700px) and (min-height: 600px) {
+  #panel button:not(.spell):not(.spell-info-toggle),
+  #raise-presets button {
+    min-height: 44px;
+  }
+}
+
+/* 320px HUD: keep the table name readable beside five controls. */
+@media (max-width: 360px) {
+  .hud-buttons {
+    gap: 4px;
+  }
+
+  #hud button {
+    min-width: 40px;
+    padding: 0 6px;
+  }
+}

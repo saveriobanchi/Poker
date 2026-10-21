@@ -3,7 +3,7 @@
 A mobile-first, single-player, dark-fantasy poker roguelike built on real
 three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth and life.
 
-- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v0.5), art: [`docs/art-bible.md`](docs/art-bible.md)
+- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v1.0), art: [`docs/art-bible.md`](docs/art-bible.md)
 - Rule departures: [`docs/poker-rules-exceptions.md`](docs/poker-rules-exceptions.md)
 - History: [`docs/change-log.md`](docs/change-log.md)
 
@@ -35,6 +35,12 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
 - **P7 — Closure and measurement:** done. v0.9 rulings, Act III personalities,
   merchant voices, epilogues and a world testament (no chips carried), an offline
   paired spell-EV study, and a mobile pass (pot odds, reduced motion, small screens).
+- **P8 — Depth, character and honest measurement:** done. One shove predicate for
+  AI reads and dossiers; World Testament unlocks that are story and cosmetics only;
+  a mixed-aggressive research policy; full-table paired spell value; exact transfer
+  lines in shops; 44 px targets; and opt-in playtest instrumentation (`?playtest=1`,
+  see [`docs/playtest-protocol-p8.md`](docs/playtest-protocol-p8.md)). No human
+  playtest has been run yet.
 
 ```sh
 npm install
@@ -43,6 +49,9 @@ npm test           # unit tests, AI tests, 10,000-hand simulation
 npm run simulate   # 1,000 seeded whole runs → docs/reports/p4-simulation.json
 npm run balance    # seed batches per policy with cohorts and 95% intervals → docs/reports/balance-*.json
 npm run spell-ev   # offline paired cast-vs-skip spell value with bootstrap intervals → docs/reports/spell-ev-*.json
+npm run table-ev   # the same, continued to the end of the table, clustered intervals → docs/reports/table-ev-*.json
+npm run paired-policies  # every policy on the same worlds, compared with skilled → docs/reports/paired-policies-*.json
+python3 scripts/check-art.py [--pack]  # portrait and card-back gate, 64 px proof, art status
 npm run build      # production build in dist/
 npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
@@ -88,7 +97,8 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P8
+## Next: P9
 
-To be decided with ChatGPT after `docs/briefs/007-report-for-chatgpt.md`. Human
-playtesting on real phones is the open item no simulation can replace.
+To be decided with ChatGPT after `docs/briefs/008-report-for-chatgpt.md`. First, the
+moderated naive-player sessions (5–8 testers, `?playtest=1`), then the top three
+blockers they reveal. The seven portraits are still needed.

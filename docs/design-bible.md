@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v0.9**
+**Canonical World, Gameplay & Production Blueprint — v1.0**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4–v0.9 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4–v1.0 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -58,6 +58,17 @@ Status: Working design baseline, dated 18 October 2026 (v0.4–v0.9 amendments b
 > never carries chips, plus an offline counterfactual spell-EV protocol. Data:
 > `src/game/run/data/p7-*.json`; art: [`art-production-p7.md`](art-production-p7.md);
 > QA: [`mobile-qa-p7.md`](mobile-qa-p7.md).
+
+> **v1.0 amendments (21 October 2026).** [`design-decisions-v1.0.md`](design-decisions-v1.0.md)
+> makes the dossier "large shove" the same predicate as the AI's public shove reads; adds
+> World Testament unlocks that are story and cosmetics only (backgrounds, two prose
+> variants, card backs that must pass symmetry and silhouette checks), with `createRun`
+> unchanged; asks for a mixed-aggressive simulated policy and a full-table counterfactual
+> spell value; freezes Act III difficulty and its seven claim temperaments until human
+> playtests show a specific problem; requires exact transfer lines in every shop and
+> buyback; puts moderated naive-player sessions before any large expansion; and keeps the
+> seven portraits *needed* until real files pass the 64 px gate. Data:
+> `src/game/run/data/p8-*.json`; playtest protocol: [`playtest-protocol-p8.md`](playtest-protocol-p8.md).
 
 ---
 

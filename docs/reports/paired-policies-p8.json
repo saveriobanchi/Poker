@@ -1,0 +1,184 @@
+{
+  "label": "p8",
+  "batches": 10,
+  "perBatch": 200,
+  "seeds": "createRun(seed·100003 + k), Rng(seed·7919 + k), seed = 1000 + batch",
+  "rates": {
+    "skilled": {
+      "clear": 0.1135,
+      "death": 0.661,
+      "act3Entry": 0.4915
+    },
+    "passive": {
+      "clear": 0,
+      "death": 0.9935,
+      "act3Entry": 0.0185
+    },
+    "maniac": {
+      "clear": 0.0165,
+      "death": 0.9645,
+      "act3Entry": 0.105
+    },
+    "tight": {
+      "clear": 0.0485,
+      "death": 0.728,
+      "act3Entry": 0.439
+    },
+    "mixed_aggressive": {
+      "clear": 0.1315,
+      "death": 0.726,
+      "act3Entry": 0.389
+    }
+  },
+  "vsSkilled": {
+    "passive": {
+      "worlds": 2000,
+      "clear": {
+        "meanDiffVsSkilled": -0.1135,
+        "ci95": [
+          -0.1285,
+          -0.1
+        ],
+        "onlyThis": 0,
+        "onlySkilled": 227
+      },
+      "death": {
+        "meanDiffVsSkilled": 0.3325,
+        "ci95": [
+          0.3105,
+          0.354
+        ],
+        "onlyThis": 672,
+        "onlySkilled": 7
+      },
+      "act3Entry": {
+        "meanDiffVsSkilled": -0.473,
+        "ci95": [
+          -0.4955,
+          -0.4505
+        ],
+        "onlyThis": 13,
+        "onlySkilled": 959
+      },
+      "finalLifechips": {
+        "meanDiffVsSkilled": -62.9945,
+        "ci95": [
+          -68.6225,
+          -57.016
+        ]
+      }
+    },
+    "maniac": {
+      "worlds": 2000,
+      "clear": {
+        "meanDiffVsSkilled": -0.097,
+        "ci95": [
+          -0.112,
+          -0.082
+        ],
+        "onlyThis": 29,
+        "onlySkilled": 223
+      },
+      "death": {
+        "meanDiffVsSkilled": 0.3035,
+        "ci95": [
+          0.28,
+          0.325
+        ],
+        "onlyThis": 652,
+        "onlySkilled": 45
+      },
+      "act3Entry": {
+        "meanDiffVsSkilled": -0.3865,
+        "ci95": [
+          -0.4115,
+          -0.3595
+        ],
+        "onlyThis": 101,
+        "onlySkilled": 874
+      },
+      "finalLifechips": {
+        "meanDiffVsSkilled": -39.2225,
+        "ci95": [
+          -48.262,
+          -29.4645
+        ]
+      }
+    },
+    "tight": {
+      "worlds": 2000,
+      "clear": {
+        "meanDiffVsSkilled": -0.065,
+        "ci95": [
+          -0.0795,
+          -0.052
+        ],
+        "onlyThis": 59,
+        "onlySkilled": 189
+      },
+      "death": {
+        "meanDiffVsSkilled": 0.067,
+        "ci95": [
+          0.042,
+          0.093
+        ],
+        "onlyThis": 421,
+        "onlySkilled": 287
+      },
+      "act3Entry": {
+        "meanDiffVsSkilled": -0.0525,
+        "ci95": [
+          -0.081,
+          -0.025
+        ],
+        "onlyThis": 351,
+        "onlySkilled": 456
+      },
+      "finalLifechips": {
+        "meanDiffVsSkilled": -34.8085,
+        "ci95": [
+          -40.861,
+          -28.523
+        ]
+      }
+    },
+    "mixed_aggressive": {
+      "worlds": 2000,
+      "clear": {
+        "meanDiffVsSkilled": 0.018,
+        "ci95": [
+          0.0005,
+          0.0355
+        ],
+        "onlyThis": 174,
+        "onlySkilled": 138
+      },
+      "death": {
+        "meanDiffVsSkilled": 0.065,
+        "ci95": [
+          0.0405,
+          0.0885
+        ],
+        "onlyThis": 361,
+        "onlySkilled": 231
+      },
+      "act3Entry": {
+        "meanDiffVsSkilled": -0.1025,
+        "ci95": [
+          -0.1265,
+          -0.0775
+        ],
+        "onlyThis": 246,
+        "onlySkilled": 451
+      },
+      "finalLifechips": {
+        "meanDiffVsSkilled": 5.2345,
+        "ci95": [
+          -2.03,
+          12.2805
+        ]
+      }
+    }
+  },
+  "seconds": 345.3
+}
