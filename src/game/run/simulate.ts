@@ -3,6 +3,7 @@
  * across contrasting player policies). Every step re-checks the global Lifechip
  * invariant; the report aggregates route, claim, contract and magic outcomes.
  */
+import { isLargeShove } from '../ai/reads';
 import { RELICS } from '../magic/relics';
 import { SPELLS } from '../magic/spells';
 import { Rng } from '../rules/rng';
@@ -161,7 +162,7 @@ export function simulateRuns(runs: number, seed = 1, maxSteps = 60_000): Simulat
         seenHands.add(tag);
         const h = t.table.hand;
         const shove = h.log.findIndex(
-          (e) => e.street === 'preflop' && (e.action.type === 'raise' || e.action.type === 'bet') && e.action.to >= 0.5 * h.setup.players[e.seat].stack,
+          (e) => e.street === 'preflop' && isLargeShove(e.action, h.setup.players[e.seat].stack),
         );
         if (shove >= 0) {
           for (const e of h.log.slice(shove + 1)) {

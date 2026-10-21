@@ -1,0 +1,45 @@
+{
+  "schema": "p8-v1.0",
+  "items": [
+    {
+      "id": "dossier_shove",
+      "decision": "adjust",
+      "rule": "Keep public action types; LARGE_SHOVE label must use same threshold predicate and start-of-hand stack denominator as existing P5 AI. Share an implementation helper, avoid changing the AI policy semantics."
+    },
+    {
+      "id": "whisper",
+      "decision": "approve",
+      "rule": "Name spell ID only, one seeded disclosure, never imply particular copy or that spell will be cast."
+    },
+    {
+      "id": "legacy_line",
+      "decision": "expand",
+      "rule": "Story-only predecessor line; add four optional backgrounds total including default, 2 scripted prose variants, cosmetic backs when assets exist; zero gameplay buffs."
+    },
+    {
+      "id": "merchant_copy",
+      "decision": "approve_pending_polish",
+      "rule": "Keep current character voices; no price, wallet or claimant changes."
+    },
+    {
+      "id": "cinder_pass",
+      "decision": "approve",
+      "rule": "Waive first otherwise valid fee at Writ or Petition; at most once and only if a Favor cost was actually due."
+    },
+    {
+      "id": "spell_ev_table",
+      "decision": "yes",
+      "rule": "A/B test full-table continuations; Cinder highest priority."
+    },
+    {
+      "id": "act3_mortality",
+      "decision": "freeze",
+      "rule": "Keep observed 27.5% phase-conditional entrant mortality baseline pending human sessions."
+    },
+    {
+      "id": "portraits",
+      "decision": "pending_real_art",
+      "rule": "Seven source images not delivered in P8 handoff; do not mark integrated; use established gold monograms until verified."
+    }
+  ]
+}

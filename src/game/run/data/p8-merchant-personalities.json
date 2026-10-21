@@ -1,0 +1,36 @@
+{
+  "schema": "p8-v1.0",
+  "mechanical_change": false,
+  "profiles": [
+    {
+      "id": "selene",
+      "voice": "wry, practical, sympathetic to prudent budgets",
+      "sample": "A strong hand is worthless if you spent the last chip on its decoration."
+    },
+    {
+      "id": "merchant_elin",
+      "voice": "socially precise, discreet, status-aware",
+      "sample": "Prestige opens the door. Only your stack keeps you at the table."
+    },
+    {
+      "id": "merchant_oran",
+      "voice": "formal, ceremonial, clear about large costs",
+      "sample": "Count that relic in big blinds before you decide it is beautiful."
+    },
+    {
+      "id": "broker_osric",
+      "voice": "miserly but scrupulous, explicitly keeps his own wallet",
+      "sample": "I can offer half the price. No more than my purse can bear."
+    },
+    {
+      "id": "merchant_wisp",
+      "voice": "stern solidarity toward bound and fallen characters",
+      "sample": "The Underledger remembers every debt. It need not decide your worth."
+    }
+  ],
+  "safety": [
+    "merchants are never automatically claimants",
+    "merchants can never fund mercy without explicit legal claimant/wallet path",
+    "no chip movement from dialogue"
+  ]
+}

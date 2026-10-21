@@ -1,0 +1,95 @@
+{
+  "schema": "p8-v1.0-design-contract",
+  "new_run_core_must_be_identical": true,
+  "base_chips": 100,
+  "base_spellbook": "original P2 2/2/2/2",
+  "seed_independence": "Cosmetic/background selection cannot consume or alter poker or magic gameplay RNG. Existing createRun must not read World Testament for gameplay benefits.",
+  "backgrounds": [
+    {
+      "id": "unmarked",
+      "title": "The Unmarked",
+      "unlock": "always",
+      "intro": "The Ledger has no entry for the person you were yesterday.",
+      "mechanical_modifiers": {}
+    },
+    {
+      "id": "exiled_heir",
+      "title": "The Dispossessed",
+      "unlock": "testament ending the_unchosen_road with retire",
+      "intro": "The houses remember another who walked away with their life.",
+      "mechanical_modifiers": {}
+    },
+    {
+      "id": "cinder_bound",
+      "title": "The Cinder-Born",
+      "unlock": "testament ending under_living_end with fate honor_contract or seek_liberation",
+      "intro": "Below the lamps, the old promises still have names.",
+      "mechanical_modifiers": {}
+    },
+    {
+      "id": "ledger_witness",
+      "title": "The Witness",
+      "unlock": "testament ending the_ledger_unbound with allegiance reform OR claim",
+      "intro": "Someone once reached the Crown, and the Ledger kept the answer.",
+      "mechanical_modifiers": {}
+    }
+  ],
+  "cosmetic_backs": [
+    {
+      "id": "standard",
+      "title": "Gilded Eclipse",
+      "unlock": "always",
+      "path": "art/source/chatgpt-p3/back-300.png",
+      "status": "integrated"
+    },
+    {
+      "id": "cinder_etch",
+      "title": "Cinder Etching",
+      "unlock": "testament with under_living_end",
+      "source_planned": "art/incoming/p8/back-cinder.png",
+      "status": "needed"
+    },
+    {
+      "id": "crown_filigree",
+      "title": "Crown Filigree",
+      "unlock": "testament with the_ledger_unbound",
+      "source_planned": "art/incoming/p8/back-crown.png",
+      "status": "needed"
+    }
+  ],
+  "event_variants": [
+    {
+      "id": "arrival_echo",
+      "replaces": "existing Wagerer Arrival narrative prose only",
+      "unlock": "any previous testament",
+      "effect": "one alternate predecessor line from latest archived testament",
+      "chips": 0,
+      "extra_table": false
+    },
+    {
+      "id": "cinder_gossip",
+      "replaces": "one existing Cinder Registry/Underledger prose beat only",
+      "unlock": "any testament marked fallen or under_living_end",
+      "effect": "references predecessor choice in non-mechanical dialog",
+      "chips": 0,
+      "extra_table": false
+    }
+  ],
+  "limits": {
+    "selected_backgrounds_per_run": 1,
+    "event_variant_per_run_max": 1,
+    "same_face_down_back_for_all_seats": true,
+    "exact_rotation_180_required": true,
+    "back_source_dimensions": [
+      300,
+      420
+    ]
+  },
+  "acceptance": [
+    "Byte-equivalent poker/magic seed state when only selected background changes",
+    "Starting Lifechips exactly 100 for every background",
+    "same player policy from same seed yields identical hands and outcome",
+    "legacy grants no chip wallet transfer and no extra claim chance",
+    "Archive appends once per unique character id"
+  ]
+}

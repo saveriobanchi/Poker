@@ -1,0 +1,22 @@
+{
+  "schema": "p8-v1.0-signoff",
+  "decision": "APPROVE_AND_FREEZE",
+  "canonical_path": "src/game/run/data/p7-act3-temperaments.json",
+  "rule": "The seven Act III character claim and debtor temperaments already implemented in P7 are approved without numerical changes. Do not overwrite with new parameter guesses in P8. Apply existing v0.5/v0.6 modifiers, vetoes, 10 Lifechip funded endowment, persisted claim roll, and one counteroffer.",
+  "characters": [
+    "dame_neris",
+    "copper_saint",
+    "master_fen",
+    "archivist_sorn",
+    "captain_rusk",
+    "ledger_regent",
+    "the_uncrowned"
+  ],
+  "merchant_rule": "Merchants are not claimants unless actually seated as eligible poker winners in some future authored encounter. P8 has no new such encounters.",
+  "tests": [
+    "Existing P7 claim rates and vetoes unchanged",
+    "Repeat seed yields identical outcomes",
+    "All funded transactions conserve chips",
+    "No saved claim can reroll or mint a chip"
+  ]
+}

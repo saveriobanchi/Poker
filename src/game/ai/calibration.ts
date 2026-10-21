@@ -3,9 +3,10 @@
  * over at least 10,000 AI opportunities). Each sample deals a fresh hand at the
  * table's starting stacks and plays preflop only, which is all VPIP/PFR count.
  */
-import { applyAction, getPublicView, startHand } from '../rules/engine';
+import { applyAction, getPublicView, type HandState, replayHand, startHand } from '../rules/engine';
 import { Rng } from '../rules/rng';
 import { decide } from './agent';
+import { isLargeShove } from './reads';
 import type { AiProfile } from './profiles';
 
 export interface StyleSample {
@@ -51,17 +52,27 @@ export function measureStyles(
   return Object.fromEntries([...tally].map(([id, t]) => [id, { vpip: t.vpip / t.n, pfr: t.pfr / t.n, opportunities: t.n }]));
 }
 
-/** One archived public preflop hand of a dossier's subject: the actions it took, in order. */
+/**
+ * Raw public action types (design v1.0 §06). An all-in keeps its kind: a call
+ * all-in, or a bet/raise all-in.
+ */
+export type DossierAction = 'fold' | 'check' | 'call' | 'bet' | 'raise' | 'all_in_call' | 'all_in_raise' | /* P7 saves */ 'shove';
+
+/** One archived public preflop hand of a dossier's subject. */
 export interface DossierHand {
   hand: number;
-  actions: ('fold' | 'check' | 'call' | 'raise' | 'shove')[];
+  actions: DossierAction[];
+  /** From the shared AI predicate with the start-of-hand stack (absent in P7 saves). */
+  largeShove?: boolean;
 }
 
-/** A public dossier (design v0.9 §02): the archived action log, and figures recomputed from it. */
+/** A public dossier (design v0.9 §02, v1.0 §06): the archived action log, and figures recomputed from it. */
 export interface Dossier {
   rival: string;
   /** The seed fixed before the player chose, so the archive is reproducible. */
   seed: number;
+  /** 2 = shared large-shove predicate (v1.0); missing = a P7 record, kept exactly as saved. */
+  rule?: 2;
   records: DossierHand[];
   hands: number;
   vpip: number;
@@ -69,14 +80,37 @@ export interface Dossier {
   shoves: number;
 }
 
-/** Figures derived only from the stored public records. */
+const VOLUNTARY: DossierAction[] = ['call', 'bet', 'raise', 'all_in_call', 'all_in_raise', 'shove'];
+const AGGRESSIVE: DossierAction[] = ['bet', 'raise', 'all_in_raise', 'shove'];
+
+/** Figures derived only from the stored public records (P7 records keep their saved 'shove' label). */
 export function dossierFigures(records: DossierHand[]): { hands: number; vpip: number; pfr: number; shoves: number } {
   return {
     hands: records.length,
-    vpip: records.filter((r) => r.actions.some((a) => a === 'call' || a === 'raise' || a === 'shove')).length,
-    pfr: records.filter((r) => r.actions.some((a) => a === 'raise' || a === 'shove')).length,
-    shoves: records.filter((r) => r.actions.includes('shove')).length,
+    vpip: records.filter((r) => r.actions.some((a) => VOLUNTARY.includes(a))).length,
+    pfr: records.filter((r) => r.actions.some((a) => AGGRESSIVE.includes(a))).length,
+    shoves: records.filter((r) => r.largeShove ?? r.actions.includes('shove')).length,
   };
+}
+
+/**
+ * A seat's public preflop record from a hand history: raw action types (an
+ * all-in keeps its kind) and the shared large-shove label against the hand's
+ * recorded starting stack. Uses only the public log.
+ */
+export function classifyPreflop(hand: HandState, seat: number): { actions: DossierAction[]; largeShove: boolean } {
+  const mine = hand.log.filter((e) => e.seat === seat && e.street === 'preflop');
+  const start = hand.setup.players[seat].stack;
+  // Replay the public log to see, right after each of the seat's actions, whether it left them all-in.
+  const actions: DossierAction[] = [];
+  hand.log.forEach((e, i) => {
+    if (e.seat !== seat || e.street !== 'preflop') return;
+    const a = e.action;
+    const after = replayHand(hand.setup, hand.log.slice(0, i + 1), (hand.effects ?? []).filter((x) => x.atLog <= i));
+    const allIn = after.seats[seat].stack === 0 && a.type !== 'fold' && a.type !== 'check';
+    actions.push(allIn ? (a.type === 'call' ? 'all_in_call' : 'all_in_raise') : (a.type as DossierAction));
+  });
+  return { actions, largeShove: mine.some((e) => isLargeShove(e.action, start)) };
 }
 
 /**
@@ -95,19 +129,11 @@ export function publicDossier(rival: AiProfile, others: AiProfile[], hands: numb
       smallBlind: bigBlind / 2,
       bigBlind,
     });
-    const actions: DossierHand['actions'] = [];
     while (s.phase === 'betting' && s.street === 'preflop') {
       const seat = s.toAct!;
-      const a = decide(getPublicView(s, seat), seats[seat], rng);
-      const before = s.seats[seat].stack + s.seats[seat].streetCommitted;
-      s = applyAction(s, seat, a);
-      if (seat !== 0) continue;
-      // Record what spectators saw: a bet/raise of half the starting stack or more is a shove.
-      const logged = s.log.at(-1)!.action;
-      if (logged.type === 'fold' || logged.type === 'check' || logged.type === 'call') actions.push(logged.type);
-      else actions.push(logged.type === 'allIn' || logged.to >= before * 0.5 ? 'shove' : 'raise');
+      s = applyAction(s, seat, decide(getPublicView(s, seat), seats[seat], rng));
     }
-    records.push({ hand: h + 1, actions });
+    records.push({ hand: h + 1, ...classifyPreflop(s, 0) });
   }
-  return { rival: rival.id, seed, records, ...dossierFigures(records) };
+  return { rival: rival.id, seed, rule: 2, records, ...dossierFigures(records) };
 }

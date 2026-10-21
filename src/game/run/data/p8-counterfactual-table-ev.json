@@ -1,0 +1,84 @@
+{
+  "schema": "p8-v1.0-design-contract",
+  "baseline_source": "docs/reports/spell-ev-p7.json",
+  "estimand": "cast vs skip paired end-of-current-table effect conditional on reachable legal source states; not a claim of globally optimal casting",
+  "priority_groups": [
+    {
+      "priority": "A",
+      "spells": [
+        "cinder_challenge",
+        "ember_echo",
+        "red_oath"
+      ],
+      "questions": [
+        "Aether delayed benefits",
+        "impact of legal raise enchantment",
+        "win rate and survivability after whole table"
+      ]
+    },
+    {
+      "priority": "B",
+      "spells": [
+        "briar_lock",
+        "thorn_lattice",
+        "quiet_briars"
+      ],
+      "questions": [
+        "variance and risk reduction",
+        "downside-tail protection",
+        "does control preserve Lifechips at table end"
+      ]
+    },
+    {
+      "priority": "C",
+      "spells": [
+        "unmask",
+        "twin_oracle",
+        "fate_exchange"
+      ],
+      "questions": [
+        "information value net of spent Aether",
+        "advantage survives subsequent hands",
+        "magic competition across archetypes"
+      ]
+    },
+    {
+      "priority": "D",
+      "spells": [
+        "ravenous_eye",
+        "second_reflection",
+        "marked_fate"
+      ],
+      "questions": [
+        "rare branch effect with interval uncertainty"
+      ]
+    }
+  ],
+  "min_paired_samples_if_available": {
+    "base_spell": 5000,
+    "evolved_spell": 2000
+  },
+  "seed_batches_min": 10,
+  "sampling": "same legally reached cast opportunity and same policy seed; do not duplicate identical ancestral run states and claim independence",
+  "policy_set": [
+    "skilled",
+    "tight",
+    "mixed_aggressive"
+  ],
+  "counterfactual": "cast vs skip the spell, for Cinder perform same legal raise without magic",
+  "endpoints": [
+    "end_of_table_net_lifechips",
+    "death_probability_delta",
+    "contract_success_delta",
+    "remaining_aether",
+    "spells_cast_after_decision",
+    "turnover_of_player_stack"
+  ],
+  "uncertainty": "cluster/bootstrap by original run and seed batch; also show raw n and effective independent parent states",
+  "fairness": [
+    "no hidden information in player/AI policy",
+    "both arms account for RNG divergence explicitly",
+    "conserved chips and unique cards in every branch",
+    "no auto award of future spell value unless simulated"
+  ]
+}
