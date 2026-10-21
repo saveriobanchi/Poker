@@ -9,7 +9,7 @@ import { availableParallelism } from 'node:os';
 import { isMainThread, parentPort, Worker, workerData } from 'node:worker_threads';
 import { simulateRuns, type SimulationReport } from '../src/game/run/simulate';
 
-const POLICIES = ['skilled', 'passive', 'maniac', 'tight'];
+const POLICIES = ['skilled', 'passive', 'maniac', 'tight', 'mixed_aggressive'];
 
 function wilson(k: number, n: number): [number, number] {
   const z = 1.96;

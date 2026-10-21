@@ -3,7 +3,8 @@
  * Used by tests and by scripts/simulate-runs.ts (design v0.6 acceptance:
  * 1,000 seeded runs across contrasting skill policies).
  */
-import { decideChoice, decideOpening, decideTurn } from '../ai/magic';
+import { postflopEquity } from '../ai/agent';
+import { decideChoice, decideOpening, decideTurn, knownCards } from '../ai/magic';
 import { preflopPercentile } from '../ai/preflop';
 import { shovePrior, shoveRate } from '../ai/reads';
 import { type AiProfile, PROFILES } from '../ai/profiles';
@@ -31,11 +32,44 @@ import {
   type RunState,
 } from './run';
 
-export type PolicyName = 'skilled' | 'passive' | 'maniac' | 'tight';
-export const POLICIES: PolicyName[] = ['skilled', 'passive', 'maniac', 'tight'];
+export type PolicyName = 'skilled' | 'passive' | 'maniac' | 'tight' | 'mixed_aggressive';
+export const POLICIES: PolicyName[] = ['skilled', 'passive', 'maniac', 'tight', 'mixed_aggressive'];
 
 /** The skilled policy plays like a disciplined, magic-using rival. */
 export const SKILLED: AiProfile = { ...PROFILES.corvin, id: 'skilled', looseness: 0.35, aggression: 0.6, bluff: 0.08, stickiness: 0.35 };
+
+/**
+ * Mixed-aggressive (design v1.0 §02): opens and value-bets more, semi-bluffs
+ * drawing hands, applies pot-sized pressure — and never shoves unless short or
+ * already committed. Distinct from the all-in maniac. Uses only its own view.
+ */
+export const MIXED: AiProfile = { ...PROFILES.corvin, id: 'mixed_aggressive', looseness: 0.55, aggression: 0.9, bluff: 0.22, stickiness: 0.4 };
+
+function mixedAggressive(t: TableSession, action: PlayerAction, rng: Rng): PlayerAction {
+  const me = humanSeat(t);
+  const hand = t.table.hand;
+  const legal = getLegalActions(hand)!;
+  const p = hand.seats[me];
+  const pot = hand.seats.reduce((a, x) => a + x.totalCommitted, 0);
+  const stackBB = (p.stack + p.streetCommitted) / hand.setup.bigBlind;
+  const committed = p.totalCommitted / (p.totalCommitted + p.stack);
+  // Semi-bluff: on the flop or turn, a drawing-strength hand bets instead of checking.
+  if (action.type === 'check' && legal.raise && (hand.street === 'flop' || hand.street === 'turn')) {
+    const view = getPublicView(hand, me);
+    const eq = postflopEquity(view, rng, knownCards(view, getMagicView(t.table, me)));
+    if (eq >= 0.3 && eq < 0.55 && rng.nextFloat() < 0.5) {
+      const to = Math.max(legal.raise.minTo, Math.min(legal.raise.maxTo, Math.round(pot * 0.6)));
+      return { type: legal.raise.isBet ? 'bet' : 'raise', to };
+    }
+  }
+  // Pressure without shoving: cap bets at about the pot unless short-stacked or pot-committed.
+  const shoves = action.type === 'allIn' || ((action.type === 'bet' || action.type === 'raise') && action.to >= p.stack + p.streetCommitted);
+  if (shoves && legal.raise && stackBB > 12 && committed < 0.4) {
+    const to = Math.max(legal.raise.minTo, Math.min(legal.raise.maxTo, Math.round(hand.currentBet + pot + legal.callAmount)));
+    if (to < legal.raise.maxTo) return { type: legal.raise.isBet ? 'bet' : 'raise', to };
+  }
+  return action;
+}
 
 function pokerAction(t: TableSession, policy: PolicyName, rng: Rng): PlayerAction {
   const me = humanSeat(t);
@@ -52,7 +86,8 @@ function pokerAction(t: TableSession, policy: PolicyName, rng: Rng): PlayerActio
       return strong ? (legal.canCheck ? { type: 'check' } : { type: 'call' }) : free;
     }
     case 'skilled':
-      throw new Error('skilled uses the magic-aware path');
+    case 'mixed_aggressive':
+      throw new Error('magic-aware policies decide in humanDecision');
   }
   return free;
   void rng;
@@ -76,14 +111,15 @@ export function humanDecision(t: TableSession, policy: PolicyName, rng: Rng): Hu
     case 'humanChoice':
       return { kind: 'choose', pick: decideChoice(view, magic) };
     case 'humanWindow': {
-      if (policy !== 'skilled') return { kind: 'pass' };
-      const c = decideOpening(view, magic, SKILLED, rng);
+      if (policy !== 'skilled' && policy !== 'mixed_aggressive') return { kind: 'pass' };
+      const c = decideOpening(view, magic, policy === 'skilled' ? SKILLED : MIXED, rng);
       return c.kind === 'pass' ? { kind: 'pass' } : { kind: 'cast', uid: c.uid, params: c.params };
     }
     case 'humanToAct': {
-      if (policy !== 'skilled') return { kind: 'act', action: pokerAction(t, policy, rng) };
-      const c = decideTurn(view, magic, SKILLED, rng, publicShoveRates(t));
-      return c.kind === 'act' ? { kind: 'act', action: c.action } : { kind: 'cast', uid: c.uid, params: c.params };
+      if (policy !== 'skilled' && policy !== 'mixed_aggressive') return { kind: 'act', action: pokerAction(t, policy, rng) };
+      const c = decideTurn(view, magic, policy === 'skilled' ? SKILLED : MIXED, rng, publicShoveRates(t));
+      if (c.kind === 'cast') return { kind: 'cast', uid: c.uid, params: c.params };
+      return { kind: 'act', action: policy === 'mixed_aggressive' ? mixedAggressive(t, c.action, rng) : c.action };
     }
     default:
       throw new Error('Not the player’s decision');
@@ -95,6 +131,9 @@ export function publicShoveRates(t: TableSession): number[] {
   const reads = t.reads ?? {};
   return t.seats.map((s) => shoveRate(reads[s.id], shovePrior(s.profileId ? PROFILES[s.profileId] : undefined)));
 }
+
+/** Policies that shop, study and bargain like a thinking player (route choices). */
+const strategic = (policy: PolicyName) => policy === 'skilled' || policy === 'mixed_aggressive';
 
 /** One step of the run under `policy`. Returns null when the run has ended. */
 export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | null {
@@ -118,7 +157,7 @@ export function step(run: RunState, policy: PolicyName, rng: Rng): RunState | nu
         const debtor = roles(t.world, claim).proposer === 'debtor';
         if (!usable.length) return runClaim(run, { kind: debtor ? 'acceptFate' : 'claimLife' });
         // Debtors plead for the best outlook; claimants grant mercy (skilled) or claim the life.
-        if (!debtor && policy !== 'skilled') return runClaim(run, { kind: 'claimLife' });
+        if (!debtor && !strategic(policy)) return runClaim(run, { kind: 'claimLife' });
         const rank = { HIGH: 0, FAIR: 1, LOW: 2 } as const;
         const best = [...usable].sort((a, b) => rank[a.outlook!] - rank[b.outlook!])[0];
         return runClaim(run, { kind: 'propose', pact: debtor ? best.pact : 'mercy' });
@@ -144,14 +183,14 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
     case 'lantern_shop': {
       const chips = playerChips(run);
       const affordable = run.shop!.offers.findIndex((o) => !o.sold && chips - o.price >= 40);
-      if (policy === 'skilled' && affordable >= 0) return { kind: 'buy', offer: affordable };
-      return { kind: 'leaveShop', to: policy === 'skilled' && !run.eventResolved ? 'optional_event' : 'contract_2' };
+      if (strategic(policy) && affordable >= 0) return { kind: 'buy', offer: affordable };
+      return { kind: 'leaveShop', to: strategic(policy) && !run.eventResolved ? 'optional_event' : 'contract_2' };
     }
     case 'velvet_exchange': {
       const chips = playerChips(run);
       const affordable = run.shop!.offers.findIndex((o) => !o.sold && chips - o.price >= 60 && (run.player.magic.relics ?? []).length < SLOT_LIMITS.relics);
-      if (policy === 'skilled' && affordable >= 0) return { kind: 'buy', offer: affordable };
-      return { kind: 'leaveShop', to: policy === 'skilled' ? 'mirror_audience' : 'secret_bargain' };
+      if (strategic(policy) && affordable >= 0) return { kind: 'buy', offer: affordable };
+      return { kind: 'leaveShop', to: strategic(policy) ? 'mirror_audience' : 'secret_bargain' };
     }
     case 'mirror_audience': {
       if (mirrorChoice(run)) return { kind: 'advance' };
@@ -159,7 +198,7 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
       return rival ? { kind: 'event', take: true, rival } : { kind: 'event', take: false };
     }
     case 'secret_bargain':
-      return policy === 'maniac' || policy === 'skilled' ? { kind: 'event', take: true, uid: resonanceTargets(run)[0]?.uid } : { kind: 'event', take: false };
+      return policy === 'maniac' || strategic(policy) ? { kind: 'event', take: true, uid: resonanceTargets(run)[0]?.uid } : { kind: 'event', take: false };
     case 'act2_petition':
       return { kind: 'petition', choice: 'favor' };
     case 'crown_writ':
@@ -167,19 +206,19 @@ function routeChoice(run: RunState, policy: PolicyName): RunCommand {
     case 'crown_archive': {
       if (run.flags.includes('archive_done')) return { kind: 'advance' };
       const uid = resonanceTargets(run)[0]?.uid;
-      return policy === 'skilled' || !uid ? { kind: 'archive', choice: 'study', rival: ARCHIVE_RIVALS[0] } : { kind: 'archive', choice: 'resonate', uid };
+      return strategic(policy) || !uid ? { kind: 'archive', choice: 'study', rival: ARCHIVE_RIVALS[0] } : { kind: 'archive', choice: 'resonate', uid };
     }
     case 'royal_exchange': {
       const chips = playerChips(run);
       const affordable = run.shop!.offers.findIndex((o) => !o.sold && chips - o.price >= 80 && (run.player.magic.relics ?? []).length < SLOT_LIMITS.relics);
-      if (policy === 'skilled' && affordable >= 0) return { kind: 'buy', offer: affordable };
+      if (strategic(policy) && affordable >= 0) return { kind: 'buy', offer: affordable };
       return { kind: 'leaveShop', to: 'seals_table' };
     }
     case 'optional_event':
       return { kind: 'event', take: playerChips(run) >= 60 };
     case 'reward': {
       const offers = evolutionOffers(run);
-      if (offers.length && policy === 'skilled') {
+      if (offers.length && strategic(policy)) {
         const token = run.reward!.findIndex((r) => r.kind === 'evolution_token');
         if (token >= 0) return { kind: 'reward', index: token };
       }
