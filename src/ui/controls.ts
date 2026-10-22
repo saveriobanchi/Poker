@@ -53,6 +53,12 @@ export class Controls {
   private readonly choice = el<HTMLDivElement>('spell-choice');
   private readonly odds = el<HTMLParagraphElement>('odds');
   private readonly info = el<HTMLDivElement>('spell-info');
+  private readonly reason = el<HTMLParagraphElement>('spell-reason');
+  private readonly custom = el<HTMLButtonElement>('btn-custom');
+  /** What the spell tray is offering: nothing, a street-opening window, or the player's betting turn. */
+  private mode: 'waiting' | 'window' | 'turn' = 'waiting';
+  private canRaise = false;
+  private reasonTimer: number | undefined;
   private infoOpen = false;
   private lastInfo: { magic: MagicView; deciding: boolean } | null = null;
   private readonly infoToggle = button('ⓘ', () => {
@@ -92,6 +98,14 @@ export class Controls {
     this.next.addEventListener('click', () => this.cb.onNextHand());
     this.pass.addEventListener('click', () => this.cb.onPass());
     this.slider.addEventListener('input', () => this.setRaise(Number(this.slider.value)));
+    // Compact phones: the slider sits behind ± so presets and actions keep 44px without shrinking the table.
+    this.custom.addEventListener('click', () => {
+      const open = !this.raiseRow.classList.contains('custom');
+      this.raiseRow.classList.toggle('custom', open);
+      this.custom.setAttribute('aria-expanded', String(open));
+      this.custom.textContent = open ? '✕' : '±';
+      this.custom.setAttribute('aria-label', open ? 'Back to preset amounts' : 'Choose a custom amount');
+    });
     this.presets.addEventListener('click', (e) => {
       const target = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-to]');
       if (target) this.setRaise(Number(target.dataset.to));
@@ -129,6 +143,12 @@ export class Controls {
 
   private reset(): void {
     this.clearConfirm();
+    this.mode = 'waiting';
+    this.canRaise = false;
+    this.reason.hidden = true;
+    this.raiseRow.classList.remove('custom');
+    this.custom.setAttribute('aria-expanded', 'false');
+    this.custom.textContent = '±';
     this.legal = null;
     this.cinderUid = null;
     this.choice.hidden = true;
@@ -163,6 +183,7 @@ export class Controls {
     this.view = view;
     this.actionRow.hidden = true;
     this.pass.hidden = false;
+    this.mode = 'window';
     this.renderSpells(magic, names);
   }
 
@@ -189,6 +210,8 @@ export class Controls {
     const r = legal.raise;
     this.raise.disabled = !r;
     this.raiseRow.hidden = !r;
+    this.mode = 'turn';
+    this.canRaise = !!r;
     this.renderSpells(magic, names);
     if (!r) {
       this.raise.textContent = 'Raise';
@@ -260,10 +283,14 @@ export class Controls {
         cost.textContent = '◆'.repeat(def.cost);
         b.append(title, cost);
         b.title = def.effect;
-        b.setAttribute('aria-label', `${def.name}, costs ${def.cost} Aether`);
-        b.disabled = !usable;
+        // A spell that cannot be cast stays focusable and says why when tapped (design v1.1 §08).
+        const why = usable ? '' : this.whyNot(magic, card.uid, card.spell);
+        b.setAttribute('aria-label', `${def.name}, costs ${def.cost} Aether${why ? `. Not castable: ${why}` : ''}`);
+        b.setAttribute('aria-disabled', String(!usable));
+        b.classList.toggle('unusable', !usable);
         if (card.uid === this.cinderUid) b.classList.add('armed');
         if (usable) b.addEventListener('click', () => this.onSpell(card.uid, card.spell, option!.targets ?? [], names!));
+        else b.addEventListener('click', () => this.showReason(`${def.name}: ${why}`));
         return b;
       }),
     );
@@ -279,12 +306,36 @@ export class Controls {
       ...magic.myHand.map((c) => {
         const def = SPELLS[c.spell];
         const row = document.createElement('p');
-        const status = castable.has(c.uid) ? 'castable now' : deciding ? 'not castable in this window' : 'waiting';
+        const status = castable.has(c.uid) ? 'castable now' : `not now — ${this.whyNot(magic, c.uid, c.spell)}`;
         row.textContent = `${DISCIPLINE_GLYPH[def.discipline]} ${def.name} · ${def.cost} Aether · ${status}. ${def.effect}`;
         return row;
       }),
     );
     this.info.hidden = !this.infoOpen || magic.myHand.length === 0;
+  }
+
+  /** Why a drawn spell cannot be cast at this moment, from the player's own view only. */
+  private whyNot(magic: MagicView, uid: string, spell: SpellId): string {
+    const def = SPELLS[spell];
+    const me = magic.viewer;
+    if (magic.castThisHand[me]) return 'you have already cast a spell this hand (one per hand).';
+    if (this.mode === 'waiting') return def.family === 'cinder_challenge' ? 'cast it with a raise on your turn.' : 'cast it when a street opens, before the betting.';
+    if (def.family === 'cinder_challenge') {
+      if (this.mode === 'window') return 'it enchants a raise: cast it on your betting turn.';
+      if (!this.canRaise) return 'no raise is legal for you right now.';
+    } else if (this.mode === 'turn') return 'it is cast when a street opens, before the betting.';
+    if (magic.aether[me] < def.cost) return `needs ${def.cost} Aether; you have ${magic.aether[me]}.`;
+    if (def.family === 'briar_lock' && magic.streetLocked) return 'this street is already locked.';
+    if (def.family === 'unmask') return 'no opponent can be targeted now (folded, all-in or already revealed).';
+    void uid;
+    return 'not castable at this moment.';
+  }
+
+  private showReason(text: string): void {
+    this.reason.textContent = text;
+    this.reason.hidden = false;
+    window.clearTimeout(this.reasonTimer);
+    this.reasonTimer = window.setTimeout(() => (this.reason.hidden = true), 3500);
   }
 
   private onSpell(uid: string, spell: SpellId, targets: number[], names: string[]): void {

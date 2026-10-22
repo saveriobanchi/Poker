@@ -16,13 +16,13 @@
   </head>
   <body>
     <header id="hud">
-      <span id="hand-info">The Last Wager</span>
+      <button id="hand-info" type="button" aria-expanded="false" aria-label="Table and route details">The Last Wager</button>
       <span class="hud-buttons">
         <button id="btn-sound" type="button" aria-pressed="true" aria-label="Sound">🔊</button>
         <button id="btn-motion" type="button" aria-pressed="false" aria-label="Reduce motion" title="Reduce motion">🌀</button>
         <button id="btn-speed" type="button" aria-pressed="false" aria-label="Normal speed">▶</button>
         <button id="btn-playtest" type="button" aria-label="Playtest log" title="Playtest log" hidden>📋</button>
-        <button id="btn-new" type="button">New run</button>
+        <button id="btn-new" type="button" aria-label="New run"><span class="long">New run</span><span class="short">New</span></button>
       </span>
     </header>
     <main id="game" aria-label="Poker table"></main>
@@ -34,11 +34,13 @@
         <div id="spells" aria-label="Your spells"></div>
       </div>
       <div id="spell-choice" hidden></div>
+      <p id="spell-reason" role="status" hidden></p>
       <div id="spell-info" hidden></div>
       <p id="odds" hidden></p>
       <div id="raise-row" hidden>
         <div id="raise-presets"></div>
         <input id="raise-slider" type="range" aria-label="Raise amount" />
+        <button id="btn-custom" type="button" aria-expanded="false" aria-label="Choose a custom amount">±</button>
       </div>
       <div id="action-row">
         <button id="btn-fold" type="button" disabled>Fold</button>

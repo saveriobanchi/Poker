@@ -1310,9 +1310,7 @@ button.small {
     letter-spacing: 0;
   }
 
-  .spell-info-toggle {
-    width: 38px;
-  }
+
 }
 
 /* iPhone 13-class heights (600–700px) have room for full 44px action controls. */
@@ -1330,7 +1328,142 @@ button.small {
   }
 
   #hud button {
-    min-width: 40px;
     padding: 0 6px;
+  }
+}
+
+/* v1.1 §08: the collapsed route bar is a real control that expands to the full route. */
+#hud #hand-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#hud.expanded {
+  flex-wrap: wrap;
+}
+
+#hud.expanded #hand-info {
+  flex-basis: 100%;
+  order: 2;
+  white-space: normal;
+  color: var(--parchment);
+  padding: 4px 0;
+}
+
+/* v1.1 §08: an uncastable spell stays readable and tappable, and says why. */
+button.spell.unusable {
+  opacity: 0.4;
+}
+
+#spell-reason {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gold-light);
+  text-align: center;
+}
+
+/* ± custom amount: only on compact phones (see below). */
+#btn-custom {
+  display: none;
+}
+
+/*
+ * Compact phones (iPhone SE class, ≤600px tall): the slider sits behind ±, so the
+ * presets and the action row reach 44px and the table gains height instead of losing it.
+ */
+@media (max-height: 600px) {
+  #raise-row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  #raise-presets {
+    flex: 1 1 auto;
+  }
+
+  #raise-slider {
+    display: none;
+  }
+
+  #btn-custom {
+    display: block;
+    flex: 0 0 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  #raise-row.custom #raise-presets {
+    display: none;
+  }
+
+  #raise-row.custom #raise-slider {
+    display: block;
+    flex: 1 1 auto;
+  }
+
+  #panel button:not(.spell):not(.spell-info-toggle),
+  #raise-presets button {
+    min-height: 44px;
+  }
+}
+
+/* "New run" shortens on narrow phones so the route title keeps a usable width. */
+#btn-new .short {
+  display: none;
+}
+
+@media (max-width: 360px) {
+  #btn-new .long {
+    display: none;
+  }
+
+  #btn-new .short {
+    display: inline;
+  }
+}
+
+/*
+ * Landscape phones (v1.1 §08): the table and the action panel sit side by side
+ * instead of the panel squeezing the table to a sliver.
+ */
+@media (orientation: landscape) and (max-height: 500px) {
+  body.at-table {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(290px, 50%);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  body.at-table #hud {
+    grid-column: 1 / -1;
+  }
+
+  body.at-table #game {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  body.at-table #panel {
+    grid-column: 2;
+    grid-row: 2;
+    overflow-y: auto;
+    border-top: none;
+    border-left: 1px solid var(--gold-muted);
+  }
+
+  body.at-table #panel button.spell {
+    min-height: 44px;
   }
 }

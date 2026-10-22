@@ -31,7 +31,7 @@ import { ClaimScreen } from './ui/claimScreen';
 import { Controls } from './ui/controls';
 import { legacyIntro, loadLegacy, recordEnding, saveLegacy } from './game/run/legacy';
 import { describeAction } from './ui/format';
-import { attunePanel, evolutionPanel, renderNewRunPicker, renderRunScreen, renderTitle, type ScreenHandlers } from './ui/runScreens';
+import { attunePanel, evolutionPanel, renderNewRunPicker, renderRunScreen, renderTitle, routeLine, type ScreenHandlers } from './ui/runScreens';
 import { type BackId, type BackgroundId, BACKGROUNDS, backgroundIntro, backStates, choosePresentation, cinderGossip, loadPresentation, savePresentation, unlockedBackgrounds } from './game/run/presentation';
 import { loadPlaytestLog, Playtest, playtestEnabled, pt, setPlaytest, summarizePlaytest } from './ui/playtest';
 import { Sound } from './ui/sound';
@@ -132,6 +132,12 @@ class Game {
     document.getElementById('btn-sound')!.addEventListener('click', () => this.toggleSound());
     document.getElementById('btn-motion')!.addEventListener('click', () => this.toggleMotion());
     document.getElementById('btn-new')!.addEventListener('click', () => this.confirmNewRun());
+    // The collapsed route bar expands to its full text on tap (design v1.1 §08).
+    this.handInfo.addEventListener('click', () => {
+      const open = document.getElementById('hud')!.classList.toggle('expanded');
+      this.handInfo.setAttribute('aria-expanded', String(open));
+      if (this.run?.table) this.renderTable(this.run, this.run.table);
+    });
     this.evolveButton.addEventListener('click', () => {
       this.evolveOpen = true;
       this.refresh();
@@ -155,7 +161,7 @@ class Game {
       'pointerdown',
       (e) => {
         const b = (e.target as HTMLElement).closest?.('button');
-        if (b && (b as HTMLButtonElement).disabled) p.record('disabled_tap', { control: (b.id || b.className || b.textContent || '').slice(0, 40) });
+        if (b && ((b as HTMLButtonElement).disabled || b.getAttribute('aria-disabled') === 'true')) p.record('disabled_tap', { control: (b.id || b.className || b.textContent || '').slice(0, 40) });
       },
       { capture: true, passive: true },
     );
@@ -383,8 +389,10 @@ class Game {
       stacks: tableStacks(s),
     });
     const cap = s.config.maxHands ? `/${s.config.maxHands}` : '';
-    this.handInfo.textContent = `${s.config.label.replace(/^The /, '')} · ${s.handNumber}${cap} · ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
-    this.handInfo.title = `${s.config.label}, hand ${s.handNumber}${cap}, blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
+    const full = `${s.config.label}, hand ${s.handNumber}${cap}, blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind} · ${routeLine(run)}`;
+    const expanded = document.getElementById('hud')!.classList.contains('expanded');
+    this.handInfo.textContent = expanded ? full : `${s.config.label.replace(/^The /, '')} · ${s.handNumber}${cap} · ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind}`;
+    this.handInfo.title = full;
     const relics = run.player.magic.relics ?? [];
     const covenants = run.player.magic.covenants ?? [];
     const d = run.dossier;

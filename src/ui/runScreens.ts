@@ -145,6 +145,16 @@ function trailFor(run: RunState) {
   return MAIN_TRAIL;
 }
 
+/** One line for the expanded top bar: which road, where on it, and what comes next. */
+export function routeLine(run: RunState): string {
+  const nodes = trailFor(run);
+  const idx = nodes.findIndex((n) => n.id === trailPosition(run));
+  const road = nodes === ACT3_TRAIL ? 'Act III' : nodes === ACT2_TRAIL ? 'Act II' : nodes === UNDER_TRAIL ? 'The Undercircuit' : nodes === FALLEN_TRAIL ? 'The Fallen road' : 'Act I';
+  if (idx < 0) return road;
+  const next = nodes[idx + 1];
+  return `${road} · step ${idx + 1} of ${nodes.length}${next ? ` · next: ${next.label}` : ' · final step'}`;
+}
+
 function trail(run: RunState): HTMLElement {
   const nodes = trailFor(run);
   const at = trailPosition(run);
