@@ -1,0 +1,54 @@
+{
+  "schema": "p9-mobile-v1",
+  "screens": [
+    {
+      "id": "iphone13",
+      "viewport": [
+        390,
+        844
+      ]
+    },
+    {
+      "id": "iphone_se",
+      "viewport": [
+        320,
+        568
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "r1",
+      "rule": "bet amount, call amount, pot and Lifechips always readable before confirmation"
+    },
+    {
+      "id": "r2",
+      "rule": "legal action never obscured by drawer/safe-area and all-in requires confirmation"
+    },
+    {
+      "id": "r3",
+      "rule": "disabled spell has on-demand accessible reason; info toggle never moves action row"
+    },
+    {
+      "id": "r4",
+      "rule": "reduced-motion mode retains tells and state announcements"
+    },
+    {
+      "id": "r5",
+      "rule": "portrait circle 64px avoids loss of face/identity"
+    },
+    {
+      "id": "r6",
+      "rule": "portrait integration does not degrade loading or introduce game state timing changes"
+    },
+    {
+      "id": "r7",
+      "rule": "no horizontal scroll or clipped important text; route top bar can expand"
+    }
+  ],
+  "touch": {
+    "target_px": 44,
+    "se_current_exception_px": 40,
+    "solution": "prototype collapsible info header or sticky action rail rather than blindly reducing poker table; compare touch accuracy on device"
+  }
+}

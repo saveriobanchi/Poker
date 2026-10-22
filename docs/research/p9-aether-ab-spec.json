@@ -1,0 +1,65 @@
+{
+  "schema": "p9-aether-study-v1",
+  "status": "offline_research_only",
+  "baseline": {
+    "aether_cap": 3,
+    "cast_cap": 1,
+    "production_unchanged": true
+  },
+  "cohorts": [
+    {
+      "id": "baseline",
+      "effect": "exact P8"
+    },
+    {
+      "id": "ember_overflow_reserve",
+      "effect": "If a qualifying Cinder-family settlement reward would overflow the 3 Aether cap, keep at most 1 otherwise-lost Aether in a private Ember Reserve until the next hand opens; transfer it only if Aether <3, then remove. Table end expires reserve. No rescue after bankruptcy, no added casts.",
+      "reserve_max": 1,
+      "trigger": "after contested settled reward; after showdown regen",
+      "visibility": "public existence of magical reserve shown; identity of cards unchanged"
+    },
+    {
+      "id": "ember_next_hand_discount",
+      "effect": "A qualifying Cinder-family enchanted raise that receives the +2 contested-showdown reward gives exactly one 1-Aether discount to next legal Ember-family cast on a later hand in same table, once, floor 0. Token expires at table end. Base reward remains unchanged for test of synergies.",
+      "discount": 1,
+      "max_tokens": 1,
+      "no_extra_cast": true
+    }
+  ],
+  "test_policy": [
+    "skilled",
+    "mixed_aggressive",
+    "tight"
+  ],
+  "per_arm": {
+    "paired_seed": true,
+    "cluster_on": "source_run",
+    "metrics": [
+      "net_lifechips",
+      "death_at_table",
+      "table_success",
+      "spells_cast_later",
+      "aether_wasted_at_cap",
+      "aether_end",
+      "cast_frequency",
+      "profit_by_table_stage"
+    ]
+  },
+  "negative_controls": [
+    "cinder_not_cast",
+    "caster_folds",
+    "no_eligible_pot",
+    "all_fold_reward",
+    "split_pot",
+    "side_pot_ineligible",
+    "full_aether",
+    "terminal_bankruptcy",
+    "reload_during_pending_reward"
+  ],
+  "gating": {
+    "do_not_ship_variant": true,
+    "report_both_expected_value_and_risk": true,
+    "no_rarity_inflation": true,
+    "no_changes_to_live_configs": true
+  }
+}

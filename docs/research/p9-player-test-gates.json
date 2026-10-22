@@ -1,0 +1,64 @@
+{
+  "schema": "p9-human-ux-v1",
+  "human_testing": "NOT_PERFORMED",
+  "run_instructions": "docs/playtest-protocol-p8.md; director runs 5-8 sessions on actual phones with voluntary adult participants, can stop anytime",
+  "sample": {
+    "total_min": 5,
+    "total_max": 8,
+    "narrow_screen_min": 2,
+    "poker_experience": "include novices and experienced users when practical"
+  },
+  "privacy": {
+    "opt_in": true,
+    "local_only": true,
+    "export_with_participant_permission": true,
+    "no_cards_or_personal_identifiers": true,
+    "feedback_anonymize": true
+  },
+  "scores": {
+    "P0": {
+      "title": "Irreversible gameplay harm",
+      "cases": [
+        "inadvertent fold/all-in",
+        "unable to take available poker action",
+        "wrong amount or chip conservation/save loss",
+        "undisclosed final-chip risk",
+        "Last Claim misrepresentation"
+      ]
+    },
+    "P1": {
+      "title": "Comprehension/accessibility",
+      "cases": [
+        "Lifechips confused with HP",
+        "unnoticed legal casting window",
+        "bet/pot odds unclear",
+        "hard-to-use 40px buttons",
+        "inaccessible sheet"
+      ]
+    },
+    "P2": {
+      "title": "Presentation/pacing",
+      "cases": [
+        "repetitive audio/FX",
+        "generic art feel",
+        "excess menu taps",
+        "unclear narrative pacing"
+      ]
+    }
+  },
+  "top_three": "Fix after real sessions by highest severity, then frequency and reproducibility; record pre/post screenshot and telemetry",
+  "metrics": [
+    "first_action_ms",
+    "decision_latency_ms",
+    "allin_confirm_cancel_rate",
+    "disabled_tap_counts",
+    "spell_info_opens",
+    "Lifechip_comprehension",
+    "LastClaim_comprehension",
+    "enjoyment_15m",
+    "enjoyment_45m",
+    "reported_fun_quote",
+    "unexpected_death_misunderstanding"
+  ],
+  "release_gate": "Cannot report human playtest passed until actual sessions completed"
+}

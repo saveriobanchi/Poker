@@ -1,0 +1,36 @@
+{
+  "schema": "p9-v1.1",
+  "baseline_commit": "dcc0b48760aac48f22cacae0b64ca4f86fca5f47",
+  "source": "GitHub P8 report 008 and committed JSON",
+  "questions": {
+    "p8_unlocks": "approve",
+    "p8_prose_variant": "approve_seed_parity",
+    "p8_mixed_aggressive": "approve_research_only",
+    "p8_cinder_skip": "approve_as_enchantment_only_estimand",
+    "p8_se_40": "temporary_exception_ux_experiment"
+  },
+  "production_rule_freeze": {
+    "poker": true,
+    "last_claim": true,
+    "act3_difficulty": true,
+    "initial_aether": 2,
+    "max_aether": 3,
+    "casts_per_hand": 1,
+    "unlimited_chips": false
+  },
+  "priorities": [
+    "art_assets",
+    "naive_real_phone_sessions",
+    "fix_top3_confirmed_blockers",
+    "isolated_aether_tests",
+    "rare_branch_targeting",
+    "mobile_audio_animation_refinement"
+  ],
+  "complete_only_when": [
+    "full regression passing",
+    "zero invariants",
+    "all 7 portrait assets integrated or blockers acknowledged",
+    "real player feedback identified accurately or pending stated",
+    "new report with screenshots and QA proof"
+  ]
+}

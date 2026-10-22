@@ -45,7 +45,28 @@ export interface SeatMagic {
   tableFlags?: string[];
   /** Ember Echo: spells to draw in addition at the start of the next hand (0 or 1). */
   extraDraw?: number;
+  /**
+   * Offline research only (design v1.1 §04): an isolated Aether variant for this
+   * table. Never set in play; absent means exact P8 rules.
+   */
+  research?: AetherVariant;
+  /** Research instrumentation: Aether lost to the cap at this table (only counted when `research` is set). */
+  capWaste?: number;
+  /** ember_overflow_reserve: at most 1 Aether lost to the cap by a Cinder reward, held until the next hand opens. */
+  emberReserve?: number;
+  /** ember_next_hand_discount: one 1-Aether discount on a later Cinder-family cast at this table. */
+  emberDiscount?: number;
 }
+
+/** `baseline` changes no rule: it only turns on the cap-waste counter so the control arm is measured alike. */
+/**
+ * `ember_overflow_reserve` is the hand-off's literal rule (return at the next hand's opening
+ * if below the cap). A reward only overflows when it fills Aether to the cap, and nothing
+ * lowers Aether before the next hand opens, so the literal rule can never return anything.
+ * `ember_reserve_on_spend` is the labelled interpretation awaiting a ruling: the reserve
+ * returns right after the holder's first paid cast in the next hand, else expires with it.
+ */
+export type AetherVariant = 'baseline' | 'ember_overflow_reserve' | 'ember_reserve_on_spend' | 'ember_next_hand_discount';
 
 export type CastParams =
   | { spell: 'briar_lock' | 'thorn_lattice' | 'quiet_briars' }
@@ -76,6 +97,7 @@ export interface MagicEvent {
 }
 
 export type AetherGainReason =
+  | 'ember_reserve'
   | 'showdown'
   | 'cinder_called'
   | 'cinder_folded'
@@ -204,6 +226,12 @@ export function beginHand(hand: HandState, seats: SeatMagic[], magicSeed: number
   const rng = new Rng(t.magic.rngState);
   hand.seats.forEach((p, i) => {
     const s = t.seats[i];
+    // Research variant: a held overflow Aether returns as the next hand opens if below the cap, then expires.
+    if (s.emberReserve && s.research === 'ember_overflow_reserve') {
+      if (p.inHand && s.aether < AETHER.max) gain(t, i, s.emberReserve, 'ember_reserve');
+      s.emberReserve = 0;
+    }
+    if (!p.inHand) s.emberReserve = 0;
     if (!p.inHand) return;
     // Covenant of the Open Book: +1 Aether, and one hole card shown to everyone before any window.
     if (has(s.covenants, 'covenant_open_book')) {
@@ -240,12 +268,14 @@ function actionable(t: MagicTable, seat: number): boolean {
 /** Aether cost after relic discounts (first family cast each table, minimum 0). */
 export function castCost(s: SeatMagic, spell: SpellId): { cost: number; discount: RelicId | null } {
   const base = SPELLS[spell].cost;
+  // Research variant only: one Ember token reduces a later Cinder-family cast by 1 (floor 0).
+  const ember = s.emberDiscount && SPELLS[spell].family === 'cinder_challenge' ? 1 : 0;
   for (const relic of s.relics ?? []) {
     if (FAMILY_DISCOUNT[relic] === SPELLS[spell].family && !has(s.tableFlags, `discount:${relic}`)) {
-      return { cost: Math.max(0, base - 1), discount: relic };
+      return { cost: Math.max(0, base - 1 - ember), discount: relic };
     }
   }
-  return { cost: base, discount: null };
+  return { cost: Math.max(0, base - ember), discount: null };
 }
 
 function canAfford(t: MagicTable, seat: number, spell: SpellId): boolean {
@@ -549,6 +579,11 @@ export function castSpell(t0: MagicTable, seat: number, uid: string, params: Cas
   const { cost, discount } = castCost(t.seats[seat], card.spell);
   t.seats[seat].aether -= cost;
   if (discount) flag(t.seats[seat], `discount:${discount}`);
+  if (t.seats[seat].emberDiscount && SPELLS[card.spell].family === 'cinder_challenge') t.seats[seat].emberDiscount = 0;
+  if (t.seats[seat].emberReserve && t.seats[seat].research === 'ember_reserve_on_spend' && cost > 0) {
+    gain(t, seat, t.seats[seat].emberReserve!, 'ember_reserve');
+    t.seats[seat].emberReserve = 0;
+  }
   t.magic.rngState = rng.state;
   t.magic.cast[seat] = uid;
   t.magic.events.push(event);
@@ -645,6 +680,7 @@ function gain(t: MagicTable, seat: number, amount: number, reason: AetherGainRea
   const after = Math.min(AETHER.max, before + amount);
   if (after > before) t.magic.gains.push({ seat, amount: after - before, reason });
   t.seats[seat].aether = after;
+  if (t.seats[seat].research && before + amount > after) t.seats[seat].capWaste = (t.seats[seat].capWaste ?? 0) + before + amount - after;
 }
 
 /**
@@ -654,6 +690,8 @@ function gain(t: MagicTable, seat: number, amount: number, reason: AetherGainRea
  */
 function settleMagic(t: MagicTable): void {
   const result = t.hand.result!;
+  // ember_reserve_on_spend: a reserve carried into this hand and not spent expires now.
+  for (const s of t.seats) if (s.research === 'ember_reserve_on_spend') s.emberReserve = 0;
   for (const entry of result.showdown) gain(t, entry.seat, AETHER.showdownRegen, 'showdown');
 
   for (const mark of t.magic.cinder) {
@@ -664,7 +702,13 @@ function settleMagic(t: MagicTable): void {
         (pot) => pot.winners.length === 1 && pot.winners[0] === mark.seat && matchers.some((c) => pot.eligible.includes(c)),
       );
       if (wonAgainstMatcher) {
-        gain(t, mark.seat, mark.spell === 'red_oath' ? CINDER_REWARD.redOathCalledAndWon : CINDER_REWARD.calledAndWon, 'cinder_called');
+        const reward = mark.spell === 'red_oath' ? CINDER_REWARD.redOathCalledAndWon : CINDER_REWARD.calledAndWon;
+        const s = t.seats[mark.seat];
+        const overflow = s.aether + reward - AETHER.max;
+        gain(t, mark.seat, reward, 'cinder_called');
+        // Research variants (off in play): keep one capped-away Aether, or grant one later Cinder discount.
+        if ((s.research === 'ember_overflow_reserve' || s.research === 'ember_reserve_on_spend') && overflow > 0) s.emberReserve = Math.min(1, (s.emberReserve ?? 0) + overflow);
+        if (s.research === 'ember_next_hand_discount' && reward === CINDER_REWARD.calledAndWon) s.emberDiscount = 1;
         if (mark.spell === 'ember_echo') t.seats[mark.seat].extraDraw = 1;
       }
     } else if (
@@ -715,6 +759,9 @@ export function assertMagicInvariants(t: MagicTable): void {
   t.seats.forEach((s, seat) => {
     if (!Number.isInteger(s.aether) || s.aether < 0 || s.aether > AETHER.max) {
       throw new Error(`Magic invariant: Aether ${s.aether} out of range for seat ${seat}`);
+    }
+    if ((s.emberReserve ?? 0) > 1 || (s.emberDiscount ?? 0) > 1 || ((s.emberReserve || s.emberDiscount) && !s.research)) {
+      throw new Error(`Magic invariant: research Aether state outside its variant for seat ${seat}`);
     }
     const all = [...allCards(s.book), ...t.magic.hands[seat]];
     const uids = new Set(all.map((c) => c.uid));

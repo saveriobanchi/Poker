@@ -1,0 +1,51 @@
+{
+  "schema": "p9-branch-ev-v1",
+  "reference": "docs/reports/table-ev-p8.json",
+  "branches": [
+    {
+      "id": "quiet_briars",
+      "p8_pairs": 489,
+      "p8_source_runs": 51
+    },
+    {
+      "id": "ravenous_eye",
+      "p8_pairs": 242,
+      "p8_source_runs": 46
+    },
+    {
+      "id": "second_reflection",
+      "p8_pairs": 508,
+      "p8_source_runs": 66
+    },
+    {
+      "id": "marked_fate",
+      "p8_pairs": 55,
+      "p8_source_runs": 12
+    }
+  ],
+  "method": "Evolve legally at between-hand opportunities in seeded source runs; collect only legal cast decision states. Paired cast-vs-skip plus same-family parent as a separate design comparison, not incorrectly matched if target conditions differ.",
+  "sampling": {
+    "target_pairs": 2000,
+    "target_independent_runs_min": 100,
+    "batch_target": 20,
+    "undersampling_report_required": true,
+    "do_not_force_ineligible_states": true
+  },
+  "metrics": [
+    "chip_net_to_table_end",
+    "chip_net_to_run_end_if_feasible",
+    "death",
+    "table_success",
+    "aether_remaining",
+    "later_spell_casts",
+    "branch_pick_frequency",
+    "branch_use_frequency"
+  ],
+  "reports": [
+    "raw_source_run_counts",
+    "bootstrap_clustered_ci95",
+    "selection_bias_warning",
+    "win_conditions_by_table",
+    "public_hidden_information_test"
+  ]
+}

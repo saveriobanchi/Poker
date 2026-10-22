@@ -10,7 +10,7 @@
  */
 import { decide } from '../ai/agent';
 import { knownCards } from '../ai/magic';
-import type { CastOption, CastParams } from '../magic/table';
+import type { AetherVariant, CastOption, CastParams } from '../magic/table';
 import { getMagicView } from '../magic/table';
 import { SPELLS } from '../magic/spells';
 import { rankOf } from '../rules/cards';
@@ -23,6 +23,8 @@ import { PLAYER_ID, runHuman, type RunState } from './run';
 export interface TablePair {
   spell: string;
   policy: PolicyName;
+  /** The table (stage) the decision was taken at. */
+  node: string;
   /** Cluster: the source run (pairs from one run are correlated). */
   cluster: number;
   /** End-of-table player net Lifechips, cast minus skip. */
@@ -76,7 +78,9 @@ function pokerOnly(run: RunState, policy: PolicyName, rng: Rng): PlayerAction {
   return cmd.kind === 'act' ? cmd.action : getLegalActions(t.table.hand)!.canCheck ? { type: 'check' } : { type: 'fold' };
 }
 
-interface ArmResult {
+export interface ArmResult {
+  /** The table this arm played (stage). */
+  node: string;
   net: number;
   handNet: number;
   died: boolean;
@@ -84,22 +88,26 @@ interface ArmResult {
   aether: number;
   later: number;
   turnover: number;
+  /** Aether lost to the cap (counted only when a research arm turned instrumentation on). */
+  capWaste: number;
   trace: string;
 }
 
 /** Plays the rest of the current table; reads endpoints from the run's own table result. */
-function playTable(run: RunState, policy: PolicyName, rng: Rng, firstHand: number): ArmResult {
+export function playTable(run: RunState, policy: PolicyName, rng: Rng, firstHand: number): ArmResult {
   const node = run.tableNode!;
   let handNet: number | null = null;
   let later = 0;
   let turnover = 0;
   let aether = 0;
+  let capWaste = 0;
   const seenHands = new Set<number>();
   const trace: string[] = [];
   for (let guard = 0; guard < 20_000 && run.table && run.tableNode === node; guard++) {
     const t = run.table;
     const me = humanSeat(t);
     aether = t.table.seats[me].aether;
+    capWaste = t.table.seats[me].capWaste ?? 0;
     if (t.table.hand.phase === 'complete' && !seenHands.has(t.handNumber)) {
       seenHands.add(t.handNumber);
       const net = t.table.hand.result!.netChange[me];
@@ -115,14 +123,15 @@ function playTable(run: RunState, policy: PolicyName, rng: Rng, firstHand: numbe
     run = next;
   }
   const r = run.results.at(-1)!;
-  return { net: r.net, handNet: handNet ?? 0, died: r.outcome === 'dead', won: r.outcome === 'win', aether, later, turnover, trace: trace.join(',') };
+  return { node, net: r.net, handNet: handNet ?? 0, died: r.outcome === 'dead', won: r.outcome === 'win', aether, later, turnover, capWaste, trace: trace.join(',') };
 }
 
 /**
  * Paired full-table continuations at the player's current decision, one per
  * castable spell (deduplicated) and downstream policy. `only` limits spells.
  */
-export function tablePairsAt(run: RunState, policies: PolicyName[], seed: number, cluster: number, only?: Set<string>): { pairs: TablePair[]; incompatible: number } {
+export function tablePairsAt(run: RunState, policies: PolicyName[], seed: number, cluster: number, only?: Set<string>, variant?: AetherVariant): { pairs: TablePair[]; incompatible: number } {
+  if (variant) run = withVariant(run, variant);
   const t = run.table;
   if (!t) return { pairs: [], incompatible: 0 };
   const status = sessionStatus(t);
@@ -156,6 +165,7 @@ export function tablePairsAt(run: RunState, policies: PolicyName[], seed: number
         pairs.push({
           spell: o.spell,
           policy,
+          node: run.tableNode ?? '',
           cluster,
           diff: a.net - b.net,
           handDiff: a.handNet - b.handNet,
@@ -177,6 +187,17 @@ export function tablePairsAt(run: RunState, policies: PolicyName[], seed: number
     }
   }
   return { pairs, incompatible };
+}
+
+/**
+ * Offline research only (design v1.1 §04): a copy of `run` whose current table
+ * plays under an isolated Aether variant for every seat (rule parity with the AI).
+ * The variant expires with the table, as the run rebuilds magic for the next one.
+ */
+export function withVariant(run: RunState, variant: AetherVariant): RunState {
+  const copy = structuredClone(run);
+  for (const s of copy.table!.table.seats) s.research = variant;
+  return copy;
 }
 
 /** Cluster bootstrap: resample whole source runs, not correlated pairs. */
