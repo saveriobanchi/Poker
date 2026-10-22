@@ -1467,3 +1467,38 @@ button.spell.unusable {
     min-height: 44px;
   }
 }
+
+/* Five compact presets on SE: one line each. */
+@media (max-height: 600px) {
+  #raise-presets button {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 0 2px;
+  }
+}
+
+/* Landscape panel: spell names break between words only, as on narrow portrait phones. */
+@media (orientation: landscape) and (max-height: 500px) {
+  button.spell .spell-name {
+    font-size: 12px;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+  button.spell {
+    padding: 3px 4px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  #spell-row {
+    flex-wrap: wrap;
+  }
+
+  #aether {
+    flex-basis: 100%;
+    text-align: center;
+  }
+}
