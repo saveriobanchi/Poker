@@ -19,7 +19,10 @@
     "table-ev": "esbuild scripts/table-ev.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/table-ev.mjs --log-level=warning && node node_modules/.cache/table-ev.mjs",
     "paired-policies": "esbuild scripts/paired-policies.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/paired-policies.mjs --log-level=warning && node node_modules/.cache/paired-policies.mjs",
     "aether-ab": "esbuild scripts/aether-ab.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/aether-ab.mjs --log-level=warning && node node_modules/.cache/aether-ab.mjs",
-    "rare-branches": "esbuild scripts/rare-branches.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/rare-branches.mjs --log-level=warning && node node_modules/.cache/rare-branches.mjs"
+    "rare-branches": "esbuild scripts/rare-branches.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/rare-branches.mjs --log-level=warning && node node_modules/.cache/rare-branches.mjs",
+    "art": "python3 -I scripts/check-art.py --apply",
+    "art:check": "python3 -I scripts/check-art.py",
+    "test:art": "python3 -I scripts/test_art_pipeline.py"
   },
   "devDependencies": {
     "@types/node": "22.20.5",

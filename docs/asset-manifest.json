@@ -151,7 +151,14 @@
       "alpha": true,
       "status": "needed",
       "license": "project original pending independent generation",
-      "review": "Replace provisional vector, match painted cast"
+      "review": "Replace provisional vector, match painted cast",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     },
     {
       "id": "portrait.mara-quill",
@@ -161,7 +168,14 @@
       "height": 512,
       "alpha": true,
       "status": "needed",
-      "license": "project original pending independent generation"
+      "license": "project original pending independent generation",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     },
     {
       "id": "portrait.eldric-vale",
@@ -171,7 +185,14 @@
       "height": 512,
       "alpha": true,
       "status": "needed",
-      "license": "project original pending independent generation"
+      "license": "project original pending independent generation",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     },
     {
       "id": "portrait.bailiff-sable",
@@ -181,7 +202,14 @@
       "height": 512,
       "alpha": true,
       "status": "needed",
-      "license": "project original pending independent generation"
+      "license": "project original pending independent generation",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     },
     {
       "id": "portrait.sister-rill",
@@ -191,7 +219,14 @@
       "height": 512,
       "alpha": true,
       "status": "needed",
-      "license": "project original pending independent generation"
+      "license": "project original pending independent generation",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     },
     {
       "id": "portrait.night_clerk",
@@ -202,7 +237,14 @@
       "alpha": true,
       "status": "needed",
       "origin": "not yet generated",
-      "license": "project original (pending source generation)"
+      "license": "project original (pending source generation)",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     },
     {
       "id": "portrait.dock_runner",
@@ -213,7 +255,14 @@
       "alpha": true,
       "status": "needed",
       "origin": "not yet generated",
-      "license": "project original (pending source generation)"
+      "license": "project original (pending source generation)",
+      "check": {
+        "date": "2026-10-22",
+        "sha256": null,
+        "problems": [],
+        "detail": "source file not delivered",
+        "provenance": null
+      }
     }
   ]
 }
