@@ -21,7 +21,16 @@ const CARD_BACK_FRAME = 52;
 const CARD_W = 50;
 const CARD_H = 70;
 const DISPLAY = 'Cinzel, Georgia, serif';
-const UI = 'Inter, system-ui, sans-serif';
+const UI = '"Alegreya Sans", "Gill Sans", sans-serif';
+/** Palette shared with src/style.css. */
+const C = {
+  plate: 0x16120f,
+  brass: 0xc4a052,
+  brassHi: 0xead39a,
+  brassLo: 0x6f5934,
+  arcane: 0xa28ecc,
+  arcaneDim: 0x3a3247,
+};
 
 export interface TableModel {
   view: PublicView;
@@ -137,21 +146,17 @@ export class TableScene extends Phaser.Scene {
     const pot = view.seats.reduce((s, p) => s + p.totalCommitted, 0);
     const inFront = view.seats.reduce((s, p) => s + p.streetCommitted, 0);
     const r = this.root!;
-    if (pot - inFront > 0) {
-      r.add(this.add.image(176, 200, 'chip').setDisplaySize(18, 18));
-      r.add(this.txt(190, 200, String(pot - inFront), { fontFamily: UI, fontSize: '16px', color: '#F3D27A', fontStyle: '600' }).setOrigin(0, 0.5));
+    // One figure: the whole pot, the same number the odds line uses. Bets still in front of seats show beside them.
+    if (pot > 0) {
+      const amount = this.txt(0, 0, String(pot), { fontFamily: UI, fontSize: '19px', color: '#EAD39A', fontStyle: '700' }).setOrigin(0, 0.5);
+      const w = 21 + amount.width;
+      r.add(this.add.image(200 - w / 2 + 8, 205, 'chip').setDisplaySize(17, 17));
+      amount.setPosition(200 - w / 2 + 21, 204);
+      r.add(amount);
+      r.add(this.txt(200, 223, inFront > 0 ? `POT · ${inFront} IN BETS` : 'POT', { fontFamily: UI, fontSize: '9.5px', color: '#B5A98E', fontStyle: '700', letterSpacing: 2 } as Phaser.Types.GameObjects.Text.TextStyle).setOrigin(0.5));
     }
-    r.add(this.txt(200, 220, `Total ${pot}`, { fontFamily: UI, fontSize: '11px', color: '#B8AE99' }).setOrigin(0.5));
     if (model.magic.streetLocked) {
-      r.add(
-        this.txt(200, 238, '❦ Pot-limit this street', {
-          fontFamily: UI,
-          fontSize: '11px',
-          color: '#CFE3D9',
-          backgroundColor: '#477A68cc',
-          padding: { x: 6, y: 2 },
-        }).setOrigin(0.5),
-      );
+      r.add(this.tag(200, 240, 'POT-LIMIT THIS STREET', '#477A68', '#E4F0EA'));
     }
   }
 
@@ -189,11 +194,29 @@ export class TableScene extends Phaser.Scene {
     const [px, py] = L.plate;
     const w = L.plateWidth;
     const left = px - w / 2;
+    // Engraved plate: chamfered corners, an outer brass rule and a faint inner one.
     const plate = this.add.graphics();
-    plate.fillStyle(0x231a18, 0.94).fillRoundedRect(left, py - 23, w, 46, 12);
-    plate.lineStyle(active ? 2.5 : 1, active ? 0xf3d27a : 0x856b3e, 1).strokeRoundedRect(left, py - 23, w, 46, 12);
+    const chamfer = (x: number, y: number, pw: number, ph: number, c: number) => [
+      new Phaser.Math.Vector2(x + c, y),
+      new Phaser.Math.Vector2(x + pw - c, y),
+      new Phaser.Math.Vector2(x + pw, y + c),
+      new Phaser.Math.Vector2(x + pw, y + ph - c),
+      new Phaser.Math.Vector2(x + pw - c, y + ph),
+      new Phaser.Math.Vector2(x + c, y + ph),
+      new Phaser.Math.Vector2(x, y + ph - c),
+      new Phaser.Math.Vector2(x, y + c),
+    ];
+    plate.fillStyle(0x000000, 0.35).fillPoints(chamfer(left + 1, py - 21, w, 46, 6), true);
+    plate.fillStyle(C.plate, 0.95).fillPoints(chamfer(left, py - 23, w, 46, 6), true);
+    plate.lineStyle(1, active ? C.brassHi : C.brassLo, 1).strokePoints(chamfer(left, py - 23, w, 46, 6), true);
+    plate.lineStyle(1, C.brass, active ? 0.55 : 0.18).strokePoints(chamfer(left + 3, py - 20, w - 6, 40, 4), true);
     r.add(plate);
-    if (active && !this.reduceMotion) this.tweens.add({ targets: plate, alpha: 0.6, duration: 650, yoyo: true, repeat: -1 });
+    if (active) {
+      const glow = this.add.graphics();
+      glow.lineStyle(3, C.brassHi, 0.22).strokePoints(chamfer(left - 2, py - 25, w + 4, 50, 7), true);
+      r.add(glow);
+      if (!this.reduceMotion) this.tweens.add({ targets: glow, alpha: 0.25, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.InOut' });
+    }
 
     const cx = left + 24;
     const key = `portrait-${model.portraits[seat]}`;
@@ -213,14 +236,15 @@ export class TableScene extends Phaser.Scene {
       r.add(this.txt(cx, py, initials, { fontFamily: DISPLAY, fontSize: '15px', color: busted ? '#6d6458' : '#F3D27A', fontStyle: '600' }).setOrigin(0.5));
     }
     const ring = this.add.graphics();
-    ring.lineStyle(2, busted ? 0x555555 : 0xc9a24a, 1).strokeCircle(cx, py, 20);
+    ring.lineStyle(1.5, busted ? 0x555555 : C.brass, 1).strokeCircle(cx, py, 20);
+    ring.lineStyle(1, busted ? 0x333333 : C.brassLo, 1).strokeCircle(cx, py, 22.5);
     r.add(ring);
 
     const textX = left + 50;
     const name = this.txt(textX, py - 10, model.names[seat], {
       fontFamily: DISPLAY,
       fontSize: isHuman ? '13px' : '11px',
-      color: busted ? '#6d6458' : '#EFE7D5',
+      color: busted ? '#6d6458' : '#ECE2C8',
       fontStyle: '600',
     }).setOrigin(0, 0.5);
     const room = left + w - 8 - textX;
@@ -228,11 +252,11 @@ export class TableScene extends Phaser.Scene {
     r.add(name);
     if (busted) {
       const gone = status === 'exited' ? 'Departed · Fallen' : status === 'dead' ? 'Claimed' : 'Last Claim';
-      r.add(this.txt(textX, py + 9, gone, { fontFamily: UI, fontSize: '12px', color: status === 'exited' ? '#B8AE99' : '#c06060' }).setOrigin(0, 0.5));
+      r.add(this.txt(textX, py + 9, gone, { fontFamily: UI, fontSize: '12px', color: status === 'exited' ? '#B5A98E' : '#D58474', fontStyle: '700' }).setOrigin(0, 0.5));
     } else {
       r.add(this.add.image(textX + 6, py + 9, 'chip').setDisplaySize(12, 12));
       r.add(
-        this.txt(textX + 15, py + 9, String(stack), { fontFamily: UI, fontSize: '13px', color: '#F3D27A', fontStyle: '600' }).setOrigin(0, 0.5),
+        this.txt(textX + 15, py + 9, String(stack), { fontFamily: UI, fontSize: '14px', color: '#EAD39A', fontStyle: '700' }).setOrigin(0, 0.5),
       );
       // Aether pips (public).
       const pipX = left + w - 12;
@@ -240,7 +264,7 @@ export class TableScene extends Phaser.Scene {
         const g = this.add.graphics();
         const x = pipX - (2 - i) * 10;
         const filled = i < magic.aether[seat];
-        g.fillStyle(filled ? 0x9d86c9 : 0x3a3044, 1);
+        g.fillStyle(filled ? C.arcane : C.arcaneDim, 1);
         g.fillPoints([new Phaser.Math.Vector2(x, py + 4), new Phaser.Math.Vector2(x + 4, py + 9), new Phaser.Math.Vector2(x, py + 14), new Phaser.Math.Vector2(x - 4, py + 9)], true);
         r.add(g);
       }
@@ -283,35 +307,22 @@ export class TableScene extends Phaser.Scene {
     if (p.streetCommitted > 0 && view.phase === 'betting') {
       const [bx, by] = L.bet;
       r.add(this.add.image(bx - 10, by, 'chip').setDisplaySize(18, 18));
-      r.add(this.txt(bx + 2, by, String(p.streetCommitted), { fontFamily: UI, fontSize: '13px', color: '#F3D27A', fontStyle: '600' }).setOrigin(0, 0.5));
+      r.add(this.txt(bx + 2, by, String(p.streetCommitted), { fontFamily: UI, fontSize: '14px', color: '#EAD39A', fontStyle: '700', stroke: '#0b0d0c', strokeThickness: 3 }).setOrigin(0, 0.5));
     }
 
     // Spell cast this hand (public), on the plate edge.
     const cast = magic.events.find((e) => e.seat === seat);
     if (cast) {
       const def = SPELLS[cast.spell];
-      r.add(
-        this.txt(left + w - 4, isHuman ? py - 23 : py + 23, `✦ ${def.name}`, {
-          fontFamily: UI,
-          fontSize: '9px',
-          color: '#F2E8D0',
-          backgroundColor: DISCIPLINE_COLOR[def.discipline] + 'ee',
-          padding: { x: 4, y: 1 },
-        }).setOrigin(1, 0.5),
-      );
+      const t = this.tag(0, isHuman ? py - 23 : py + 23, def.name.toUpperCase(), DISCIPLINE_COLOR[def.discipline], '#F6EEDB', 9);
+      t.setX(left + w - 6 - t.width / 2);
+      r.add(t);
     }
 
     const label = this.statusLabel(view, seat);
     if (label) {
       const [tx, ty] = L.label;
-      const text = this.txt(tx, ty, label.text, {
-        fontFamily: UI,
-        fontSize: '11px',
-        color: label.win ? '#201E22' : '#EFE7D5',
-        backgroundColor: label.win ? '#F3D27A' : '#000000aa',
-        padding: { x: 6, y: 2 },
-        fontStyle: '600',
-      }).setOrigin(0.5);
+      const text = label.win ? this.tag(tx, ty, label.text.toUpperCase(), '#CBA552', '#1D140A', 11) : this.tag(tx, ty, label.text.toUpperCase(), '#15110E', '#ECE2C8', 10.5, '#6F5934');
       r.add(text);
       if (label.win && !this.reduceMotion) this.tweens.add({ targets: text, y: ty - 6, duration: 500, yoyo: true, repeat: 1, ease: 'Sine.InOut' });
     }
@@ -343,21 +354,25 @@ export class TableScene extends Phaser.Scene {
     const color = Phaser.Display.Color.HexStringToColor(DISCIPLINE_COLOR[def.discipline]).color;
     const [px, py] = L.plate;
     const arc = this.add.graphics();
-    arc.lineStyle(3, color, 1).strokeCircle(px - L.plateWidth / 2 + 24, py, 24);
+    arc.lineStyle(2, color, 1).strokeCircle(px - L.plateWidth / 2 + 24, py, 25);
+    arc.lineStyle(1, color, 0.6).strokeCircle(px - L.plateWidth / 2 + 24, py, 28);
     this.fx!.add(arc);
     if (this.reduceMotion) this.time.delayedCall(900, () => arc.destroy());
     else this.tweens.add({ targets: arc, alpha: 0, scale: 1.04, duration: 900, onComplete: () => arc.destroy() });
 
     const who = model.names[e.seat];
     const target = e.target !== undefined ? ` → ${model.names[e.target]}` : '';
-    const banner = this.txt(200, 262, `${who}: ${def.name}${target}`, {
-      fontFamily: DISPLAY,
-      fontSize: '13px',
-      color: '#F2E8D0',
-      backgroundColor: DISCIPLINE_COLOR[def.discipline] + 'f0',
-      padding: { x: 10, y: 5 },
-      fontStyle: '600',
-    }).setOrigin(0.5);
+    // A cartouche over the board: lacquer, two rules in the discipline's colour, the caster and the spell.
+    const label = this.txt(0, 0, `${who} · ${def.name}${target}`, { fontFamily: DISPLAY, fontSize: '12.5px', color: '#F3E9D2', fontStyle: '600' }).setOrigin(0.5);
+    const bw = Math.min(380, label.width + 34);
+    const bg = this.add.graphics();
+    bg.fillStyle(0x120f0d, 0.94).fillRect(-bw / 2, -15, bw, 30);
+    bg.lineStyle(1, color, 1).lineBetween(-bw / 2, -15, bw / 2, -15).lineBetween(-bw / 2, 15, bw / 2, 15);
+    bg.lineStyle(1, color, 0.45).lineBetween(-bw / 2 + 6, -12, bw / 2 - 6, -12).lineBetween(-bw / 2 + 6, 12, bw / 2 - 6, 12);
+    bg.fillStyle(color, 1).fillPoints([new Phaser.Math.Vector2(-bw / 2 - 5, 0), new Phaser.Math.Vector2(-bw / 2, -5), new Phaser.Math.Vector2(-bw / 2 + 5, 0), new Phaser.Math.Vector2(-bw / 2, 5)], true);
+    bg.fillPoints([new Phaser.Math.Vector2(bw / 2 - 5, 0), new Phaser.Math.Vector2(bw / 2, -5), new Phaser.Math.Vector2(bw / 2 + 5, 0), new Phaser.Math.Vector2(bw / 2, 5)], true);
+    if (label.width > bw - 34) label.setScale((bw - 34) / label.width);
+    const banner = this.add.container(200, 262, [bg, label]);
     this.fx!.add(banner);
     if (this.reduceMotion) {
       this.time.delayedCall(1700, () => banner.destroy());
@@ -375,6 +390,17 @@ export class TableScene extends Phaser.Scene {
   }
 
   // ─────────────────────────── primitives ───────────────────────────
+
+  /** A small engraved tag: flat plate, optional hairline, letter-spaced caps. */
+  private tag(x: number, y: number, text: string, fill: string, ink: string, size = 10, line?: string): Phaser.GameObjects.Container {
+    const t = this.txt(0, 0, text, { fontFamily: UI, fontSize: `${size}px`, color: ink, fontStyle: '700', letterSpacing: 1.2 } as Phaser.Types.GameObjects.Text.TextStyle).setOrigin(0.5);
+    const w = t.width + 12;
+    const h = size + 8;
+    const g = this.add.graphics();
+    g.fillStyle(Phaser.Display.Color.HexStringToColor(fill).color, 0.95).fillRect(-w / 2, -h / 2, w, h);
+    if (line) g.lineStyle(1, Phaser.Display.Color.HexStringToColor(line).color, 1).strokeRect(-w / 2 + 0.5, -h / 2 + 0.5, w - 1, h - 1);
+    return this.add.container(x, y, [g, t]).setSize(w, h);
+  }
 
   private txt(x: number, y: number, text: string, style: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
     return this.add.text(x, y, text, { ...style, resolution: RENDER_ZOOM });

@@ -1,7 +1,8 @@
 import '@fontsource/cinzel/latin-600.css';
 import '@fontsource/cormorant-garamond/latin-600.css';
-import '@fontsource/inter/latin-500.css';
-import '@fontsource/inter/latin-600.css';
+import '@fontsource/alegreya-sans/latin-500.css';
+import '@fontsource/alegreya-sans/latin-700.css';
+import '@fontsource/alegreya-sans/latin-500-italic.css';
 import Phaser from 'phaser';
 import './style.css';
 import { getMagicView } from './game/magic/table';
@@ -34,6 +35,7 @@ import { describeAction } from './ui/format';
 import { attunePanel, evolutionPanel, renderNewRunPicker, renderRunScreen, renderTitle, routeLine, type ScreenHandlers } from './ui/runScreens';
 import { type BackId, type BackgroundId, BACKGROUNDS, backgroundIntro, backStates, choosePresentation, cinderGossip, loadPresentation, savePresentation, unlockedBackgrounds } from './game/run/presentation';
 import { loadPlaytestLog, Playtest, playtestEnabled, pt, setPlaytest, summarizePlaytest } from './ui/playtest';
+import { icon, iconSvg } from './ui/icons';
 import { Sound } from './ui/sound';
 import { PORTRAIT_FILES, portraitFor, RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
@@ -138,6 +140,7 @@ class Game {
       this.handInfo.setAttribute('aria-expanded', String(open));
       if (this.run?.table) this.renderTable(this.run, this.run.table);
     });
+    this.evolveButton.prepend(icon('evolve', 18));
     this.evolveButton.addEventListener('click', () => {
       this.evolveOpen = true;
       this.refresh();
@@ -166,6 +169,7 @@ class Game {
       { capture: true, passive: true },
     );
     const btn = document.getElementById('btn-playtest')!;
+    btn.innerHTML = iconSvg('quill', 22);
     btn.hidden = false;
     btn.addEventListener('click', () => this.showPlaytestPanel());
     window.setInterval(() => this.maybeFeedback(), 30_000);
@@ -396,8 +400,13 @@ class Game {
     const relics = run.player.magic.relics ?? [];
     const covenants = run.player.magic.covenants ?? [];
     const d = run.dossier;
-    const read = d ? `👁 ${PROFILES[d.rival]?.name ?? d.rival}: plays ${d.vpip}/${d.hands}, raises ${d.pfr}/${d.hands}, shoves ${d.shoves}` : null;
-    this.relicStrip.textContent = [...relics.map((r) => `◈ ${RELICS[r].name}`), ...covenants.map(() => '✠ Open Book'), ...(read ? [read] : [])].join('  ');
+    const read = d ? `${PROFILES[d.rival]?.name ?? d.rival}: plays ${d.vpip}/${d.hands}, raises ${d.pfr}/${d.hands}, shoves ${d.shoves}` : null;
+    const tag = (name: 'relic' | 'covenant' | 'eye', text: string) => {
+      const s = document.createElement('span');
+      s.append(icon(name, 13), text);
+      return s;
+    };
+    this.relicStrip.replaceChildren(...relics.map((r) => tag('relic', RELICS[r].name)), ...covenants.map(() => tag('covenant', 'Open Book')), ...(read ? [tag('eye', read)] : []));
     this.relicStrip.hidden = !relics.length && !covenants.length && !read;
 
     const last = t.hand.log.at(-1);
@@ -591,14 +600,16 @@ class Game {
 
   private updateHudButtons(): void {
     const speed = document.getElementById('btn-speed')!;
-    speed.textContent = this.prefs.fast ? '⏩' : '▶';
+    speed.innerHTML = iconSvg(this.prefs.fast ? 'fast' : 'hourglass', 22);
     speed.setAttribute('aria-label', this.prefs.fast ? 'Fast play' : 'Normal speed');
     speed.setAttribute('aria-pressed', String(this.prefs.fast));
     const motion = document.getElementById('btn-motion')!;
+    if (!motion.firstChild) motion.innerHTML = iconSvg('pendulum', 22);
     motion.setAttribute('aria-pressed', String(this.reduceMotion()));
     document.body.classList.toggle('reduce-motion', this.reduceMotion());
     const sound = document.getElementById('btn-sound')!;
-    sound.textContent = this.prefs.muted ? '🔇' : '🔊';
+    sound.innerHTML = iconSvg(this.prefs.muted ? 'bellOff' : 'bell', 22);
+    sound.setAttribute('aria-label', this.prefs.muted ? 'Sound off' : 'Sound on');
     sound.setAttribute('aria-pressed', String(!this.prefs.muted));
   }
 
@@ -613,7 +624,7 @@ class Game {
 // Wait for the web fonts so canvas text renders with them from the first frame.
 await document.fonts.ready;
 await Promise.all(
-  ['600 16px Cinzel', '500 16px Inter', '600 16px Inter', '600 16px "Cormorant Garamond"'].map((f) => document.fonts.load(f).catch(() => undefined)),
+  ['600 16px Cinzel', '500 16px "Alegreya Sans"', '700 16px "Alegreya Sans"', '600 16px "Cormorant Garamond"'].map((f) => document.fonts.load(f).catch(() => undefined)),
 );
 
 // Portraits that passed the art gate (scripts/check-art.py --pack); the built-in list is the fallback.

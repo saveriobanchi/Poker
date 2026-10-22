@@ -1,7 +1,8 @@
 import type { LoggedAction, PlayerAction } from '../game/rules/engine';
 import { Card, rankOf, suitOf } from '../game/rules/cards';
 
-export const SUIT_GLYPH: Record<string, string> = { c: '♣', d: '♦', h: '♥', s: '♠' };
+/** Text presentation selector (U+FE0E) so no platform draws the suits as emoji. */
+export const SUIT_GLYPH: Record<string, string> = { c: '♣\uFE0E', d: '♦\uFE0E', h: '♥\uFE0E', s: '♠\uFE0E' };
 const RANK_LABEL = ['', '', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
 export function rankLabel(card: Card): string {

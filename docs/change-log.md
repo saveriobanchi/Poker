@@ -1,5 +1,43 @@
 # Change log
 
+## 2026-10-22 — Visual v2: "the Ledger by candlelight"
+
+A full redesign of the interface around the art bible's Gilded Eclipse. No rule,
+number, save or simulation changed; all 203 tests still pass.
+
+- **Design system:** `src/style.css` is rewritten as one coherent stylesheet.
+  - Soot and walnut surfaces with fine grain, a warm key light from the upper
+    left and a cool rim.
+  - Brass hairlines and vellum type.
+  - Buttons are engraved plaques with square corners and an inner rule (brass
+    for the decisive action, vellum for check/call, oxblood enamel for a Cinder
+    raise). No pill shapes remain.
+  - Lists read as ledger entries: rules above and below, dotted leaders to the
+    price, roman-numeral plans.
+  - Screen titles carry an engraved lozenge rule.
+- **Type:** Cinzel for titles, Cormorant Garamond for narrative text, and
+  Alegreya Sans (a humanist face) for controls and figures, replacing Inter.
+- **Icons:** `src/ui/icons.ts` is the game's own engraved line set, covering:
+  - the bell, pendulum, hourglass and quill controls;
+  - route marks;
+  - relics and covenants;
+  - a sigil for each discipline (flame, hooded eye, briar, mirror) in place of
+    the suit symbols;
+  - Aether gems.
+
+  No emoji or pictographic glyph remains anywhere in the interface (checked on
+  12 rendered screens). Card suits render as text, never as emoji.
+- **Table:** chamfered engraved seat plates, double-ringed medallions, flat
+  engraved tags, and the cast-spell cartouche. The pot shows one figure, the
+  same number the odds line uses.
+- **Clarity:** `src/ui/plain.ts` gives every spell, relic and covenant a short
+  plain description and says when the spell can be used. The exact rules text
+  stays one tap away under "Full rules", and the ⓘ list now explains each spell
+  in plain words.
+- **Mobile:** an automated audit at 390×844, 320×568 and both landscapes finds
+  no control under 44×44 px, no overflow and no off-screen action.
+- **Screens:** before and after sheets are in `docs/briefs/visual-v2/`.
+
 ## 2026-10-22 — Design v1.1 + P9: Evidence, art gate and mobile polish (engineering milestone)
 
 **Design (ChatGPT's v1.1 hand-off):**

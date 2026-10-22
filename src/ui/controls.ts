@@ -7,7 +7,9 @@ import { SPELLS, type SpellId } from '../game/magic/spells';
 import type { LegalActions, PlayerAction, PublicView } from '../game/rules/engine';
 import { rankLabel, suitGlyph } from './format';
 import { pt } from './playtest';
-import { DISCIPLINE_COLOR, DISCIPLINE_GLYPH } from './theme';
+import { DISCIPLINE_COLOR } from './theme';
+import { aetherGems, DISCIPLINE_ICON, icon } from './icons';
+import { SPELL_PLAIN } from './plain';
 
 export interface ControlsCallbacks {
   onAction(action: PlayerAction): void;
@@ -61,7 +63,7 @@ export class Controls {
   private reasonTimer: number | undefined;
   private infoOpen = false;
   private lastInfo: { magic: MagicView; deciding: boolean } | null = null;
-  private readonly infoToggle = button('ⓘ', () => {
+  private readonly infoToggle = button('', () => {
     this.infoOpen = !this.infoOpen;
     if (this.infoOpen) pt()?.record('spell_info_open');
     if (this.lastInfo) this.renderInfo(this.lastInfo.magic, this.lastInfo.deciding);
@@ -77,6 +79,8 @@ export class Controls {
 
   constructor(private readonly cb: ControlsCallbacks) {
     this.infoToggle.setAttribute('aria-label', 'Spell details');
+    this.infoToggle.append(icon('info', 22));
+    this.custom.replaceChildren(icon('scales', 22));
     this.spellRow.append(this.infoToggle);
     this.fold.addEventListener('click', () => this.legal && this.cb.onAction({ type: 'fold' }));
     this.call.addEventListener('click', () => {
@@ -103,7 +107,7 @@ export class Controls {
       const open = !this.raiseRow.classList.contains('custom');
       this.raiseRow.classList.toggle('custom', open);
       this.custom.setAttribute('aria-expanded', String(open));
-      this.custom.textContent = open ? '✕' : '±';
+      this.custom.replaceChildren(icon(open ? 'close' : 'scales', 22));
       this.custom.setAttribute('aria-label', open ? 'Back to preset amounts' : 'Choose a custom amount');
     });
     this.presets.addEventListener('click', (e) => {
@@ -148,7 +152,7 @@ export class Controls {
     this.reason.hidden = true;
     this.raiseRow.classList.remove('custom');
     this.custom.setAttribute('aria-expanded', 'false');
-    this.custom.textContent = '±';
+    this.custom.replaceChildren(icon('scales', 22));
     this.legal = null;
     this.cinderUid = null;
     this.choice.hidden = true;
@@ -204,7 +208,7 @@ export class Controls {
       const pot = view.seats.reduce((sum, p) => sum + p.totalCommitted, 0);
       const call = Math.min(legal.callAmount, me.stack);
       const need = Math.round((100 * call) / (pot + call));
-      this.odds.textContent = `Pot ${pot} · to call ${call} · you need about ${need}% to break even`;
+      this.odds.innerHTML = `Pot <b>${pot}</b> · to call <b>${call}</b> · you need <b>${need}%</b> equity to break even`;
       this.odds.hidden = false;
     }
     const r = legal.raise;
@@ -260,7 +264,7 @@ export class Controls {
   private renderSpells(magic: MagicView, names: string[] | null): void {
     const me = magic.viewer;
     const a = magic.aether[me];
-    this.aether.textContent = '◆'.repeat(a) + '◇'.repeat(Math.max(0, 3 - a));
+    this.aether.replaceChildren(aetherGems(a, 3, 15));
     this.aether.setAttribute('aria-label', `Aether ${a} of 3`);
     this.spellRow.hidden = magic.myHand.length === 0 && !magic.castThisHand[me];
     this.renderInfo(magic, names !== null);
@@ -277,12 +281,12 @@ export class Controls {
         b.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
         const title = document.createElement('span');
         title.className = 'spell-name';
-        title.textContent = `${DISCIPLINE_GLYPH[def.discipline]} ${def.name}`;
+        title.append(icon(DISCIPLINE_ICON[def.discipline], 14), def.name);
         const cost = document.createElement('span');
         cost.className = 'spell-cost';
-        cost.textContent = '◆'.repeat(def.cost);
+        cost.append(def.cost ? aetherGems(def.cost, def.cost, 10) : 'free');
         b.append(title, cost);
-        b.title = def.effect;
+        b.title = SPELL_PLAIN[card.spell].does;
         // A spell that cannot be cast stays focusable and says why when tapped (design v1.1 §08).
         const why = usable ? '' : this.whyNot(magic, card.uid, card.spell);
         b.setAttribute('aria-label', `${def.name}, costs ${def.cost} Aether${why ? `. Not castable: ${why}` : ''}`);
@@ -305,9 +309,21 @@ export class Controls {
     this.info.replaceChildren(
       ...magic.myHand.map((c) => {
         const def = SPELLS[c.spell];
-        const row = document.createElement('p');
-        const status = castable.has(c.uid) ? 'castable now' : `not now — ${this.whyNot(magic, c.uid, c.spell)}`;
-        row.textContent = `${DISCIPLINE_GLYPH[def.discipline]} ${def.name} · ${def.cost} Aether · ${status}. ${def.effect}`;
+        const plain = SPELL_PLAIN[c.spell];
+        const row = document.createElement('div');
+        row.className = 'info-entry';
+        row.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
+        const name = document.createElement('span');
+        name.className = 'info-name';
+        name.textContent = `${def.name} · ${def.cost ? `${def.cost} Aether` : 'free'}`;
+        const meta = document.createElement('span');
+        const now = castable.has(c.uid);
+        meta.className = `info-meta${now ? ' now' : ''}`;
+        meta.textContent = now ? 'You can cast it now' : `${plain.when} — not now: ${this.whyNot(magic, c.uid, c.spell)}`;
+        const does = document.createElement('span');
+        does.className = 'info-does';
+        does.textContent = plain.does;
+        row.append(icon(DISCIPLINE_ICON[def.discipline], 18), name, meta, does);
         return row;
       }),
     );

@@ -41,7 +41,9 @@ import {
   type RunState,
   TABLE_NODES,
 } from '../game/run/run';
-import { DISCIPLINE_COLOR, DISCIPLINE_GLYPH } from './theme';
+import { DISCIPLINE_COLOR } from './theme';
+import { aetherGems, DISCIPLINE_ICON, icon, type IconName } from './icons';
+import { COVENANT_PLAIN, RELIC_PLAIN, SPELL_PLAIN } from './plain';
 
 export interface ScreenHandlers {
   command(cmd: RunCommand): void;
@@ -169,12 +171,12 @@ function trail(run: RunState): HTMLElement {
     if (n.id === 'start' && idx === -1 && ended) state = 'done';
     const o = outcome.get(n.id);
     const table = n.id in TABLE_NODES;
-    const mark = o === 'win' ? '✓' : o === 'alive_failure' ? '✗' : o === 'fallen' ? '☾' : o === 'dead' ? '✝' : table ? '♠' : '◆';
+    const mark: IconName = o === 'win' ? 'check' : o === 'alive_failure' ? 'cross' : o === 'fallen' ? 'moon' : o === 'dead' ? 'grave' : table ? 'table' : 'node';
     list.append(
       h(
         'li',
         { class: `trail-node ${state}${played.has(n.id) ? ' played' : ''}`, 'aria-current': state === 'here' ? 'step' : 'false' },
-        h('span', { class: 'trail-dot' }, mark),
+        h('span', { class: 'trail-dot' }, icon(mark, mark === 'node' ? 9 : 13)),
         h('span', { class: 'trail-label' }, n.short),
       ),
     );
@@ -195,9 +197,9 @@ function purse(run: RunState): HTMLElement {
     h(
       'div',
       { class: 'purse-items' },
-      ...relics.map((id) => h('span', { class: 'relic', title: RELICS[id].effect }, `◈ ${RELICS[id].name}`)),
-      ...covenants.map((id) => h('span', { class: 'relic covenant', title: COVENANTS[id].effect }, `✠ ${COVENANTS[id].name}`)),
-      run.player.evolutionTokens ? h('span', { class: 'relic token' }, `✦ Evolution token ×${run.player.evolutionTokens}`) : null,
+      ...relics.map((id) => h('span', { class: 'relic', title: RELIC_PLAIN[id] }, icon('relic', 14), RELICS[id].name)),
+      ...covenants.map((id) => h('span', { class: 'relic covenant', title: COVENANT_PLAIN[id] }, icon('covenant', 14), COVENANTS[id].name)),
+      run.player.evolutionTokens ? h('span', { class: 'relic token' }, icon('evolve', 14), `Evolution token ×${run.player.evolutionTokens}`) : null,
       !relics.length && !covenants.length && !run.player.evolutionTokens ? h('span', { class: 'muted' }, `No relics yet · ${SLOT_LIMITS.relics} slots`) : null,
     ),
   );
@@ -207,12 +209,12 @@ function resonancePips(card: SpellCard): HTMLElement {
   const r = card.resonance ?? 0;
   if (!isBaseSpell(card.spell)) return h('span', { class: 'res evolved' }, 'evolved');
   const t = EVOLUTIONS[card.spell].threshold;
-  return h('span', { class: 'res', 'aria-label': `Resonance ${r} of ${t}` }, '●'.repeat(Math.min(r, t)) + '○'.repeat(Math.max(0, t - r)));
+  return h('span', { class: 'res', 'aria-label': `Resonance ${r} of ${t}`, title: `Resonance ${r} of ${t}` }, ...Array.from({ length: t }, (_, i) => h('i', { class: i < r ? 'on' : '' })));
 }
 
 function spellChip(spell: SpellId, extra?: Child): HTMLElement {
   const def = SPELLS[spell];
-  const chip = h('span', { class: 'spell-chip', title: def.effect }, `${DISCIPLINE_GLYPH[def.discipline]} ${def.name}`, extra);
+  const chip = h('span', { class: 'spell-chip', title: SPELL_PLAIN[spell].does }, h('span', {}, icon(DISCIPLINE_ICON[def.discipline], 15), def.name), extra);
   chip.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
   return chip;
 }
@@ -242,7 +244,7 @@ export function evolutionPanel(run: RunState, cb: ScreenHandlers): HTMLElement |
   return h(
     'section',
     { class: 'evolve' },
-    h('h3', {}, '✦ A spell is ready to evolve'),
+    h('h3', {}, icon('evolve', 16), 'A spell is ready to evolve'),
     h('p', { class: 'note' }, 'Evolution replaces this one instance; its Resonance resets. You may also wait.'),
     ...unique.map((o) =>
       h(
@@ -257,9 +259,9 @@ export function evolutionPanel(run: RunState, cb: ScreenHandlers): HTMLElement |
             const card = h(
               'button',
               { type: 'button', class: 'branch' },
-              h('span', { class: 'branch-name' }, `${DISCIPLINE_GLYPH[def.discipline]} ${def.name}`),
-              h('span', { class: 'branch-cost' }, '◆'.repeat(def.cost)),
-              h('span', { class: 'branch-text' }, def.effect),
+              h('span', { class: 'branch-name' }, icon(DISCIPLINE_ICON[def.discipline], 15), def.name),
+              h('span', { class: 'branch-cost' }, def.cost ? aetherGems(def.cost, def.cost, 11) : 'free'),
+              h('span', { class: 'branch-text' }, SPELL_PLAIN[b].does),
             );
             card.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
             card.addEventListener('click', () => cb.command({ kind: 'evolve', uid: o.card.uid, branch: b, useToken: o.needsToken }));
@@ -278,7 +280,7 @@ export function attunePanel(run: RunState, cb: ScreenHandlers): HTMLElement | nu
   return h(
     'section',
     { class: 'evolve' },
-    h('h3', {}, '✦ Spend your evolution token'),
+    h('h3', {}, icon('evolve', 16), 'Spend your evolution token'),
     h('p', { class: 'note' }, 'No spell has Resonance yet, so the token attunes one instead: +1 Resonance, no evolution this time.'),
     h('div', { class: 'choice-row' }, ...uniqueBySpell(options).map((c) => btn(SPELLS[c.spell].name, () => cb.command({ kind: 'attune', uid: c.uid }), 'small'))),
   );
@@ -309,6 +311,11 @@ function transferLine(run: RunState, amount: number, counterparty: string, direc
 
 let currentHandlers: ScreenHandlers;
 
+/** The exact rules text, folded away under the plain description. */
+function rules(text: string): HTMLElement {
+  return h('details', { class: 'rules' }, h('summary', {}, 'Full rules'), h('p', {}, text));
+}
+
 function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
   const s = run.shop!;
   const chips = playerChips(run);
@@ -319,8 +326,9 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
     return h(
       'div',
       { class: `offer${o.sold ? ' sold' : ''}` },
-      h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${def.name}`, def.rarity !== 'common' ? h('span', { class: `rarity ${def.rarity}` }, def.rarity) : null), h('span', { class: 'price' }, `${o.price}`)),
-      h('p', { class: 'offer-text' }, def.effect),
+      h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, icon('relic', 15), def.name, def.rarity !== 'common' ? h('span', { class: `rarity ${def.rarity}` }, def.rarity) : null), h('span', { class: 'price' }, `${o.price}`)),
+      h('p', { class: 'offer-text' }, RELIC_PLAIN[o.relic]),
+      rules(def.effect),
       owned ? h('p', { class: 'warning-text' }, 'You already carry this relic.') : relics.length >= SLOT_LIMITS.relics && !o.sold ? h('p', { class: 'warning-text' }, `Your ${SLOT_LIMITS.relics} relic slots are full: a purchase is refused.`) : null,
       o.sold
         ? h('span', { class: 'muted' }, 'Sold')
@@ -343,7 +351,7 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
     rethread = h(
       'div',
       { class: 'rethread' },
-      h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, '⟲ Spell Rethread'), h('span', { class: 'price' }, String(RETHREAD_PRICE))),
+      h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, icon('rethread', 15), 'Spell Rethread'), h('span', { class: 'price' }, String(RETHREAD_PRICE))),
       h('p', { class: 'offer-text' }, 'Replace one owned base spell with a different starter spell. Its Resonance resets.'),
       h('div', { class: 'offer-foot' }, transferLine(run, RETHREAD_PRICE, s.merchant, 'pay')),
       h('div', { class: 'choice-row' }, ...uniqueBySpell(base).map((c) => btn(SPELLS[c.spell].name, () => ((rethreadUid = c.uid), cb.rerender()), 'small'))),
@@ -408,7 +416,7 @@ function standingsTable(run: RunState): HTMLElement {
             'tr',
             { class: s.id === PLAYER_ID ? 'me' : '' },
             h('td', {}, String(s.rank)),
-            h('td', {}, s.name, s.status === 'dead' ? ' ✝' : s.status === 'exited' ? ' ☾' : ''),
+            h('td', {}, s.name, s.status === 'dead' ? icon('grave', 13) : s.status === 'exited' ? icon('moon', 13) : null),
             h('td', {}, String(s.stack)),
           ),
         ),
@@ -436,7 +444,7 @@ function dutyLines(run: RunState): HTMLElement | null {
       'ol',
       {},
       ...mine.map((d) =>
-        h('li', { class: run.duties!.completed.includes(d.id) ? 'done' : d.id === active?.id ? 'active' : '' }, run.duties!.completed.includes(d.id) ? '✓ ' : d.id === active?.id ? '▸ ' : '', d.text),
+        h('li', { class: run.duties!.completed.includes(d.id) ? 'done' : d.id === active?.id ? 'active' : '' }, run.duties!.completed.includes(d.id) ? icon('check', 15) : d.id === active?.id ? icon('arrow', 15) : icon('node', 15), d.text),
       ),
     ),
   );
@@ -563,7 +571,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
               { class: 'record' },
               h('h3', {}, 'Your relic slots are full'),
               h('p', {}, 'To take a relic, choose one to give up first. It is lost, not sold.'),
-              h('div', { class: 'choice-row' }, ...owned.map((r) => btn(`${replaceRelic === r ? '✓ ' : ''}${RELICS[r].name}`, () => ((replaceRelic = r), cb.rerender()), 'small'))),
+              h('div', { class: 'choice-row' }, ...owned.map((r) => { const b = btn(RELICS[r].name, () => ((replaceRelic = r), cb.rerender()), `small${replaceRelic === r ? ' primary' : ''}`); b.setAttribute('aria-pressed', String(replaceRelic === r)); return b; })),
             )
           : null,
         h(
@@ -571,10 +579,10 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
           { class: 'offers' },
           ...run.reward!.map((o, i) =>
             o.kind === 'relic'
-              ? h('button', { type: 'button', class: 'offer pick', 'data-i': String(i) }, h('span', { class: 'offer-name' }, `◈ ${RELICS[o.relic].name}`), h('span', { class: 'offer-text' }, RELICS[o.relic].effect))
+              ? h('button', { type: 'button', class: 'offer pick', 'data-i': String(i), title: RELICS[o.relic].effect }, h('span', { class: 'offer-name' }, icon('relic', 15), RELICS[o.relic].name), h('span', { class: 'offer-text' }, RELIC_PLAIN[o.relic]))
               : o.kind === 'resonance'
-                ? h('div', { class: 'offer' }, h('span', { class: 'offer-name' }, '✦ Attune a spell'), h('span', { class: 'offer-text' }, '+1 Resonance to one unevolved spell (max 2).'), spellPicker(run, (uid) => cb.command({ kind: 'reward', index: i, uid })))
-                : h('button', { type: 'button', class: 'offer pick', 'data-i': String(i) }, h('span', { class: 'offer-name' }, '✦ Evolution token'), h('span', { class: 'offer-text' }, 'Evolve one base spell that has at least 1 Resonance early; if none has any, attune one (+1 Resonance) instead.')),
+                ? h('div', { class: 'offer' }, h('span', { class: 'offer-name' }, icon('evolve', 15), 'Attune a spell'), h('span', { class: 'offer-text' }, 'One unevolved spell gains 1 Resonance (up to 2), bringing it closer to evolving.'), spellPicker(run, (uid) => cb.command({ kind: 'reward', index: i, uid })))
+                : h('button', { type: 'button', class: 'offer pick', 'data-i': String(i) }, h('span', { class: 'offer-name' }, icon('evolve', 15), 'Evolution token'), h('span', { class: 'offer-text' }, 'Evolve a spell early, as soon as it has 1 Resonance. If none has any yet, it gives one spell 1 Resonance instead.')),
           ),
         ),
         spellbookPanel(run),
@@ -747,7 +755,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
         h('p', { class: 'lede' }, `Matron Wisp buys one relic at half its shop value, from her own purse of ${wallet} Lifechips.`),
         sold || !relics.length
           ? h('p', { class: 'muted' }, sold ? 'You have already sold to Matron Wisp.' : 'You carry no relic she would buy.')
-          : h('div', { class: 'offers' }, ...relics.map((r) => h('div', { class: 'offer' }, h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${RELICS[r].name}`), h('span', { class: 'price' }, String(brokerPrice(r)))), h('p', { class: 'offer-text' }, `Shop value ${RELICS[r].price}; half is paid.`), h('div', { class: 'offer-foot' }, transferLine(run, brokerPrice(r), WISP_ID, 'receive'), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet))))),
+          : h('div', { class: 'offers' }, ...relics.map((r) => h('div', { class: 'offer' }, h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, icon('relic', 15), RELICS[r].name), h('span', { class: 'price' }, String(brokerPrice(r)))), h('p', { class: 'offer-text' }, `Shop value ${RELICS[r].price}; half is paid.`), h('div', { class: 'offer-foot' }, transferLine(run, brokerPrice(r), WISP_ID, 'receive'), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet))))),
         h('div', { class: 'actions' }, btn(`Sit at ${TABLE_NODES.underlamp_table.label}`, () => cb.command({ kind: 'advance' }), 'primary')),
       );
       break;
@@ -812,7 +820,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
                 h(
                   'div',
                   { class: 'offer' },
-                  h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, `◈ ${RELICS[r].name}`), h('span', { class: 'price' }, String(brokerPrice(r)))),
+                  h('div', { class: 'offer-head' }, h('span', { class: 'offer-name' }, icon('relic', 15), RELICS[r].name), h('span', { class: 'price' }, String(brokerPrice(r)))),
                   h('p', { class: 'offer-text' }, `Shop value ${RELICS[r].price}; half is paid.`), h('div', { class: 'offer-foot' }, transferLine(run, brokerPrice(r), BROKER_ID, 'receive'), btn('Sell', () => cb.command({ kind: 'sell', relic: r }), 'primary small', brokerPrice(r) > wallet)),
                 ),
               ),
@@ -853,7 +861,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
         run,
         'Mirror’s Petition',
         h('p', { class: 'lede' }, 'A Witness of the Mirror offers the Covenant of the Open Book. Your fee goes into the Witness’s escrow, not the void.'),
-        h('section', { class: 'record' }, h('h3', {}, `✠ ${COVENANTS.covenant_open_book.name}`), h('p', {}, COVENANTS.covenant_open_book.effect)),
+        h('section', { class: 'record' }, h('h3', {}, icon('covenant', 15), COVENANTS.covenant_open_book.name), h('p', {}, COVENANT_PLAIN.covenant_open_book), rules(COVENANTS.covenant_open_book.effect)),
         h(
           'div',
           { class: 'actions' },
@@ -996,8 +1004,10 @@ export function renderNewRunPicker(
             { class: 'choice-row' },
             ...backs.map((b) => {
               const usable = b.unlocked && b.artReady;
-              const label = `${b.id === back ? '✓ ' : ''}${b.title}${!b.unlocked ? ' · locked' : !b.artReady ? ' · art pending' : ''}`;
-              return btn(label, () => ((back = b.id), draw()), 'small', !usable);
+              const label = `${b.title}${!b.unlocked ? ' · locked' : !b.artReady ? ' · art pending' : ''}`;
+              const el = btn(label, () => ((back = b.id), draw()), `small${b.id === back ? ' primary' : ''}`, !usable);
+              el.setAttribute('aria-pressed', String(b.id === back));
+              return el;
             }),
           ),
         ),

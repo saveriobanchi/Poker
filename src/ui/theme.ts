@@ -5,10 +5,3 @@ export const DISCIPLINE_COLOR: Record<'Ember' | 'Veil' | 'Thorn' | 'Mirror', str
   Thorn: '#477A68',
   Mirror: '#5A8EAC',
 };
-
-export const DISCIPLINE_GLYPH: Record<'Ember' | 'Veil' | 'Thorn' | 'Mirror', string> = {
-  Ember: '♥',
-  Veil: '♠',
-  Thorn: '♣',
-  Mirror: '♦',
-};
