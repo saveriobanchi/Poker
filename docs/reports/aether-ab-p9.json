@@ -1,0 +1,3489 @@
+{
+  "label": "p9",
+  "batches": 20,
+  "sourceRunsPerBatch": 25,
+  "sourceRuns": 500,
+  "note": "offline research only; variants are never enabled in play. Study A: variant minus exact-P8 baseline from the identical table-start state, every seat under the same rule. Study B: Cinder-family cast minus the same unenchanted raise, to table end, within each rule. Cluster bootstrap over source runs.",
+  "tableStarts": 8871,
+  "pairs": 109152,
+  "incompatible": 0,
+  "studyA": {
+    "all|skilled|ember_overflow_reserve": {
+      "tables": 2957,
+      "changedTables": 0,
+      "netDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 53.492,
+        "netSdVariant": 53.492,
+        "deathRateBaseline": 0.104,
+        "deathRateVariant": 0.104
+      },
+      "baselineCapWastePerTable": 1.647,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "all|skilled|ember_reserve_on_spend": {
+      "tables": 2957,
+      "changedTables": 45,
+      "netDiff": {
+        "mean": -0.01,
+        "ci95": [
+          -0.084,
+          0.062
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.004,
+        "ci95": [
+          0.001,
+          0.008
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.006
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 53.492,
+        "netSdVariant": 53.433,
+        "deathRateBaseline": 0.104,
+        "deathRateVariant": 0.104
+      },
+      "baselineCapWastePerTable": 1.647,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.148
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0.015
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.033
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": -0.004
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": -0.118
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": -0.136
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0.356
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "all|skilled|ember_next_hand_discount": {
+      "tables": 2957,
+      "changedTables": 16,
+      "netDiff": {
+        "mean": 0.012,
+        "ci95": [
+          -0.005,
+          0.036
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0.002,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.001,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.002,
+        "ci95": [
+          0,
+          0.004
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 53.492,
+        "netSdVariant": 53.494,
+        "deathRateBaseline": 0.104,
+        "deathRateVariant": 0.104
+      },
+      "baselineCapWastePerTable": 1.647,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.043
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": -0.031
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0.227
+        }
+      }
+    },
+    "all|mixed_aggressive|ember_overflow_reserve": {
+      "tables": 2957,
+      "changedTables": 0,
+      "netDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 60.86,
+        "netSdVariant": 60.86,
+        "deathRateBaseline": 0.124,
+        "deathRateVariant": 0.124
+      },
+      "baselineCapWastePerTable": 1.596,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "all|mixed_aggressive|ember_reserve_on_spend": {
+      "tables": 2957,
+      "changedTables": 57,
+      "netDiff": {
+        "mean": -0.04,
+        "ci95": [
+          -0.165,
+          0.064
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.002,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.001,
+          0.004
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.011,
+        "ci95": [
+          0.007,
+          0.015
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.008
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 60.86,
+        "netSdVariant": 60.779,
+        "deathRateBaseline": 0.124,
+        "deathRateVariant": 0.124
+      },
+      "baselineCapWastePerTable": 1.596,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.106
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0.053
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.038
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": -0.332
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0.009
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": -0.299
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0.345
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "all|mixed_aggressive|ember_next_hand_discount": {
+      "tables": 2957,
+      "changedTables": 32,
+      "netDiff": {
+        "mean": -0.01,
+        "ci95": [
+          -0.08,
+          0.057
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0.002,
+        "ci95": [
+          0,
+          0.005
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.005,
+        "ci95": [
+          0.002,
+          0.008
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.003,
+        "ci95": [
+          0,
+          0.006
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 60.86,
+        "netSdVariant": 60.86,
+        "deathRateBaseline": 0.124,
+        "deathRateVariant": 0.123
+      },
+      "baselineCapWastePerTable": 1.596,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.024
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.045
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": -0.275
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0.061
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0.336
+        }
+      }
+    },
+    "all|tight|ember_overflow_reserve": {
+      "tables": 2957,
+      "changedTables": 0,
+      "netDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 51.253,
+        "netSdVariant": 51.253,
+        "deathRateBaseline": 0.096,
+        "deathRateVariant": 0.096
+      },
+      "baselineCapWastePerTable": 3.996,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "all|tight|ember_reserve_on_spend": {
+      "tables": 2957,
+      "changedTables": 10,
+      "netDiff": {
+        "mean": -0.007,
+        "ci95": [
+          -0.056,
+          0.036
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.002,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 51.253,
+        "netSdVariant": 51.251,
+        "deathRateBaseline": 0.096,
+        "deathRateVariant": 0.096
+      },
+      "baselineCapWastePerTable": 3.996,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0.052
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": -0.019
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": -0.03
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0.06
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": -0.042
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": -0.028
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": -0.184
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "all|tight|ember_next_hand_discount": {
+      "tables": 2957,
+      "changedTables": 6,
+      "netDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.025,
+          0.021
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.001,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 51.253,
+        "netSdVariant": 51.254,
+        "deathRateBaseline": 0.096,
+        "deathRateVariant": 0.096
+      },
+      "baselineCapWastePerTable": 3.996,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.054
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0.032
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0.042
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|skilled|ember_overflow_reserve": {
+      "tables": 2957,
+      "changedTables": 0,
+      "netDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 53.492,
+        "netSdVariant": 53.492,
+        "deathRateBaseline": 0.104,
+        "deathRateVariant": 0.104
+      },
+      "baselineCapWastePerTable": 1.647,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|skilled|ember_reserve_on_spend": {
+      "tables": 2957,
+      "changedTables": 45,
+      "netDiff": {
+        "mean": -0.01,
+        "ci95": [
+          -0.084,
+          0.062
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.004,
+        "ci95": [
+          0.001,
+          0.008
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.006
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 53.492,
+        "netSdVariant": 53.433,
+        "deathRateBaseline": 0.104,
+        "deathRateVariant": 0.104
+      },
+      "baselineCapWastePerTable": 1.647,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.148
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0.015
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.033
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": -0.004
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": -0.118
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": -0.136
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0.356
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|skilled|ember_next_hand_discount": {
+      "tables": 2957,
+      "changedTables": 16,
+      "netDiff": {
+        "mean": 0.012,
+        "ci95": [
+          -0.005,
+          0.036
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0.002,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.001,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.002,
+        "ci95": [
+          0,
+          0.004
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 53.492,
+        "netSdVariant": 53.494,
+        "deathRateBaseline": 0.104,
+        "deathRateVariant": 0.104
+      },
+      "baselineCapWastePerTable": 1.647,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.043
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": -0.031
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0.227
+        }
+      }
+    },
+    "cinderOwner|mixed_aggressive|ember_overflow_reserve": {
+      "tables": 2957,
+      "changedTables": 0,
+      "netDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 60.86,
+        "netSdVariant": 60.86,
+        "deathRateBaseline": 0.124,
+        "deathRateVariant": 0.124
+      },
+      "baselineCapWastePerTable": 1.596,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|mixed_aggressive|ember_reserve_on_spend": {
+      "tables": 2957,
+      "changedTables": 57,
+      "netDiff": {
+        "mean": -0.04,
+        "ci95": [
+          -0.165,
+          0.064
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.002,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.001,
+          0.004
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.011,
+        "ci95": [
+          0.007,
+          0.015
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.001,
+          0.008
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 60.86,
+        "netSdVariant": 60.779,
+        "deathRateBaseline": 0.124,
+        "deathRateVariant": 0.124
+      },
+      "baselineCapWastePerTable": 1.596,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.106
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0.053
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.038
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": -0.332
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0.009
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": -0.299
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0.345
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|mixed_aggressive|ember_next_hand_discount": {
+      "tables": 2957,
+      "changedTables": 32,
+      "netDiff": {
+        "mean": -0.01,
+        "ci95": [
+          -0.08,
+          0.057
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0.002,
+        "ci95": [
+          0,
+          0.005
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.005,
+        "ci95": [
+          0.002,
+          0.008
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0.003,
+        "ci95": [
+          0,
+          0.006
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 60.86,
+        "netSdVariant": 60.86,
+        "deathRateBaseline": 0.124,
+        "deathRateVariant": 0.123
+      },
+      "baselineCapWastePerTable": 1.596,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.024
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0.045
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": -0.275
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0.061
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0.336
+        }
+      }
+    },
+    "cinderOwner|tight|ember_overflow_reserve": {
+      "tables": 2957,
+      "changedTables": 0,
+      "netDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 51.253,
+        "netSdVariant": 51.253,
+        "deathRateBaseline": 0.096,
+        "deathRateVariant": 0.096
+      },
+      "baselineCapWastePerTable": 3.996,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|tight|ember_reserve_on_spend": {
+      "tables": 2957,
+      "changedTables": 10,
+      "netDiff": {
+        "mean": -0.007,
+        "ci95": [
+          -0.056,
+          0.036
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.002,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 51.253,
+        "netSdVariant": 51.251,
+        "deathRateBaseline": 0.096,
+        "deathRateVariant": 0.096
+      },
+      "baselineCapWastePerTable": 3.996,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": 0.052
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": -0.019
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": -0.03
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0.06
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": -0.042
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": -0.028
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": -0.184
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    },
+    "cinderOwner|tight|ember_next_hand_discount": {
+      "tables": 2957,
+      "changedTables": 6,
+      "netDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.025,
+          0.021
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.001
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "castsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "capWasteDiff": {
+        "mean": 0.001,
+        "ci95": [
+          0,
+          0.003
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "aetherEndDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2957,
+        "clusters": 500
+      },
+      "risk": {
+        "netSdBaseline": 51.253,
+        "netSdVariant": 51.254,
+        "deathRateBaseline": 0.096,
+        "deathRateVariant": 0.096
+      },
+      "baselineCapWastePerTable": 3.996,
+      "byStage": {
+        "contract_1": {
+          "n": 500,
+          "netDiff": -0.054
+        },
+        "contract_2": {
+          "n": 474,
+          "netDiff": 0.032
+        },
+        "boss_ledger": {
+          "n": 399,
+          "netDiff": 0
+        },
+        "masked_salon": {
+          "n": 316,
+          "netDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 226,
+          "netDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 172,
+          "netDiff": 0
+        },
+        "underlamp_table": {
+          "n": 68,
+          "netDiff": 0
+        },
+        "velvet_arena": {
+          "n": 214,
+          "netDiff": 0.042
+        },
+        "crown_inquest": {
+          "n": 177,
+          "netDiff": 0
+        },
+        "coronet_table": {
+          "n": 174,
+          "netDiff": 0
+        },
+        "seals_table": {
+          "n": 127,
+          "netDiff": 0
+        },
+        "crown_table": {
+          "n": 110,
+          "netDiff": 0
+        }
+      }
+    }
+  },
+  "studyB": {
+    "baseline|skilled|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": -0.137,
+        "ci95": [
+          -0.675,
+          0.428
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.003,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.065,
+        "ci95": [
+          -0.084,
+          -0.045
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.264,
+        "ci95": [
+          -0.286,
+          -0.243
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "baseline|skilled|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -1.064,
+        "ci95": [
+          -2.278,
+          0.143
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.008,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.048,
+        "ci95": [
+          -0.079,
+          -0.013
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.193,
+        "ci95": [
+          -0.23,
+          -0.16
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "baseline|skilled|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.987,
+        "ci95": [
+          -3.228,
+          -0.708
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.004,
+          0.006
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.107,
+        "ci95": [
+          0.072,
+          0.147
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.116,
+        "ci95": [
+          -0.151,
+          -0.076
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "baseline|mixed_aggressive|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.309,
+        "ci95": [
+          -0.359,
+          0.96
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.062,
+        "ci95": [
+          -0.084,
+          -0.042
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.249,
+        "ci95": [
+          -0.271,
+          -0.228
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "baseline|mixed_aggressive|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -0.278,
+        "ci95": [
+          -1.518,
+          0.98
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.007,
+          0.002
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.045,
+        "ci95": [
+          -0.079,
+          -0.005
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.236,
+        "ci95": [
+          -0.269,
+          -0.205
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "baseline|mixed_aggressive|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.409,
+        "ci95": [
+          -2.828,
+          0.01
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.007,
+          0.007
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.125,
+        "ci95": [
+          0.091,
+          0.162
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.105,
+        "ci95": [
+          -0.142,
+          -0.064
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "baseline|tight|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.147,
+        "ci95": [
+          -0.092,
+          0.408
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.002
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.213,
+        "ci95": [
+          -0.229,
+          -0.197
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "baseline|tight|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": 0.343,
+        "ci95": [
+          -0.226,
+          0.974
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.157,
+        "ci95": [
+          -0.18,
+          -0.133
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "baseline|tight|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": 0.159,
+        "ci95": [
+          -0.465,
+          0.897
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.004
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.117,
+        "ci95": [
+          0.092,
+          0.144
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_overflow_reserve|skilled|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": -0.137,
+        "ci95": [
+          -0.675,
+          0.428
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.003,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.065,
+        "ci95": [
+          -0.084,
+          -0.045
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.264,
+        "ci95": [
+          -0.286,
+          -0.243
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_overflow_reserve|skilled|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -1.064,
+        "ci95": [
+          -2.278,
+          0.143
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.008,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.048,
+        "ci95": [
+          -0.079,
+          -0.013
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.193,
+        "ci95": [
+          -0.23,
+          -0.16
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_overflow_reserve|skilled|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.987,
+        "ci95": [
+          -3.228,
+          -0.708
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.004,
+          0.006
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.107,
+        "ci95": [
+          0.072,
+          0.147
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.116,
+        "ci95": [
+          -0.151,
+          -0.076
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_overflow_reserve|mixed_aggressive|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.309,
+        "ci95": [
+          -0.359,
+          0.96
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.062,
+        "ci95": [
+          -0.084,
+          -0.042
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.249,
+        "ci95": [
+          -0.271,
+          -0.228
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_overflow_reserve|mixed_aggressive|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -0.278,
+        "ci95": [
+          -1.518,
+          0.98
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.007,
+          0.002
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.045,
+        "ci95": [
+          -0.079,
+          -0.005
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.236,
+        "ci95": [
+          -0.269,
+          -0.205
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_overflow_reserve|mixed_aggressive|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.409,
+        "ci95": [
+          -2.828,
+          0.01
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.007,
+          0.007
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.125,
+        "ci95": [
+          0.091,
+          0.162
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.105,
+        "ci95": [
+          -0.142,
+          -0.064
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_overflow_reserve|tight|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.147,
+        "ci95": [
+          -0.092,
+          0.408
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.002
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.213,
+        "ci95": [
+          -0.229,
+          -0.197
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_overflow_reserve|tight|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": 0.343,
+        "ci95": [
+          -0.226,
+          0.974
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.157,
+        "ci95": [
+          -0.18,
+          -0.133
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_overflow_reserve|tight|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": 0.159,
+        "ci95": [
+          -0.465,
+          0.897
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.004
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.117,
+        "ci95": [
+          0.092,
+          0.144
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_reserve_on_spend|skilled|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": -0.087,
+        "ci95": [
+          -0.658,
+          0.493
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.003,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.055,
+        "ci95": [
+          -0.075,
+          -0.036
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.261,
+        "ci95": [
+          -0.284,
+          -0.239
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_reserve_on_spend|skilled|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -1.035,
+        "ci95": [
+          -2.24,
+          0.17
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.007,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.048,
+        "ci95": [
+          -0.078,
+          -0.014
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.191,
+        "ci95": [
+          -0.228,
+          -0.158
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_reserve_on_spend|skilled|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -2.141,
+        "ci95": [
+          -3.432,
+          -0.818
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.004,
+          0.006
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.109,
+        "ci95": [
+          0.073,
+          0.147
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.112,
+        "ci95": [
+          -0.147,
+          -0.071
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_reserve_on_spend|mixed_aggressive|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.325,
+        "ci95": [
+          -0.353,
+          0.963
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.004,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.058,
+        "ci95": [
+          -0.079,
+          -0.037
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.245,
+        "ci95": [
+          -0.266,
+          -0.224
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_reserve_on_spend|mixed_aggressive|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -0.173,
+        "ci95": [
+          -1.395,
+          1.062
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.007,
+          0.002
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.043,
+        "ci95": [
+          -0.078,
+          -0.002
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.231,
+        "ci95": [
+          -0.265,
+          -0.2
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_reserve_on_spend|mixed_aggressive|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.452,
+        "ci95": [
+          -2.866,
+          -0.068
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.007,
+          0.007
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.134,
+        "ci95": [
+          0.102,
+          0.173
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.102,
+        "ci95": [
+          -0.139,
+          -0.063
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_reserve_on_spend|tight|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.152,
+        "ci95": [
+          -0.081,
+          0.415
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.002,
+          0.002
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.213,
+        "ci95": [
+          -0.229,
+          -0.197
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_reserve_on_spend|tight|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": 0.343,
+        "ci95": [
+          -0.226,
+          0.974
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.157,
+        "ci95": [
+          -0.18,
+          -0.133
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_reserve_on_spend|tight|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": 0.204,
+        "ci95": [
+          -0.421,
+          0.95
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.002,
+          0.004
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.118,
+        "ci95": [
+          0.093,
+          0.144
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_next_hand_discount|skilled|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": -0.142,
+        "ci95": [
+          -0.7,
+          0.422
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.003,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.06,
+        "ci95": [
+          -0.08,
+          -0.041
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.261,
+        "ci95": [
+          -0.284,
+          -0.239
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_next_hand_discount|skilled|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -1.047,
+        "ci95": [
+          -2.27,
+          0.164
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.008,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.046,
+        "ci95": [
+          -0.076,
+          -0.01
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.187,
+        "ci95": [
+          -0.224,
+          -0.155
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_next_hand_discount|skilled|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.987,
+        "ci95": [
+          -3.228,
+          -0.708
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.004,
+          0.006
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.107,
+        "ci95": [
+          0.072,
+          0.147
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.116,
+        "ci95": [
+          -0.151,
+          -0.076
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_next_hand_discount|mixed_aggressive|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.314,
+        "ci95": [
+          -0.364,
+          0.964
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.003
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.059,
+        "ci95": [
+          -0.08,
+          -0.039
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": -0.245,
+        "ci95": [
+          -0.268,
+          -0.224
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_next_hand_discount|mixed_aggressive|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": -0.275,
+        "ci95": [
+          -1.492,
+          0.955
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": -0.003,
+        "ci95": [
+          -0.007,
+          0.002
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.044,
+        "ci95": [
+          -0.077,
+          -0.005
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": -0.231,
+        "ci95": [
+          -0.263,
+          -0.2
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_next_hand_discount|mixed_aggressive|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": -1.409,
+        "ci95": [
+          -2.828,
+          0.01
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.007,
+          0.007
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.126,
+        "ci95": [
+          0.092,
+          0.163
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": -0.105,
+        "ci95": [
+          -0.142,
+          -0.064
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    },
+    "ember_next_hand_discount|tight|cinder_challenge": {
+      "n": 4891,
+      "tableNetDiff": {
+        "mean": 0.147,
+        "ci95": [
+          -0.092,
+          0.408
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.001,
+          0.002
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "aetherDiff": {
+        "mean": -0.213,
+        "ci95": [
+          -0.229,
+          -0.197
+        ],
+        "n": 4891,
+        "clusters": 492
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 4891,
+        "clusters": 492
+      }
+    },
+    "ember_next_hand_discount|tight|ember_echo": {
+      "n": 2107,
+      "tableNetDiff": {
+        "mean": 0.343,
+        "ci95": [
+          -0.226,
+          0.974
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "aetherDiff": {
+        "mean": -0.157,
+        "ci95": [
+          -0.18,
+          -0.133
+        ],
+        "n": 2107,
+        "clusters": 171
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2107,
+        "clusters": 171
+      }
+    },
+    "ember_next_hand_discount|tight|red_oath": {
+      "n": 2098,
+      "tableNetDiff": {
+        "mean": 0.159,
+        "ci95": [
+          -0.465,
+          0.897
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.004
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "aetherDiff": {
+        "mean": 0.117,
+        "ci95": [
+          0.092,
+          0.144
+        ],
+        "n": 2098,
+        "clusters": 161
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "n": 2098,
+        "clusters": 161
+      }
+    }
+  },
+  "seconds": 1510.9
+}

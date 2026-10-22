@@ -1,5 +1,61 @@
 # Change log
 
+## 2026-10-22 — Design v1.1 + P9: Evidence, art gate and mobile polish (engineering milestone)
+
+**Design (ChatGPT's v1.1 hand-off):**
+- `docs/design-decisions-v1.1.md`, `docs/p9-art-production.md` and
+  `docs/p9-qa-matrix.md`.
+- The research configs in `docs/research/`.
+- The bible is bumped to v1.1.
+
+**Production rules: unchanged.** Poker, Last Claims, the ledger, saved shops, Act
+III, Aether 0–3 and one cast per hand are untouched. On the P8 seeds, outcomes
+replay identically.
+
+**Research (offline only, never on in play)**
+- **Aether variants (`SeatMagic.research`):**
+  - `baseline`: exact P8, with Aether lost at the cap counted.
+  - `ember_overflow_reserve`: the literal rule. It is **inert**: an overflow
+    leaves Aether at the cap, and nothing lowers it before the next hand opens.
+    Proven by test and by the study, which found 0 changed tables.
+  - `ember_reserve_on_spend`: a labelled interpretation awaiting a ruling.
+  - `ember_next_hand_discount`.
+  - Each variant applies to every seat and never stacks.
+- **Studies:**
+  - `npm run aether-ab`: table-level A/B from identical table starts, plus Cinder
+    enchantment value under each rule, with cluster intervals.
+  - `npm run rare-branches`: Quiet Briars, Ravenous Eye, Second Reflection and
+    Marked Fate, reached through legal evolutions, with source-run counts and a
+    selection-bias statement.
+
+**Art**
+- **`npm run art`:** one command that checks the files, packs the passing ones,
+  writes the index and proof sheet, and sets the manifest statuses:
+  - `needed` / `rejected` / `delivered` / `integrated`;
+  - `integrated` needs a named reviewer, a provenance note and the file's
+    SHA-256;
+  - `--revert` restores the monogram.
+- **New checks:** PNG format, a genuine alpha-zero exterior, bust framing,
+  near-duplicates.
+- **Tests:** `npm run test:art`.
+- **Status:** no portrait or back was delivered. All seven stay **needed**.
+
+**Mobile**
+- **iPhone SE:** a ± control hides the slider, so every control reaches 44 px.
+  The table grows from 216×281 to 252×327.
+- **Landscape phones:** a side-by-side layout; the SE table goes from 63×83 to
+  203×264.
+- **Spells and title:** an uncastable spell can be tapped and says why. The
+  title bar expands to the full table and route.
+- **Audit:** an automated check at 390×844, 320×568 and both landscapes finds
+  no control under 44×44 px, no horizontal overflow, and no off-screen action.
+
+**Playtest kit**
+- `docs/playtest-kit-p9.md`: consent script, severity scale, notes template.
+- `npm run playtest-summary`: validates and pools real exports with
+  denominators.
+- **No human session has been run.**
+
 ## 2026-10-21 — Design v1.0 + P8: Depth, character and honest measurement
 
 **Design (ChatGPT's v1.0 hand-off):** `docs/design-decisions-v1.0.md` and the six

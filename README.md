@@ -3,7 +3,7 @@
 A mobile-first, single-player, dark-fantasy poker roguelike built on real
 three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth and life.
 
-- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v1.0), art: [`docs/art-bible.md`](docs/art-bible.md)
+- Design baseline: [`docs/design-bible.md`](docs/design-bible.md) (v1.1), art: [`docs/art-bible.md`](docs/art-bible.md)
 - Rule departures: [`docs/poker-rules-exceptions.md`](docs/poker-rules-exceptions.md)
 - History: [`docs/change-log.md`](docs/change-log.md)
 
@@ -41,6 +41,11 @@ three- or four-handed No-limit Texas Hold'em, where Lifechips are both wealth an
   lines in shops; 44 px targets; and opt-in playtest instrumentation (`?playtest=1`,
   see [`docs/playtest-protocol-p8.md`](docs/playtest-protocol-p8.md)). No human
   playtest has been run yet.
+- **P9 — Evidence, art gate, mobile polish:** engineering milestone done. Production
+  rules frozen; offline Aether A/B and rare-branch studies; a one-command portrait
+  pipeline with honest statuses; 44 px controls on every tested phone layout; a
+  director's playtest kit. **Not** visually complete (portraits still needed) and
+  **not** human-validated (no sessions yet).
 
 ```sh
 npm install
@@ -51,7 +56,11 @@ npm run balance    # seed batches per policy with cohorts and 95% intervals → 
 npm run spell-ev   # offline paired cast-vs-skip spell value with bootstrap intervals → docs/reports/spell-ev-*.json
 npm run table-ev   # the same, continued to the end of the table, clustered intervals → docs/reports/table-ev-*.json
 npm run paired-policies  # every policy on the same worlds, compared with skilled → docs/reports/paired-policies-*.json
-python3 scripts/check-art.py [--pack]  # portrait and card-back gate, 64 px proof, art status
+npm run aether-ab       # offline Aether variant A/B (research only) → docs/reports/aether-ab-*.json
+npm run rare-branches   # offline rare-branch cast-vs-skip study → docs/reports/rare-branches-*.json
+npm run art            # portrait/back gate: check, pack, manifest statuses, 64 px proof (npm run art:check = dry run)
+npm run test:art       # tests for the art pipeline (Python + Pillow)
+npm run playtest-summary -- <exports> [notes.json]  # pool real ?playtest=1 exports
 npm run build      # production build in dist/
 npm run build:assets  # regenerate card faces/felt/chip (needs Python + Pillow and Playwright's Chromium)
 ```
@@ -97,8 +106,9 @@ const next = nextHandSetup(hand, 1235);
 Every state is plain JSON (`serializeHand` / `deserializeHand`) and fully
 reproducible from `setup` plus `log` (`replayHand`).
 
-## Next: P9
+## Next
 
-To be decided with ChatGPT after `docs/briefs/008-report-for-chatgpt.md`. First, the
-moderated naive-player sessions (5–8 testers, `?playtest=1`), then the top three
-blockers they reveal. The seven portraits are still needed.
+To be decided with ChatGPT after `docs/briefs/009-report-for-chatgpt.md`. The open
+gates are the seven portraits (`npm run art` once the files exist) and the moderated
+naive-player sessions (`docs/playtest-kit-p9.md`), followed by the top three
+reproducible blockers they reveal.

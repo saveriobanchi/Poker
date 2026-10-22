@@ -1,8 +1,8 @@
 # THE LAST WAGER
 
-**Canonical World, Gameplay & Production Blueprint — v1.0**
+**Canonical World, Gameplay & Production Blueprint — v1.1**
 
-Status: Working design baseline, dated 18 October 2026 (v0.4–v1.0 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
+Status: Working design baseline, dated 18 October 2026 (v0.4–v1.1 amendments below). Values labeled *prototype* require simulation and playtesting. All names are working titles. This document is intended to be shared with ChatGPT (design, writing, visuals) and Claude (implementation and tests). It is not a claim that any game is already coded.
 
 > **v0.4 amendments (18 October 2026).** The decisions in
 > [`design-decisions-v0.4.md`](design-decisions-v0.4.md) are part of this bible and
@@ -69,6 +69,14 @@ Status: Working design baseline, dated 18 October 2026 (v0.4–v1.0 amendments b
 > buyback; puts moderated naive-player sessions before any large expansion; and keeps the
 > seven portraits *needed* until real files pass the 64 px gate. Data:
 > `src/game/run/data/p8-*.json`; playtest protocol: [`playtest-protocol-p8.md`](playtest-protocol-p8.md).
+
+> **v1.1 amendments (22 October 2026).** [`design-decisions-v1.1.md`](design-decisions-v1.1.md)
+> freezes the production rules for P9 (poker, Last Claims, Act III, Aether 0–3, one cast per
+> hand). It turns P9 towards evidence: real-phone naive-player sessions
+> ([`playtest-kit-p9.md`](playtest-kit-p9.md)), the top three reproducible blockers, a
+> portrait-led art gate ([`p9-art-production.md`](p9-art-production.md)), and offline-only
+> Aether variants and rare-branch studies (`docs/research/p9-*.json`). No result from those
+> studies changes play without a ruling. QA matrix: [`p9-qa-matrix.md`](p9-qa-matrix.md).
 
 ---
 
