@@ -50,6 +50,15 @@ replay identically.
 - **Audit:** an automated check at 390×844, 320×568 and both landscapes finds
   no control under 44×44 px, no horizontal overflow, and no off-screen action.
 
+**Results** (full figures in report #009):
+- **P8 seeds:** the balance replays P8 exactly, in every field.
+- **Aether variants:** they change at most 2% of tables, with no measurable
+  effect.
+- **Cap waste:** baseline play loses about 1.6 Aether per table at the cap.
+- **Rare branches:** Second Reflection (+2.22) and Marked Fate (+1.70) are
+  positive for skilled play at table level. Quiet Briars and Ravenous Eye are
+  neutral. All four branches meet the sample targets.
+
 **Playtest kit**
 - `docs/playtest-kit-p9.md`: consent script, severity scale, notes template.
 - `npm run playtest-summary`: validates and pools real exports with

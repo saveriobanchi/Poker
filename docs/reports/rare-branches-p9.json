@@ -1,0 +1,2139 @@
+{
+  "label": "p9",
+  "batches": 40,
+  "sourceRunsPerBatch": 25,
+  "sourceRuns": 1000,
+  "selectionBias": "Source runs deliberately evolve into these branches and cast their families more often (60% when legal) to earn Resonance; decisions therefore over-represent runs and tables where the branch was reachable. Branch-vs-parent rows are not matched: a branch replaces its parent instance, so the two are never castable in the same state. Chip net to run end was not measured (one continuation per arm to table end only).",
+  "ownedBySourceRuns": {
+    "ravenous_eye": 765,
+    "quiet_briars": 878,
+    "second_reflection": 323,
+    "marked_fate": 319
+  },
+  "offeredDecisions": {
+    "quiet_briars": 18728,
+    "ravenous_eye": 5495,
+    "second_reflection": 3142,
+    "marked_fate": 4963
+  },
+  "castBySourcePolicy": {
+    "ravenous_eye": 1932,
+    "second_reflection": 279,
+    "quiet_briars": 5353,
+    "marked_fate": 512
+  },
+  "pairs": 162525,
+  "incompatible": 0,
+  "bySpellPolicy": {
+    "quiet_briars|skilled": {
+      "role": "branch",
+      "n": 17175,
+      "sourceRuns": 837,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.198,
+        "ci95": [
+          -0.65,
+          0.266
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.003,
+          0.001
+        ]
+      },
+      "winDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.003,
+          0.004
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.071,
+        "ci95": [
+          -0.085,
+          -0.058
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.295,
+        "ci95": [
+          -0.309,
+          -0.28
+        ]
+      },
+      "byTable": {
+        "boss_ledger": {
+          "n": 1974,
+          "netDiff": 0.579,
+          "winDiff": 0.001
+        },
+        "masked_salon": {
+          "n": 2426,
+          "netDiff": -0.148,
+          "winDiff": 0.002
+        },
+        "velvet_arena": {
+          "n": 2493,
+          "netDiff": 0.279,
+          "winDiff": -0.003
+        },
+        "crown_inquest": {
+          "n": 2572,
+          "netDiff": -1.245,
+          "winDiff": -0.005
+        },
+        "coronet_table": {
+          "n": 1769,
+          "netDiff": -0.291,
+          "winDiff": -0.005
+        },
+        "seals_table": {
+          "n": 1444,
+          "netDiff": 0.13,
+          "winDiff": 0.003
+        },
+        "crown_table": {
+          "n": 1950,
+          "netDiff": -0.826,
+          "winDiff": -0.004
+        },
+        "fallen_low_table": {
+          "n": 742,
+          "netDiff": 0.032,
+          "winDiff": 0.009
+        },
+        "cinder_low_table": {
+          "n": 904,
+          "netDiff": 0.123,
+          "winDiff": 0.019
+        },
+        "contract_2": {
+          "n": 446,
+          "netDiff": 0.159,
+          "winDiff": 0.009
+        },
+        "underlamp_table": {
+          "n": 449,
+          "netDiff": 0.109,
+          "winDiff": 0.002
+        },
+        "contract_1": {
+          "n": 6,
+          "netDiff": 0,
+          "winDiff": 0
+        }
+      }
+    },
+    "quiet_briars|mixed_aggressive": {
+      "role": "branch",
+      "n": 17175,
+      "sourceRuns": 837,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.061,
+        "ci95": [
+          -0.657,
+          0.528
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.004,
+          0.001
+        ]
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.003
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.077,
+        "ci95": [
+          -0.09,
+          -0.063
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.322,
+        "ci95": [
+          -0.337,
+          -0.306
+        ]
+      },
+      "byTable": {
+        "boss_ledger": {
+          "n": 1974,
+          "netDiff": 0.202,
+          "winDiff": -0.003
+        },
+        "masked_salon": {
+          "n": 2426,
+          "netDiff": 0.623,
+          "winDiff": 0.003
+        },
+        "velvet_arena": {
+          "n": 2493,
+          "netDiff": -0.951,
+          "winDiff": -0.004
+        },
+        "crown_inquest": {
+          "n": 2572,
+          "netDiff": -0.07,
+          "winDiff": -0.007
+        },
+        "coronet_table": {
+          "n": 1769,
+          "netDiff": 0.444,
+          "winDiff": -0.004
+        },
+        "seals_table": {
+          "n": 1444,
+          "netDiff": 1.261,
+          "winDiff": 0.008
+        },
+        "crown_table": {
+          "n": 1950,
+          "netDiff": -1.45,
+          "winDiff": -0.006
+        },
+        "fallen_low_table": {
+          "n": 742,
+          "netDiff": -0.121,
+          "winDiff": 0.003
+        },
+        "cinder_low_table": {
+          "n": 904,
+          "netDiff": 0.167,
+          "winDiff": 0.006
+        },
+        "contract_2": {
+          "n": 446,
+          "netDiff": -0.581,
+          "winDiff": -0.002
+        },
+        "underlamp_table": {
+          "n": 449,
+          "netDiff": 0.033,
+          "winDiff": 0.018
+        },
+        "contract_1": {
+          "n": 6,
+          "netDiff": 0,
+          "winDiff": 0
+        }
+      }
+    },
+    "quiet_briars|tight": {
+      "role": "branch",
+      "n": 17175,
+      "sourceRuns": 837,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.067,
+        "ci95": [
+          -0.171,
+          0.347
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.002,
+          0.001
+        ]
+      },
+      "winDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.001,
+          0.003
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.066,
+        "ci95": [
+          -0.075,
+          -0.058
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "boss_ledger": {
+          "n": 1974,
+          "netDiff": 0.09,
+          "winDiff": 0.003
+        },
+        "masked_salon": {
+          "n": 2426,
+          "netDiff": 0.519,
+          "winDiff": 0.007
+        },
+        "velvet_arena": {
+          "n": 2493,
+          "netDiff": 0.058,
+          "winDiff": 0.001
+        },
+        "crown_inquest": {
+          "n": 2572,
+          "netDiff": 0.621,
+          "winDiff": 0.004
+        },
+        "coronet_table": {
+          "n": 1769,
+          "netDiff": -0.252,
+          "winDiff": -0.008
+        },
+        "seals_table": {
+          "n": 1444,
+          "netDiff": -1.075,
+          "winDiff": -0.007
+        },
+        "crown_table": {
+          "n": 1950,
+          "netDiff": 0.038,
+          "winDiff": 0.001
+        },
+        "fallen_low_table": {
+          "n": 742,
+          "netDiff": 0.049,
+          "winDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 904,
+          "netDiff": -0.15,
+          "winDiff": 0.006
+        },
+        "contract_2": {
+          "n": 446,
+          "netDiff": 0.07,
+          "winDiff": -0.011
+        },
+        "underlamp_table": {
+          "n": 449,
+          "netDiff": -0.065,
+          "winDiff": 0.004
+        },
+        "contract_1": {
+          "n": 6,
+          "netDiff": -0.667,
+          "winDiff": 0
+        }
+      }
+    },
+    "ravenous_eye|skilled": {
+      "role": "branch",
+      "n": 4647,
+      "sourceRuns": 630,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.25,
+        "ci95": [
+          -1.436,
+          0.925
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.004,
+        "ci95": [
+          0,
+          0.009
+        ]
+      },
+      "winDiff": {
+        "mean": -0.006,
+        "ci95": [
+          -0.014,
+          0.003
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.293,
+        "ci95": [
+          -0.334,
+          -0.25
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.445,
+        "ci95": [
+          -0.485,
+          -0.405
+        ]
+      },
+      "byTable": {
+        "masked_salon": {
+          "n": 512,
+          "netDiff": -3.471,
+          "winDiff": -0.025
+        },
+        "velvet_arena": {
+          "n": 628,
+          "netDiff": 1.154,
+          "winDiff": 0
+        },
+        "crown_inquest": {
+          "n": 704,
+          "netDiff": -1.936,
+          "winDiff": -0.028
+        },
+        "coronet_table": {
+          "n": 652,
+          "netDiff": -1.475,
+          "winDiff": -0.006
+        },
+        "seals_table": {
+          "n": 573,
+          "netDiff": 0.756,
+          "winDiff": 0.016
+        },
+        "crown_table": {
+          "n": 628,
+          "netDiff": 3.309,
+          "winDiff": 0.019
+        },
+        "boss_ledger": {
+          "n": 235,
+          "netDiff": -1.123,
+          "winDiff": 0.004
+        },
+        "fallen_low_table": {
+          "n": 260,
+          "netDiff": 0.285,
+          "winDiff": -0.008
+        },
+        "cinder_low_table": {
+          "n": 261,
+          "netDiff": -0.579,
+          "winDiff": -0.034
+        },
+        "underlamp_table": {
+          "n": 178,
+          "netDiff": 0.242,
+          "winDiff": -0.017
+        },
+        "contract_2": {
+          "n": 16,
+          "netDiff": 0.125,
+          "winDiff": 0.125
+        }
+      }
+    },
+    "ravenous_eye|mixed_aggressive": {
+      "role": "branch",
+      "n": 4647,
+      "sourceRuns": 630,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -1.504,
+        "ci95": [
+          -2.819,
+          -0.17
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.005,
+        "ci95": [
+          0,
+          0.01
+        ]
+      },
+      "winDiff": {
+        "mean": -0.008,
+        "ci95": [
+          -0.017,
+          0
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.299,
+        "ci95": [
+          -0.341,
+          -0.257
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.467,
+        "ci95": [
+          -0.507,
+          -0.429
+        ]
+      },
+      "byTable": {
+        "masked_salon": {
+          "n": 512,
+          "netDiff": 0.621,
+          "winDiff": 0.002
+        },
+        "velvet_arena": {
+          "n": 628,
+          "netDiff": -0.104,
+          "winDiff": 0.002
+        },
+        "crown_inquest": {
+          "n": 704,
+          "netDiff": -0.736,
+          "winDiff": -0.01
+        },
+        "coronet_table": {
+          "n": 652,
+          "netDiff": -2.63,
+          "winDiff": 0.003
+        },
+        "seals_table": {
+          "n": 573,
+          "netDiff": 0.063,
+          "winDiff": -0.003
+        },
+        "crown_table": {
+          "n": 628,
+          "netDiff": -5.779,
+          "winDiff": -0.016
+        },
+        "boss_ledger": {
+          "n": 235,
+          "netDiff": -4.668,
+          "winDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 260,
+          "netDiff": -0.196,
+          "winDiff": -0.019
+        },
+        "cinder_low_table": {
+          "n": 261,
+          "netDiff": -0.525,
+          "winDiff": -0.042
+        },
+        "underlamp_table": {
+          "n": 178,
+          "netDiff": -0.264,
+          "winDiff": -0.028
+        },
+        "contract_2": {
+          "n": 16,
+          "netDiff": -5.125,
+          "winDiff": 0
+        }
+      }
+    },
+    "ravenous_eye|tight": {
+      "role": "branch",
+      "n": 4647,
+      "sourceRuns": 630,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": -0.25,
+        "ci95": [
+          -1.036,
+          0.626
+        ]
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.004,
+          0.003
+        ]
+      },
+      "winDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.009,
+          0.004
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.626,
+        "ci95": [
+          -0.668,
+          -0.587
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "masked_salon": {
+          "n": 512,
+          "netDiff": 0.912,
+          "winDiff": -0.004
+        },
+        "velvet_arena": {
+          "n": 628,
+          "netDiff": -0.541,
+          "winDiff": -0.016
+        },
+        "crown_inquest": {
+          "n": 704,
+          "netDiff": 0.426,
+          "winDiff": 0.003
+        },
+        "coronet_table": {
+          "n": 652,
+          "netDiff": -1.94,
+          "winDiff": -0.017
+        },
+        "seals_table": {
+          "n": 573,
+          "netDiff": 0.476,
+          "winDiff": 0.009
+        },
+        "crown_table": {
+          "n": 628,
+          "netDiff": -1.107,
+          "winDiff": 0
+        },
+        "boss_ledger": {
+          "n": 235,
+          "netDiff": -0.102,
+          "winDiff": 0.013
+        },
+        "fallen_low_table": {
+          "n": 260,
+          "netDiff": 0.069,
+          "winDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 261,
+          "netDiff": 0.119,
+          "winDiff": -0.008
+        },
+        "underlamp_table": {
+          "n": 178,
+          "netDiff": 0.14,
+          "winDiff": 0.017
+        },
+        "contract_2": {
+          "n": 16,
+          "netDiff": 3.125,
+          "winDiff": 0.063
+        }
+      }
+    },
+    "second_reflection|skilled": {
+      "role": "branch",
+      "n": 3142,
+      "sourceRuns": 269,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 2.216,
+        "ci95": [
+          0.173,
+          4.142
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.004,
+          0.011
+        ]
+      },
+      "winDiff": {
+        "mean": 0.013,
+        "ci95": [
+          -0.001,
+          0.028
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.421,
+        "ci95": [
+          -0.473,
+          -0.372
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.524,
+        "ci95": [
+          -0.584,
+          -0.463
+        ]
+      },
+      "byTable": {
+        "masked_salon": {
+          "n": 327,
+          "netDiff": 1.661,
+          "winDiff": 0.037
+        },
+        "velvet_arena": {
+          "n": 418,
+          "netDiff": -0.17,
+          "winDiff": 0.005
+        },
+        "crown_inquest": {
+          "n": 587,
+          "netDiff": 1.76,
+          "winDiff": 0.009
+        },
+        "coronet_table": {
+          "n": 445,
+          "netDiff": 9.038,
+          "winDiff": 0.02
+        },
+        "seals_table": {
+          "n": 394,
+          "netDiff": 0.401,
+          "winDiff": 0.01
+        },
+        "crown_table": {
+          "n": 486,
+          "netDiff": 1.619,
+          "winDiff": -0.002
+        },
+        "fallen_low_table": {
+          "n": 125,
+          "netDiff": 0.056,
+          "winDiff": 0.016
+        },
+        "cinder_low_table": {
+          "n": 150,
+          "netDiff": 0.753,
+          "winDiff": 0.013
+        },
+        "underlamp_table": {
+          "n": 87,
+          "netDiff": 0.437,
+          "winDiff": 0.011
+        },
+        "boss_ledger": {
+          "n": 122,
+          "netDiff": 2.689,
+          "winDiff": 0.041
+        },
+        "contract_2": {
+          "n": 1,
+          "netDiff": 4,
+          "winDiff": 1
+        }
+      }
+    },
+    "second_reflection|mixed_aggressive": {
+      "role": "branch",
+      "n": 3142,
+      "sourceRuns": 269,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 3.306,
+        "ci95": [
+          0.599,
+          5.985
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.005,
+        "ci95": [
+          -0.003,
+          0.014
+        ]
+      },
+      "winDiff": {
+        "mean": 0.014,
+        "ci95": [
+          0.001,
+          0.028
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.444,
+        "ci95": [
+          -0.492,
+          -0.397
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.541,
+        "ci95": [
+          -0.6,
+          -0.487
+        ]
+      },
+      "byTable": {
+        "masked_salon": {
+          "n": 327,
+          "netDiff": 1.159,
+          "winDiff": 0.046
+        },
+        "velvet_arena": {
+          "n": 418,
+          "netDiff": 4.596,
+          "winDiff": 0.029
+        },
+        "crown_inquest": {
+          "n": 587,
+          "netDiff": -1.043,
+          "winDiff": -0.009
+        },
+        "coronet_table": {
+          "n": 445,
+          "netDiff": 11.267,
+          "winDiff": 0.016
+        },
+        "seals_table": {
+          "n": 394,
+          "netDiff": 3.898,
+          "winDiff": 0.013
+        },
+        "crown_table": {
+          "n": 486,
+          "netDiff": 4.436,
+          "winDiff": 0.019
+        },
+        "fallen_low_table": {
+          "n": 125,
+          "netDiff": -0.104,
+          "winDiff": 0.024
+        },
+        "cinder_low_table": {
+          "n": 150,
+          "netDiff": 1.793,
+          "winDiff": 0.013
+        },
+        "underlamp_table": {
+          "n": 87,
+          "netDiff": -1.897,
+          "winDiff": -0.138
+        },
+        "boss_ledger": {
+          "n": 122,
+          "netDiff": -0.82,
+          "winDiff": 0.049
+        },
+        "contract_2": {
+          "n": 1,
+          "netDiff": 4,
+          "winDiff": 1
+        }
+      }
+    },
+    "second_reflection|tight": {
+      "role": "branch",
+      "n": 3142,
+      "sourceRuns": 269,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.373,
+        "ci95": [
+          -1.436,
+          2.228
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.008,
+        "ci95": [
+          0,
+          0.015
+        ]
+      },
+      "winDiff": {
+        "mean": 0.013,
+        "ci95": [
+          0.001,
+          0.026
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.623,
+        "ci95": [
+          -0.676,
+          -0.577
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "masked_salon": {
+          "n": 327,
+          "netDiff": -1.11,
+          "winDiff": -0.012
+        },
+        "velvet_arena": {
+          "n": 418,
+          "netDiff": -2.835,
+          "winDiff": 0.005
+        },
+        "crown_inquest": {
+          "n": 587,
+          "netDiff": -0.663,
+          "winDiff": 0.015
+        },
+        "coronet_table": {
+          "n": 445,
+          "netDiff": 3.324,
+          "winDiff": 0.022
+        },
+        "seals_table": {
+          "n": 394,
+          "netDiff": 7.17,
+          "winDiff": 0.03
+        },
+        "crown_table": {
+          "n": 486,
+          "netDiff": -2.023,
+          "winDiff": 0.019
+        },
+        "fallen_low_table": {
+          "n": 125,
+          "netDiff": 0.432,
+          "winDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 150,
+          "netDiff": 0.147,
+          "winDiff": -0.02
+        },
+        "underlamp_table": {
+          "n": 87,
+          "netDiff": -0.471,
+          "winDiff": 0.057
+        },
+        "boss_ledger": {
+          "n": 122,
+          "netDiff": -2.025,
+          "winDiff": 0
+        },
+        "contract_2": {
+          "n": 1,
+          "netDiff": 1,
+          "winDiff": 1
+        }
+      }
+    },
+    "marked_fate|skilled": {
+      "role": "branch",
+      "n": 4963,
+      "sourceRuns": 288,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 1.695,
+        "ci95": [
+          0.121,
+          3.294
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.003,
+        "ci95": [
+          -0.01,
+          0.004
+        ]
+      },
+      "winDiff": {
+        "mean": 0.005,
+        "ci95": [
+          -0.004,
+          0.015
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.128,
+        "ci95": [
+          -0.157,
+          -0.099
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.265,
+        "ci95": [
+          -0.294,
+          -0.234
+        ]
+      },
+      "byTable": {
+        "contract_2": {
+          "n": 39,
+          "netDiff": 2.41,
+          "winDiff": -0.026
+        },
+        "boss_ledger": {
+          "n": 285,
+          "netDiff": -0.67,
+          "winDiff": -0.004
+        },
+        "fallen_low_table": {
+          "n": 198,
+          "netDiff": 0.303,
+          "winDiff": -0.01
+        },
+        "cinder_low_table": {
+          "n": 314,
+          "netDiff": 0.656,
+          "winDiff": 0.032
+        },
+        "masked_salon": {
+          "n": 538,
+          "netDiff": 5.286,
+          "winDiff": 0.019
+        },
+        "velvet_arena": {
+          "n": 628,
+          "netDiff": 5.08,
+          "winDiff": 0.014
+        },
+        "crown_inquest": {
+          "n": 794,
+          "netDiff": 2.093,
+          "winDiff": 0.023
+        },
+        "seals_table": {
+          "n": 575,
+          "netDiff": 1.739,
+          "winDiff": -0.002
+        },
+        "crown_table": {
+          "n": 827,
+          "netDiff": -0.484,
+          "winDiff": -0.019
+        },
+        "coronet_table": {
+          "n": 610,
+          "netDiff": -0.138,
+          "winDiff": 0.008
+        },
+        "underlamp_table": {
+          "n": 155,
+          "netDiff": 0.213,
+          "winDiff": -0.032
+        }
+      }
+    },
+    "marked_fate|mixed_aggressive": {
+      "role": "branch",
+      "n": 4963,
+      "sourceRuns": 288,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 1.831,
+        "ci95": [
+          0.286,
+          3.341
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.004,
+        "ci95": [
+          -0.011,
+          0.002
+        ]
+      },
+      "winDiff": {
+        "mean": 0.011,
+        "ci95": [
+          0.001,
+          0.02
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.144,
+        "ci95": [
+          -0.174,
+          -0.114
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.267,
+        "ci95": [
+          -0.304,
+          -0.229
+        ]
+      },
+      "byTable": {
+        "contract_2": {
+          "n": 39,
+          "netDiff": -1.872,
+          "winDiff": -0.077
+        },
+        "boss_ledger": {
+          "n": 285,
+          "netDiff": -2.926,
+          "winDiff": 0.014
+        },
+        "fallen_low_table": {
+          "n": 198,
+          "netDiff": 0.207,
+          "winDiff": -0.04
+        },
+        "cinder_low_table": {
+          "n": 314,
+          "netDiff": 1.232,
+          "winDiff": 0.054
+        },
+        "masked_salon": {
+          "n": 538,
+          "netDiff": 3.184,
+          "winDiff": 0.026
+        },
+        "velvet_arena": {
+          "n": 628,
+          "netDiff": 2.726,
+          "winDiff": 0.005
+        },
+        "crown_inquest": {
+          "n": 794,
+          "netDiff": 2.579,
+          "winDiff": 0.001
+        },
+        "seals_table": {
+          "n": 575,
+          "netDiff": 0.191,
+          "winDiff": -0.005
+        },
+        "crown_table": {
+          "n": 827,
+          "netDiff": 3.838,
+          "winDiff": 0.019
+        },
+        "coronet_table": {
+          "n": 610,
+          "netDiff": 1.315,
+          "winDiff": 0.018
+        },
+        "underlamp_table": {
+          "n": 155,
+          "netDiff": 0.052,
+          "winDiff": 0.006
+        }
+      }
+    },
+    "marked_fate|tight": {
+      "role": "branch",
+      "n": 4963,
+      "sourceRuns": 288,
+      "undersampled": false,
+      "tableNetDiff": {
+        "mean": 0.61,
+        "ci95": [
+          -0.751,
+          1.984
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.003,
+          0.01
+        ]
+      },
+      "winDiff": {
+        "mean": 0.005,
+        "ci95": [
+          -0.003,
+          0.013
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.195,
+        "ci95": [
+          -0.222,
+          -0.174
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "contract_2": {
+          "n": 39,
+          "netDiff": 2.949,
+          "winDiff": 0.051
+        },
+        "boss_ledger": {
+          "n": 285,
+          "netDiff": -4.442,
+          "winDiff": 0
+        },
+        "fallen_low_table": {
+          "n": 198,
+          "netDiff": 0.308,
+          "winDiff": -0.015
+        },
+        "cinder_low_table": {
+          "n": 314,
+          "netDiff": 0.411,
+          "winDiff": 0.01
+        },
+        "masked_salon": {
+          "n": 538,
+          "netDiff": 1.563,
+          "winDiff": 0
+        },
+        "velvet_arena": {
+          "n": 628,
+          "netDiff": 1.17,
+          "winDiff": 0.006
+        },
+        "crown_inquest": {
+          "n": 794,
+          "netDiff": 1.45,
+          "winDiff": 0.011
+        },
+        "seals_table": {
+          "n": 575,
+          "netDiff": 1.421,
+          "winDiff": 0
+        },
+        "crown_table": {
+          "n": 827,
+          "netDiff": 0.863,
+          "winDiff": 0.008
+        },
+        "coronet_table": {
+          "n": 610,
+          "netDiff": -0.438,
+          "winDiff": 0.003
+        },
+        "underlamp_table": {
+          "n": 155,
+          "netDiff": -0.013,
+          "winDiff": 0.006
+        }
+      }
+    },
+    "briar_lock|skilled": {
+      "role": "parent reference (not matched)",
+      "n": 8468,
+      "sourceRuns": 992,
+      "tableNetDiff": {
+        "mean": -0.212,
+        "ci95": [
+          -0.671,
+          0.26
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.005,
+          0.002
+        ]
+      },
+      "winDiff": {
+        "mean": -0.001,
+        "ci95": [
+          -0.008,
+          0.005
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.172,
+        "ci95": [
+          -0.19,
+          -0.153
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.553,
+        "ci95": [
+          -0.574,
+          -0.531
+        ]
+      },
+      "byTable": {
+        "contract_1": {
+          "n": 1442,
+          "netDiff": 0.223,
+          "winDiff": 0.006
+        },
+        "contract_2": {
+          "n": 3036,
+          "netDiff": -0.051,
+          "winDiff": 0.002
+        },
+        "boss_ledger": {
+          "n": 2080,
+          "netDiff": -0.054,
+          "winDiff": -0.007
+        },
+        "masked_salon": {
+          "n": 861,
+          "netDiff": -1.789,
+          "winDiff": -0.013
+        },
+        "fallen_low_table": {
+          "n": 283,
+          "netDiff": -0.403,
+          "winDiff": -0.021
+        },
+        "velvet_arena": {
+          "n": 315,
+          "netDiff": -1.752,
+          "winDiff": -0.006
+        },
+        "crown_inquest": {
+          "n": 113,
+          "netDiff": -0.416,
+          "winDiff": 0.027
+        },
+        "cinder_low_table": {
+          "n": 199,
+          "netDiff": 0.573,
+          "winDiff": 0.03
+        },
+        "coronet_table": {
+          "n": 51,
+          "netDiff": 4.667,
+          "winDiff": 0.059
+        },
+        "underlamp_table": {
+          "n": 55,
+          "netDiff": 0.4,
+          "winDiff": -0.018
+        },
+        "seals_table": {
+          "n": 18,
+          "netDiff": -3.278,
+          "winDiff": -0.056
+        },
+        "crown_table": {
+          "n": 15,
+          "netDiff": 6.267,
+          "winDiff": -0.067
+        }
+      }
+    },
+    "briar_lock|mixed_aggressive": {
+      "role": "parent reference (not matched)",
+      "n": 8468,
+      "sourceRuns": 992,
+      "tableNetDiff": {
+        "mean": -0.306,
+        "ci95": [
+          -0.884,
+          0.298
+        ]
+      },
+      "deathDiff": {
+        "mean": 0,
+        "ci95": [
+          -0.004,
+          0.004
+        ]
+      },
+      "winDiff": {
+        "mean": 0.004,
+        "ci95": [
+          -0.003,
+          0.011
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.169,
+        "ci95": [
+          -0.188,
+          -0.149
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.561,
+        "ci95": [
+          -0.586,
+          -0.538
+        ]
+      },
+      "byTable": {
+        "contract_1": {
+          "n": 1442,
+          "netDiff": -0.519,
+          "winDiff": 0.007
+        },
+        "contract_2": {
+          "n": 3036,
+          "netDiff": -0.246,
+          "winDiff": 0.003
+        },
+        "boss_ledger": {
+          "n": 2080,
+          "netDiff": 0.27,
+          "winDiff": 0.004
+        },
+        "masked_salon": {
+          "n": 861,
+          "netDiff": -1.082,
+          "winDiff": 0.008
+        },
+        "fallen_low_table": {
+          "n": 283,
+          "netDiff": -0.756,
+          "winDiff": -0.025
+        },
+        "velvet_arena": {
+          "n": 315,
+          "netDiff": -2.33,
+          "winDiff": -0.003
+        },
+        "crown_inquest": {
+          "n": 113,
+          "netDiff": -3.124,
+          "winDiff": -0.018
+        },
+        "cinder_low_table": {
+          "n": 199,
+          "netDiff": 0.422,
+          "winDiff": 0.045
+        },
+        "coronet_table": {
+          "n": 51,
+          "netDiff": 8,
+          "winDiff": -0.02
+        },
+        "underlamp_table": {
+          "n": 55,
+          "netDiff": 0.891,
+          "winDiff": 0.036
+        },
+        "seals_table": {
+          "n": 18,
+          "netDiff": -6.889,
+          "winDiff": -0.056
+        },
+        "crown_table": {
+          "n": 15,
+          "netDiff": 10.667,
+          "winDiff": 0
+        }
+      }
+    },
+    "briar_lock|tight": {
+      "role": "parent reference (not matched)",
+      "n": 8468,
+      "sourceRuns": 992,
+      "tableNetDiff": {
+        "mean": -0.129,
+        "ci95": [
+          -0.401,
+          0.127
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.001,
+          0.004
+        ]
+      },
+      "winDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.002,
+          0.006
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.443,
+        "ci95": [
+          -0.459,
+          -0.424
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "contract_1": {
+          "n": 1442,
+          "netDiff": -0.257,
+          "winDiff": 0.01
+        },
+        "contract_2": {
+          "n": 3036,
+          "netDiff": -0.008,
+          "winDiff": -0.001
+        },
+        "boss_ledger": {
+          "n": 2080,
+          "netDiff": 0.061,
+          "winDiff": 0
+        },
+        "masked_salon": {
+          "n": 861,
+          "netDiff": -0.589,
+          "winDiff": -0.002
+        },
+        "fallen_low_table": {
+          "n": 283,
+          "netDiff": -0.159,
+          "winDiff": -0.011
+        },
+        "velvet_arena": {
+          "n": 315,
+          "netDiff": -0.095,
+          "winDiff": 0
+        },
+        "crown_inquest": {
+          "n": 113,
+          "netDiff": 1.212,
+          "winDiff": 0.027
+        },
+        "cinder_low_table": {
+          "n": 199,
+          "netDiff": -0.06,
+          "winDiff": 0.035
+        },
+        "coronet_table": {
+          "n": 51,
+          "netDiff": -3.51,
+          "winDiff": 0
+        },
+        "underlamp_table": {
+          "n": 55,
+          "netDiff": 0.2,
+          "winDiff": 0
+        },
+        "seals_table": {
+          "n": 18,
+          "netDiff": -2,
+          "winDiff": 0
+        },
+        "crown_table": {
+          "n": 15,
+          "netDiff": -11.133,
+          "winDiff": 0
+        }
+      }
+    },
+    "unmask|skilled": {
+      "role": "parent reference (not matched)",
+      "n": 3870,
+      "sourceRuns": 963,
+      "tableNetDiff": {
+        "mean": -0.419,
+        "ci95": [
+          -1.26,
+          0.39
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.002,
+          0.009
+        ]
+      },
+      "winDiff": {
+        "mean": -0.007,
+        "ci95": [
+          -0.015,
+          0.003
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.278,
+        "ci95": [
+          -0.312,
+          -0.245
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.683,
+        "ci95": [
+          -0.722,
+          -0.646
+        ]
+      },
+      "byTable": {
+        "contract_2": {
+          "n": 977,
+          "netDiff": -0.513,
+          "winDiff": -0.011
+        },
+        "boss_ledger": {
+          "n": 918,
+          "netDiff": -0.118,
+          "winDiff": 0.001
+        },
+        "masked_salon": {
+          "n": 531,
+          "netDiff": 1.102,
+          "winDiff": 0.019
+        },
+        "fallen_low_table": {
+          "n": 198,
+          "netDiff": 0.268,
+          "winDiff": -0.02
+        },
+        "contract_1": {
+          "n": 371,
+          "netDiff": -3.321,
+          "winDiff": -0.027
+        },
+        "velvet_arena": {
+          "n": 323,
+          "netDiff": -0.04,
+          "winDiff": -0.009
+        },
+        "coronet_table": {
+          "n": 112,
+          "netDiff": -2.286,
+          "winDiff": 0.018
+        },
+        "seals_table": {
+          "n": 53,
+          "netDiff": -4.358,
+          "winDiff": 0
+        },
+        "cinder_low_table": {
+          "n": 129,
+          "netDiff": -0.349,
+          "winDiff": -0.07
+        },
+        "underlamp_table": {
+          "n": 45,
+          "netDiff": 0.689,
+          "winDiff": 0.022
+        },
+        "crown_inquest": {
+          "n": 184,
+          "netDiff": 1.962,
+          "winDiff": -0.005
+        },
+        "crown_table": {
+          "n": 29,
+          "netDiff": -9.207,
+          "winDiff": -0.069
+        }
+      }
+    },
+    "unmask|mixed_aggressive": {
+      "role": "parent reference (not matched)",
+      "n": 3870,
+      "sourceRuns": 963,
+      "tableNetDiff": {
+        "mean": -0.057,
+        "ci95": [
+          -1.11,
+          1
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.006,
+          0.007
+        ]
+      },
+      "winDiff": {
+        "mean": -0.003,
+        "ci95": [
+          -0.012,
+          0.008
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.32,
+        "ci95": [
+          -0.35,
+          -0.29
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.666,
+        "ci95": [
+          -0.706,
+          -0.629
+        ]
+      },
+      "byTable": {
+        "contract_2": {
+          "n": 977,
+          "netDiff": 0.189,
+          "winDiff": -0.001
+        },
+        "boss_ledger": {
+          "n": 918,
+          "netDiff": -1.682,
+          "winDiff": -0.009
+        },
+        "masked_salon": {
+          "n": 531,
+          "netDiff": 2.239,
+          "winDiff": 0.011
+        },
+        "fallen_low_table": {
+          "n": 198,
+          "netDiff": -0.303,
+          "winDiff": 0
+        },
+        "contract_1": {
+          "n": 371,
+          "netDiff": 1.606,
+          "winDiff": 0.019
+        },
+        "velvet_arena": {
+          "n": 323,
+          "netDiff": -1.359,
+          "winDiff": -0.012
+        },
+        "coronet_table": {
+          "n": 112,
+          "netDiff": 3.598,
+          "winDiff": 0.027
+        },
+        "seals_table": {
+          "n": 53,
+          "netDiff": 0.396,
+          "winDiff": -0.019
+        },
+        "cinder_low_table": {
+          "n": 129,
+          "netDiff": 0.031,
+          "winDiff": -0.039
+        },
+        "underlamp_table": {
+          "n": 45,
+          "netDiff": 1.156,
+          "winDiff": -0.022
+        },
+        "crown_inquest": {
+          "n": 184,
+          "netDiff": -0.663,
+          "winDiff": -0.016
+        },
+        "crown_table": {
+          "n": 29,
+          "netDiff": -17.414,
+          "winDiff": -0.103
+        }
+      }
+    },
+    "unmask|tight": {
+      "role": "parent reference (not matched)",
+      "n": 3870,
+      "sourceRuns": 963,
+      "tableNetDiff": {
+        "mean": -0.011,
+        "ci95": [
+          -0.486,
+          0.505
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.005,
+          0.002
+        ]
+      },
+      "winDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.004,
+          0.01
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.7,
+        "ci95": [
+          -0.73,
+          -0.671
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "contract_2": {
+          "n": 977,
+          "netDiff": -0.493,
+          "winDiff": 0
+        },
+        "boss_ledger": {
+          "n": 918,
+          "netDiff": 0.157,
+          "winDiff": -0.005
+        },
+        "masked_salon": {
+          "n": 531,
+          "netDiff": 0.279,
+          "winDiff": 0.006
+        },
+        "fallen_low_table": {
+          "n": 198,
+          "netDiff": -0.025,
+          "winDiff": 0.005
+        },
+        "contract_1": {
+          "n": 371,
+          "netDiff": -1.213,
+          "winDiff": 0.022
+        },
+        "velvet_arena": {
+          "n": 323,
+          "netDiff": 1.536,
+          "winDiff": 0.015
+        },
+        "coronet_table": {
+          "n": 112,
+          "netDiff": 1.33,
+          "winDiff": -0.009
+        },
+        "seals_table": {
+          "n": 53,
+          "netDiff": -0.377,
+          "winDiff": 0.038
+        },
+        "cinder_low_table": {
+          "n": 129,
+          "netDiff": -0.101,
+          "winDiff": 0
+        },
+        "underlamp_table": {
+          "n": 45,
+          "netDiff": 0.511,
+          "winDiff": 0
+        },
+        "crown_inquest": {
+          "n": 184,
+          "netDiff": 0.277,
+          "winDiff": 0
+        },
+        "crown_table": {
+          "n": 29,
+          "netDiff": -2.931,
+          "winDiff": -0.034
+        }
+      }
+    },
+    "fate_exchange|skilled": {
+      "role": "parent reference (not matched)",
+      "n": 11910,
+      "sourceRuns": 991,
+      "tableNetDiff": {
+        "mean": 0.663,
+        "ci95": [
+          -0.022,
+          1.42
+        ]
+      },
+      "deathDiff": {
+        "mean": -0.002,
+        "ci95": [
+          -0.006,
+          0.002
+        ]
+      },
+      "winDiff": {
+        "mean": 0.001,
+        "ci95": [
+          -0.005,
+          0.008
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.269,
+        "ci95": [
+          -0.287,
+          -0.249
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.647,
+        "ci95": [
+          -0.674,
+          -0.621
+        ]
+      },
+      "byTable": {
+        "contract_1": {
+          "n": 838,
+          "netDiff": -0.415,
+          "winDiff": 0
+        },
+        "contract_2": {
+          "n": 2548,
+          "netDiff": 0.484,
+          "winDiff": 0.005
+        },
+        "boss_ledger": {
+          "n": 2606,
+          "netDiff": 0.553,
+          "winDiff": 0
+        },
+        "masked_salon": {
+          "n": 1632,
+          "netDiff": 2.128,
+          "winDiff": 0.002
+        },
+        "velvet_arena": {
+          "n": 1191,
+          "netDiff": -1.126,
+          "winDiff": -0.004
+        },
+        "fallen_low_table": {
+          "n": 552,
+          "netDiff": 0.328,
+          "winDiff": 0.002
+        },
+        "cinder_low_table": {
+          "n": 447,
+          "netDiff": 0.523,
+          "winDiff": 0.034
+        },
+        "crown_inquest": {
+          "n": 805,
+          "netDiff": 1.694,
+          "winDiff": -0.001
+        },
+        "coronet_table": {
+          "n": 533,
+          "netDiff": -1.578,
+          "winDiff": -0.006
+        },
+        "seals_table": {
+          "n": 326,
+          "netDiff": 3.847,
+          "winDiff": 0.018
+        },
+        "crown_table": {
+          "n": 254,
+          "netDiff": 4.736,
+          "winDiff": -0.024
+        },
+        "underlamp_table": {
+          "n": 178,
+          "netDiff": 0.208,
+          "winDiff": -0.039
+        }
+      }
+    },
+    "fate_exchange|mixed_aggressive": {
+      "role": "parent reference (not matched)",
+      "n": 11910,
+      "sourceRuns": 991,
+      "tableNetDiff": {
+        "mean": 0.378,
+        "ci95": [
+          -0.361,
+          1.291
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.002,
+        "ci95": [
+          -0.002,
+          0.007
+        ]
+      },
+      "winDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.004,
+          0.01
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.254,
+        "ci95": [
+          -0.275,
+          -0.233
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": -0.668,
+        "ci95": [
+          -0.697,
+          -0.639
+        ]
+      },
+      "byTable": {
+        "contract_1": {
+          "n": 838,
+          "netDiff": 0.434,
+          "winDiff": 0.014
+        },
+        "contract_2": {
+          "n": 2548,
+          "netDiff": 0.195,
+          "winDiff": 0.003
+        },
+        "boss_ledger": {
+          "n": 2606,
+          "netDiff": 0.602,
+          "winDiff": 0.003
+        },
+        "masked_salon": {
+          "n": 1632,
+          "netDiff": 0.515,
+          "winDiff": -0.002
+        },
+        "velvet_arena": {
+          "n": 1191,
+          "netDiff": -0.857,
+          "winDiff": -0.003
+        },
+        "fallen_low_table": {
+          "n": 552,
+          "netDiff": 0.063,
+          "winDiff": -0.018
+        },
+        "cinder_low_table": {
+          "n": 447,
+          "netDiff": 0.691,
+          "winDiff": 0.034
+        },
+        "crown_inquest": {
+          "n": 805,
+          "netDiff": -0.465,
+          "winDiff": 0.001
+        },
+        "coronet_table": {
+          "n": 533,
+          "netDiff": -0.636,
+          "winDiff": -0.009
+        },
+        "seals_table": {
+          "n": 326,
+          "netDiff": 5.015,
+          "winDiff": 0.018
+        },
+        "crown_table": {
+          "n": 254,
+          "netDiff": 3.606,
+          "winDiff": 0.012
+        },
+        "underlamp_table": {
+          "n": 178,
+          "netDiff": 0.382,
+          "winDiff": 0.022
+        }
+      }
+    },
+    "fate_exchange|tight": {
+      "role": "parent reference (not matched)",
+      "n": 11910,
+      "sourceRuns": 991,
+      "tableNetDiff": {
+        "mean": -0.627,
+        "ci95": [
+          -1.155,
+          -0.074
+        ]
+      },
+      "deathDiff": {
+        "mean": 0.007,
+        "ci95": [
+          0.004,
+          0.011
+        ]
+      },
+      "winDiff": {
+        "mean": 0.003,
+        "ci95": [
+          -0.003,
+          0.008
+        ]
+      },
+      "aetherDiff": {
+        "mean": -0.655,
+        "ci95": [
+          -0.679,
+          -0.631
+        ]
+      },
+      "laterCastsDiff": {
+        "mean": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      "byTable": {
+        "contract_1": {
+          "n": 838,
+          "netDiff": -0.347,
+          "winDiff": 0.032
+        },
+        "contract_2": {
+          "n": 2548,
+          "netDiff": -0.14,
+          "winDiff": 0.01
+        },
+        "boss_ledger": {
+          "n": 2606,
+          "netDiff": -0.153,
+          "winDiff": 0.003
+        },
+        "masked_salon": {
+          "n": 1632,
+          "netDiff": -0.859,
+          "winDiff": -0.001
+        },
+        "velvet_arena": {
+          "n": 1191,
+          "netDiff": -2.056,
+          "winDiff": -0.001
+        },
+        "fallen_low_table": {
+          "n": 552,
+          "netDiff": 0.045,
+          "winDiff": -0.013
+        },
+        "cinder_low_table": {
+          "n": 447,
+          "netDiff": 0.911,
+          "winDiff": 0.031
+        },
+        "crown_inquest": {
+          "n": 805,
+          "netDiff": 0.506,
+          "winDiff": -0.01
+        },
+        "coronet_table": {
+          "n": 533,
+          "netDiff": -5.831,
+          "winDiff": -0.043
+        },
+        "seals_table": {
+          "n": 326,
+          "netDiff": -1.534,
+          "winDiff": -0.015
+        },
+        "crown_table": {
+          "n": 254,
+          "netDiff": 0.78,
+          "winDiff": 0.02
+        },
+        "underlamp_table": {
+          "n": 178,
+          "netDiff": 0.011,
+          "winDiff": 0.011
+        }
+      }
+    }
+  },
+  "seconds": 1534.4
+}
