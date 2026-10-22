@@ -116,4 +116,22 @@ describe('research-only Aether variants (design v1.1 §04)', () => {
     expect(tokens).toBeGreaterThan(0);
     expect(discounted).toBeGreaterThan(0);
   }, 120_000);
+
+  it('a pending reserve or token survives a save/reload unchanged (negative control: reload during pending reward)', () => {
+    let checked = 0;
+    for (let seed = 1; seed <= 40 && checked < 3; seed++) {
+      for (const v of ['ember_reserve_on_spend', 'ember_next_hand_discount'] as const) {
+        const hs = hands(seed, v);
+        for (const h of hs) {
+          if (sessionStatus(h) !== 'handComplete' || !h.table.seats.some((x) => x.emberReserve || x.emberDiscount)) continue;
+          const reloaded = JSON.parse(JSON.stringify(h)) as TableSession;
+          expect(startNextHand(reloaded)).toEqual(startNextHand(h));
+          checked++;
+          break;
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  }, 120_000);
 });
+
