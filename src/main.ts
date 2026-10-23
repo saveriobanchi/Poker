@@ -37,7 +37,7 @@ import { type BackId, type BackgroundId, BACKGROUNDS, backgroundIntro, backState
 import { loadPlaytestLog, Playtest, playtestEnabled, pt, setPlaytest, summarizePlaytest } from './ui/playtest';
 import { icon, iconSvg } from './ui/icons';
 import { Sound } from './ui/sound';
-import { PORTRAIT_FILES, portraitFor, RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
+import { BACK_FILES, PORTRAIT_FILES, portraitFor, RENDER_ZOOM, TABLE_HEIGHT, TABLE_WIDTH, TableScene } from './ui/TableScene';
 
 const PREFS_KEY = 'lastWager.prefs.v1';
 /** P3 archives of a Fallen Wagerer (kept by the previous build), importable once into a P4 run. */
@@ -391,6 +391,7 @@ class Game {
       freshEvents,
       seatStatus: s.world.characters.map((c) => c.status),
       stacks: tableStacks(s),
+      back: loadPresentation(this.store, run.seed)?.back ?? 'standard',
     });
     const cap = s.config.maxHands ? `/${s.config.maxHands}` : '';
     const full = `${s.config.label}, hand ${s.handNumber}${cap}, blinds ${t.hand.setup.smallBlind}/${t.hand.setup.bigBlind} · ${routeLine(run)}`;
@@ -535,11 +536,11 @@ class Game {
     this.evolveOpen = false;
     const legacy = loadLegacy(this.store);
     const bgs = unlockedBackgrounds(legacy);
-    const backs = backStates(legacy);
+    const backs = backStates(legacy, BACK_FILES);
     const start = (background: BackgroundId, back: BackId) => {
       // The run is created exactly as always; the presentation is stored beside it, never inside it.
       const run = createRun(randomSeed());
-      savePresentation(this.store, choosePresentation(run.seed, legacy, background, back));
+      savePresentation(this.store, choosePresentation(run.seed, legacy, background, back, BACK_FILES));
       this.set(run);
     };
     if (bgs.length === 1 && !backs.some((b) => b.id !== 'standard' && b.unlocked)) return start('unmarked', 'standard');
@@ -631,6 +632,12 @@ await Promise.all(
 try {
   const list = (await (await fetch('assets/portraits/index.json')).json()) as string[];
   if (Array.isArray(list)) PORTRAIT_FILES.splice(0, PORTRAIT_FILES.length, ...list);
+} catch {
+  /* offline first load: keep the built-in list */
+}
+try {
+  const backs = (await (await fetch('assets/backs/index.json')).json()) as string[];
+  if (Array.isArray(backs)) BACK_FILES.splice(0, BACK_FILES.length, ...backs);
 } catch {
   /* offline first load: keep the built-in list */
 }

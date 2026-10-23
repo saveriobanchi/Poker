@@ -153,7 +153,7 @@
       "license": "project original pending independent generation",
       "review": "Replace provisional vector, match painted cast",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
@@ -170,7 +170,7 @@
       "status": "needed",
       "license": "project original pending independent generation",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
@@ -187,7 +187,7 @@
       "status": "needed",
       "license": "project original pending independent generation",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
@@ -204,7 +204,7 @@
       "status": "needed",
       "license": "project original pending independent generation",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
@@ -221,7 +221,7 @@
       "status": "needed",
       "license": "project original pending independent generation",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
@@ -239,7 +239,7 @@
       "origin": "not yet generated",
       "license": "project original (pending source generation)",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
@@ -257,11 +257,61 @@
       "origin": "not yet generated",
       "license": "project original (pending source generation)",
       "check": {
-        "date": "2026-10-22",
+        "date": "2026-10-23",
         "sha256": null,
         "problems": [],
         "detail": "source file not delivered",
         "provenance": null
+      }
+    },
+    {
+      "id": "card.back.cinder_etch",
+      "source": "art/incoming/p8/back-cinder.png",
+      "runtime": "public/assets/backs/cinder_etch.webp",
+      "width": 300,
+      "height": 420,
+      "alpha": true,
+      "origin": "ChatGPT visual direction v1.2 (programmatic vector art)",
+      "license": "project original",
+      "status": "delivered",
+      "check": {
+        "date": "2026-10-23",
+        "sha256": "1155c010ad5cf174962d7673cdd72a241fbd3449cb1fa9b3ffe2a48122531f60",
+        "problems": [],
+        "edge_contrast": 3.73,
+        "remask": {
+          "step": "alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)",
+          "original": "art/incoming/p8/original/back-cinder.png",
+          "original_sha256": "29303bc57540b3b7f12498a9269f7864cd80be8c623751bc0a8959c87339be94",
+          "result_sha256": "1155c010ad5cf174962d7673cdd72a241fbd3449cb1fa9b3ffe2a48122531f60",
+          "date": "2026-10-23"
+        },
+        "detail": "optional cosmetic: selectable once unlocked by the testament; same back on every face-down card"
+      }
+    },
+    {
+      "id": "card.back.crown_filigree",
+      "source": "art/incoming/p8/back-crown.png",
+      "runtime": "public/assets/backs/crown_filigree.webp",
+      "width": 300,
+      "height": 420,
+      "alpha": true,
+      "origin": "ChatGPT visual direction v1.2 (programmatic vector art)",
+      "license": "project original",
+      "status": "delivered",
+      "check": {
+        "date": "2026-10-23",
+        "sha256": "2982e3dd073b1bd254b0f6d2301c623a2807ca74463fc3e1ac5ea70b0b3ca170",
+        "problems": [],
+        "edge_contrast": 5.28,
+        "remask": {
+          "step": "alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)",
+          "original": "art/incoming/p8/original/back-crown.png",
+          "original_sha256": "64c8df7ed8396afbf9d9cf858a6f44e1452898cfb1dcf5e7eaaa395e2f45c613",
+          "result_sha256": "2982e3dd073b1bd254b0f6d2301c623a2807ca74463fc3e1ac5ea70b0b3ca170",
+          "date": "2026-10-23"
+        },
+        "detail": "optional cosmetic: selectable once unlocked by the testament; same back on every face-down card"
       }
     }
   ]

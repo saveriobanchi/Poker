@@ -107,7 +107,53 @@ def near_duplicates(paths: dict[str, Path]) -> dict[str, list[str]]:
     return out
 
 
-def check_back(path: Path, standard: Image.Image, felt_lum: float) -> list[str]:
+def _rel_lum(rgb) -> float:
+    def lin(c: float) -> float:
+        c /= 255
+        return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    r, g, b = rgb[:3]
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+
+
+def rim_contrast(im: Image.Image, felt_rgb) -> float:
+    """WCAG 1.4.11 non-text contrast of a card's edge against the felt: the brightest tenth of the
+    opaque outer 16px band (the rim line that draws the card's boundary) versus the felt's mean colour."""
+    a = im.getchannel('A')
+    w, h = im.size
+    rim = sorted(_rel_lum(im.getpixel((x, y))) for x in range(w) for y in range(h) if a.getpixel((x, y)) >= 250 and (x < 16 or x >= w - 16 or y < 16 or y >= h - 16))
+    p90 = rim[int(len(rim) * 0.9)] if rim else 0.0
+    return (p90 + 0.05) / (_rel_lum(felt_rgb) + 0.05)
+
+
+def remask_back(path: Path, standard: Image.Image, root: Path) -> dict | None:
+    """Applies the canonical back's alpha to a delivered back whose silhouette differs (hand-off v1.2 §B).
+    The original is kept under art/incoming/p8/original/ and the step is recorded beside the file.
+    Only ever removes coverage: refuses if the new art would need pixels it never painted."""
+    im = Image.open(path).convert('RGBA')
+    sa = standard.getchannel('A')
+    if im.size != standard.size or im.getchannel('A').tobytes() == sa.tobytes():
+        return None
+    a = im.getchannel('A')
+    if any(x > 0 and y == 0 for x, y in zip(sa.tobytes(), a.tobytes())):
+        raise SystemExit(f'{path.name}: the canonical silhouette covers pixels this art leaves empty; remask refused')
+    keep = path.parent / 'original' / path.name
+    keep.parent.mkdir(exist_ok=True)
+    if not keep.exists():
+        keep.write_bytes(path.read_bytes())
+    out = im.copy()
+    out.putalpha(sa)
+    if out.tobytes() != out.rotate(180).tobytes():
+        raise SystemExit(f'{path.name}: remasked result is not exactly 180-degree symmetric; refused')
+    out.save(path)
+    record = {'step': 'alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)', 'original': str(keep.relative_to(root)), 'original_sha256': sha256(keep), 'result_sha256': sha256(path), 'date': datetime.date.today().isoformat()}
+    path.with_suffix('.remask.json').write_text(json.dumps(record, indent=2) + '\n')
+    return record
+
+
+BACK_IDS = {'back-cinder': 'cinder_etch', 'back-crown': 'crown_filigree'}
+
+
+def check_back(path: Path, standard: Image.Image, felt_rgb) -> list[str]:
     problems = []
     im = Image.open(path)
     if im.size != (300, 420) or im.mode != 'RGBA':
@@ -116,9 +162,9 @@ def check_back(path: Path, standard: Image.Image, felt_lum: float) -> list[str]:
         problems.append('not exactly symmetric under 180-degree rotation')
     if im.getchannel('A').tobytes() != standard.getchannel('A').tobytes():
         problems.append('alpha silhouette differs from the standard back')
-    lum = ImageStat.Stat(im.convert('L'), mask=im.getchannel('A')).mean[0]
-    if abs(lum - felt_lum) < 25:
-        problems.append(f'too little contrast with the felt (luminance {lum:.0f} vs {felt_lum:.0f})')
+    ratio = rim_contrast(im, felt_rgb)
+    if ratio < 3:
+        problems.append(f'card edge contrast with the felt {ratio:.2f}:1, below the 3:1 of WCAG 1.4.11')
     return problems
 
 
@@ -158,6 +204,7 @@ def main() -> int:
     ap.add_argument('--pack', action='store_true', help='alias of --apply (P8 name)')
     ap.add_argument('--approve', action='append', default=[], help='runtime name approved by a person after the 64 px and phone review')
     ap.add_argument('--revert', action='append', default=[], help='runtime name to withdraw (monogram restored)')
+    ap.add_argument('--remask-backs', action='store_true', help='apply the canonical alpha to delivered backs whose silhouette differs (recorded, originals kept)')
     ap.add_argument('--reviewer', default='')
     ap.add_argument('--note', default='')
     ap.add_argument('--proof', default='docs/briefs/009/portrait-64-proof.png')
@@ -251,18 +298,47 @@ def main() -> int:
     standard_path = root / 'art/source/chatgpt-p3/back-300.png'
     felt_path = root / 'public/assets/felt.webp'
     incoming = root / 'art/incoming/p8'
+    backs_ready: list[str] = []
     if standard_path.exists() and felt_path.exists():
         standard = Image.open(standard_path).convert('RGBA')
-        felt_lum = ImageStat.Stat(Image.open(felt_path).convert('L')).mean[0]
+        felt = Image.open(felt_path).convert('RGB')
+        fw, fh = felt.size
+        felt_rgb = ImageStat.Stat(felt.crop((int(fw * 0.15), int(fh * 0.3), int(fw * 0.85), int(fh * 0.62)))).mean
         for b in sorted(incoming.glob('back-*.png')) if incoming.exists() else []:
-            problems = check_back(b, standard, felt_lum)
-            report['backs'].append({'source': str(b.relative_to(root)), 'status': 'rejected' if problems else 'delivered', 'problems': problems})
+            remask = remask_back(b, standard, root) if args.remask_backs else None
+            problems = check_back(b, standard, felt_rgb)
+            entry = {'source': str(b.relative_to(root)), 'id': BACK_IDS.get(b.stem), 'sha256': sha256(b), 'status': 'rejected' if problems else 'delivered', 'problems': problems, 'edge_contrast': round(rim_contrast(Image.open(b).convert('RGBA'), felt_rgb), 2)}
+            rec = b.with_suffix('.remask.json')
+            if rec.exists():
+                entry['remask'] = json.loads(rec.read_text())
+            report['backs'].append(entry)
+            if apply and not problems and BACK_IDS.get(b.stem):
+                backs_dir = root / 'public/assets/backs'
+                backs_dir.mkdir(parents=True, exist_ok=True)
+                Image.open(b).convert('RGBA').save(backs_dir / f'{BACK_IDS[b.stem]}.webp', 'WEBP', quality=90, method=6)
+                backs_ready.append(BACK_IDS[b.stem])
     if not report['backs']:
         report['backs'].append({'note': 'no cosmetic back delivered (art/incoming/p8/back-cinder.png, back-crown.png); both stay art pending'})
 
     if apply:
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / 'index.json').write_text(json.dumps(sorted(index)) + '\n')
+        backs_dir = root / 'public/assets/backs'
+        backs_dir.mkdir(parents=True, exist_ok=True)
+        for f in backs_dir.glob('*.webp'):
+            if f.stem not in backs_ready:
+                f.unlink()
+        (backs_dir / 'index.json').write_text(json.dumps(sorted(backs_ready)) + '\n')
+        for e in report['backs']:
+            if not e.get('id'):
+                continue
+            aid = f"card.back.{e['id']}"
+            asset = next((a for a in manifest['assets'] if a.get('id') == aid), None)
+            if asset is None:
+                asset = {'id': aid, 'source': e['source'], 'runtime': f"public/assets/backs/{e['id']}.webp", 'width': 300, 'height': 420, 'alpha': True, 'origin': 'ChatGPT visual direction v1.2 (programmatic vector art)', 'license': 'project original'}
+                manifest['assets'].append(asset)
+            asset['status'] = e['status']
+            asset['check'] = {'date': today, 'sha256': e['sha256'], 'problems': e['problems'], 'edge_contrast': e['edge_contrast'], 'remask': e.get('remask'), 'detail': 'optional cosmetic: selectable once unlocked by the testament; same back on every face-down card'}
         by_source = {e['source']: e for e in report['portraits']}
         for asset in manifest['assets']:
             e = by_source.get(asset.get('source'))

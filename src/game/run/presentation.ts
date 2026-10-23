@@ -36,15 +36,18 @@ export function unlockedBackgrounds(legacy: Legacy): BackgroundId[] {
   return out;
 }
 
-/** Card backs: unlocked by the testament, but usable only once their art exists and passes the symmetry check. */
-export function backStates(legacy: Legacy): { id: BackId; title: string; unlocked: boolean; artReady: boolean }[] {
+/**
+ * Card backs: unlocked by the testament, but usable only once their art exists and has passed
+ * scripts/check-art.py (symmetry, canonical silhouette, edge contrast): `packed` is that runtime list.
+ */
+export function backStates(legacy: Legacy, packed: readonly string[] = []): { id: BackId; title: string; unlocked: boolean; artReady: boolean }[] {
   const e = legacy.entries;
   const unlocked: Record<BackId, boolean> = {
     standard: true,
     cinder_etch: e.some((x) => x.ending === 'under_living_end'),
     crown_filigree: e.some((x) => x.ending === 'the_ledger_unbound'),
   };
-  return BACKS.map((b) => ({ id: b.id, title: b.title, unlocked: unlocked[b.id], artReady: b.status === 'integrated' }));
+  return BACKS.map((b) => ({ id: b.id, title: b.title, unlocked: unlocked[b.id], artReady: b.status === 'integrated' || packed.includes(b.id) }));
 }
 
 /** Prose variants the testament makes available. */
@@ -59,9 +62,9 @@ export function unlockedVariants(legacy: Legacy): VariantId[] {
  * The presentation for a new run. The variant is picked from the run seed's
  * parity — a read of the seed, never a draw from any game RNG.
  */
-export function choosePresentation(runSeed: number, legacy: Legacy, background: BackgroundId = 'unmarked', back: BackId = 'standard'): Presentation {
+export function choosePresentation(runSeed: number, legacy: Legacy, background: BackgroundId = 'unmarked', back: BackId = 'standard', packed: readonly string[] = []): Presentation {
   const bg = unlockedBackgrounds(legacy).includes(background) ? background : 'unmarked';
-  const usableBack = backStates(legacy).find((b) => b.id === back && b.unlocked && b.artReady) ? back : 'standard';
+  const usableBack = backStates(legacy, packed).find((b) => b.id === back && b.unlocked && b.artReady) ? back : 'standard';
   const variants = unlockedVariants(legacy);
   const variant = variants.length ? variants[runSeed % variants.length] : null;
   return { runSeed, background: bg, back: usableBack, variant };

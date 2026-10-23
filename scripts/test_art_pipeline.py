@@ -34,7 +34,7 @@ def bust(path: Path, hue: int, size=(512, 512), mode='RGBA', opaque_bg=False, sh
 class ArtPipeline(unittest.TestCase):
     def setUp(self):
         self.root = Path(tempfile.mkdtemp())
-        for rel in ['src/game/run/data/p8-visual-status.json', 'docs/asset-manifest.json', 'art/source/chatgpt-p3/adjudicator.png']:
+        for rel in ['src/game/run/data/p8-visual-status.json', 'docs/asset-manifest.json', 'art/source/chatgpt-p3/adjudicator.png', 'art/source/chatgpt-p3/back-300.png', 'public/assets/felt.webp']:
             (self.root / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REPO / rel, self.root / rel)
         (self.root / 'public/assets/portraits').mkdir(parents=True)
@@ -119,6 +119,51 @@ class ArtPipeline(unittest.TestCase):
         self.assertEqual(self.statuses()[SOURCES[0]['path']], 'rejected')
         self.assertIn('adjudicator', self.index())
         self.assertTrue((self.root / 'public/assets/portraits/adjudicator.webp').exists())
+
+
+    def back(self, name, rim, fill, full_rect=False):
+        std = Image.open(self.root / 'art/source/chatgpt-p3/back-300.png').convert('RGBA')
+        im = Image.new('RGBA', (300, 420), (0, 0, 0, 0))
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, 299, 419), fill=rim)
+        d.rectangle((18, 18, 281, 401), fill=fill)
+        if not full_rect:
+            im.putalpha(std.getchannel('A'))
+        p = self.root / f'art/incoming/p8/{name}.png'
+        p.parent.mkdir(parents=True, exist_ok=True)
+        im.save(p)
+        return p
+
+    def backs(self):
+        return {Path(b['source']).stem: b for b in json.loads((self.root / 'docs/reports/art-status-p9.json').read_text())['backs'] if 'source' in b}
+
+    def test_back_gates_edge_contrast_and_packs_passing_backs(self):
+        self.back('back-cinder', (230, 200, 120, 255), (40, 20, 18, 255))  # bright rim: passes
+        self.back('back-crown', (24, 46, 41, 255), (24, 46, 41, 255))  # rim the colour of the felt: fails
+        self.run_art('--apply')
+        b = self.backs()
+        self.assertEqual(b['back-cinder']['status'], 'delivered', b['back-cinder'])
+        self.assertEqual(b['back-crown']['status'], 'rejected')
+        self.assertTrue(any('3:1' in x for x in b['back-crown']['problems']))
+        self.assertEqual(json.loads((self.root / 'public/assets/backs/index.json').read_text()), ['cinder_etch'])
+
+    def test_remask_applies_the_canonical_alpha_keeps_the_original_and_records_it(self):
+        p = self.back('back-cinder', (230, 200, 120, 255), (40, 20, 18, 255), full_rect=True)
+        self.run_art()
+        self.assertEqual(self.backs()['back-cinder']['status'], 'rejected')
+        self.run_art('--apply', '--remask-backs')
+        b = self.backs()['back-cinder']
+        self.assertEqual(b['status'], 'delivered', b)
+        self.assertTrue((p.parent / 'original/back-cinder.png').exists())
+        self.assertTrue(b['remask']['original_sha256'] != b['remask']['result_sha256'])
+
+    def test_remask_refuses_art_smaller_than_the_canonical_silhouette(self):
+        p = self.back('back-cinder', (230, 200, 120, 255), (40, 20, 18, 255))
+        im = Image.open(p)
+        im.putalpha(Image.new('L', (300, 420), 0))
+        im.save(p)
+        r = subprocess.run([sys.executable, '-I', str(SCRIPT), '--root', str(self.root), '--remask-backs'], capture_output=True, text=True)
+        self.assertNotEqual(r.returncode, 0)
 
 
 if __name__ == '__main__':

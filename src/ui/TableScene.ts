@@ -46,6 +46,8 @@ export interface TableModel {
   seatStatus: ('seated' | 'exited' | 'dead')[];
   /** Table stacks after settlement and any Last Claim transfers. */
   stacks: number[];
+  /** Cosmetic back for every face-down card at the table (never per seat). */
+  back?: string;
 }
 
 interface SeatLayout {
@@ -71,6 +73,8 @@ const LAYOUT_2 = [LAYOUT_4[0], LAYOUT_4[2]];
 
 /** Runtime portrait files available (public/assets/portraits/index.json), set before the game boots. */
 export const PORTRAIT_FILES: string[] = ['wagerer', 'vesper', 'oracle', 'corvin', 'adjudicator'];
+/** Cosmetic card backs that passed the art gate (public/assets/backs/index.json). */
+export const BACK_FILES: string[] = [];
 
 /** Portrait file for a character id, or null for a monogram. */
 export function portraitFor(id: string): string | null {
@@ -86,6 +90,8 @@ export class TableScene extends Phaser.Scene {
   private shownBoard = 0;
   private ready = false;
   private masks: Phaser.GameObjects.Graphics[] = [];
+  /** Texture for face-down cards when a cosmetic back is chosen; null = the standard back (frame 52). */
+  private backKey: string | null = null;
   /** Reduce motion (system setting or the HUD toggle): no pulses, flips or slides; tells stay readable. */
   reduceMotion = false;
 
@@ -100,6 +106,7 @@ export class TableScene extends Phaser.Scene {
     this.load.image('dealer', 'assets/dealer-button.png');
     // Only portraits packed by scripts/check-art.py are listed; everyone else keeps a gold monogram.
     for (const id of PORTRAIT_FILES) this.load.image(`portrait-${id}`, `assets/portraits/${id}.webp`);
+    for (const id of BACK_FILES) this.load.image(`back-${id}`, `assets/backs/${id}.webp`);
   }
 
   create(): void {
@@ -113,6 +120,7 @@ export class TableScene extends Phaser.Scene {
   renderModel(model: TableModel): void {
     this.pending = model;
     if (!this.ready) return;
+    this.backKey = model.back && model.back !== 'standard' && this.textures.exists(`back-${model.back}`) ? `back-${model.back}` : null;
     this.root?.destroy();
     for (const m of this.masks) m.destroy();
     this.masks = [];
@@ -410,7 +418,7 @@ export class TableScene extends Phaser.Scene {
   private card(x: number, y: number, frame: number, scale: number): Phaser.GameObjects.Container {
     const shadow = this.add.graphics();
     shadow.fillStyle(0x000000, 0.35).fillRoundedRect(-CARD_W / 2 + 1.5, -CARD_H / 2 + 2.5, CARD_W, CARD_H, 5);
-    const img = this.add.image(0, 0, 'cards', frame).setDisplaySize(CARD_W, CARD_H);
+    const img = (frame === CARD_BACK_FRAME && this.backKey ? this.add.image(0, 0, this.backKey) : this.add.image(0, 0, 'cards', frame)).setDisplaySize(CARD_W, CARD_H);
     return this.add.container(x, y, [shadow, img]).setScale(scale);
   }
 }

@@ -104,3 +104,27 @@ describe('World Testament isolation (structural)', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe('cosmetic card backs (design v1.1 §07, visual direction v1.2)', () => {
+  it('a back is choosable only when unlocked by the testament and packed by the art gate', () => {
+    const l = fullTestament();
+    expect(backStates(l, ['cinder_etch']).map((b) => [b.id, b.unlocked, b.artReady])).toEqual([
+      ['standard', true, true],
+      ['cinder_etch', true, true],
+      ['crown_filigree', true, false],
+    ]);
+    expect(choosePresentation(5, l, 'unmarked', 'cinder_etch', ['cinder_etch']).back).toBe('cinder_etch');
+    expect(choosePresentation(5, l, 'unmarked', 'crown_filigree', ['cinder_etch']).back).toBe('standard');
+    // Not unlocked: an empty testament cannot use a packed back.
+    expect(choosePresentation(5, { version: 1, entries: [] }, 'unmarked', 'cinder_etch', ['cinder_etch']).back).toBe('standard');
+  });
+
+  it('the chosen back never reaches the run: a run plays byte-identically whatever back is chosen', () => {
+    const l = fullTestament();
+    const plain = trajectory(31);
+    for (const back of ['cinder_etch', 'crown_filigree'] as const) {
+      choosePresentation(31, l, 'unmarked', back, ['cinder_etch', 'crown_filigree']);
+      expect(trajectory(31)).toEqual(plain);
+    }
+  }, 240_000);
+});

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-22",
+  "generated": "2026-10-23",
   "portraits": [
     {
       "character": "Ledger Adjudicator",
@@ -60,7 +60,34 @@
   ],
   "backs": [
     {
-      "note": "no cosmetic back delivered (art/incoming/p8/back-cinder.png, back-crown.png); both stay art pending"
+      "source": "art/incoming/p8/back-cinder.png",
+      "id": "cinder_etch",
+      "sha256": "1155c010ad5cf174962d7673cdd72a241fbd3449cb1fa9b3ffe2a48122531f60",
+      "status": "delivered",
+      "problems": [],
+      "edge_contrast": 3.73,
+      "remask": {
+        "step": "alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)",
+        "original": "art/incoming/p8/original/back-cinder.png",
+        "original_sha256": "29303bc57540b3b7f12498a9269f7864cd80be8c623751bc0a8959c87339be94",
+        "result_sha256": "1155c010ad5cf174962d7673cdd72a241fbd3449cb1fa9b3ffe2a48122531f60",
+        "date": "2026-10-23"
+      }
+    },
+    {
+      "source": "art/incoming/p8/back-crown.png",
+      "id": "crown_filigree",
+      "sha256": "2982e3dd073b1bd254b0f6d2301c623a2807ca74463fc3e1ac5ea70b0b3ca170",
+      "status": "delivered",
+      "problems": [],
+      "edge_contrast": 5.28,
+      "remask": {
+        "step": "alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)",
+        "original": "art/incoming/p8/original/back-crown.png",
+        "original_sha256": "64c8df7ed8396afbf9d9cf858a6f44e1452898cfb1dcf5e7eaaa395e2f45c613",
+        "result_sha256": "2982e3dd073b1bd254b0f6d2301c623a2807ca74463fc3e1ac5ea70b0b3ca170",
+        "date": "2026-10-23"
+      }
     }
   ]
 }
