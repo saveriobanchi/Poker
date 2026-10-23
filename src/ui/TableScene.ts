@@ -90,6 +90,8 @@ export class TableScene extends Phaser.Scene {
   private shownBoard = 0;
   private ready = false;
   private masks: Phaser.GameObjects.Graphics[] = [];
+  /** Hand whose pot has already been sent to its winners (the chips travel once). */
+  private potHand = -1;
   /** Texture for face-down cards when a cosmetic back is chosen; null = the standard back (frame 52). */
   private backKey: string | null = null;
   /** Reduce motion (system setting or the HUD toggle): no pulses, flips or slides; tells stay readable. */
@@ -113,8 +115,50 @@ export class TableScene extends Phaser.Scene {
     // The canvas is RENDER_ZOOM times the logical size; the camera maps logical coordinates onto it.
     this.cameras.main.setZoom(RENDER_ZOOM).centerOn(TABLE_WIDTH / 2, TABLE_HEIGHT / 2);
     this.add.image(TABLE_WIDTH / 2, TABLE_HEIGHT / 2, 'felt').setDisplaySize(TABLE_WIDTH, TABLE_HEIGHT);
+    this.add.image(TABLE_WIDTH / 2, TABLE_HEIGHT / 2, this.candleLight()).setDisplaySize(TABLE_WIDTH, TABLE_HEIGHT);
     this.ready = true;
     if (this.pending) this.renderModel(this.pending);
+  }
+
+  /**
+   * Practical light over the felt (visual direction v1.2): a warm candle key from the upper left,
+   * a faint cool rim from the right and a soft vignette. Drawn once; it carries no information.
+   */
+  private candleLight(): string {
+    const key = 'candle-light';
+    if (this.textures.exists(key)) return key;
+    const w = TABLE_WIDTH * 2;
+    const h = TABLE_HEIGHT * 2;
+    const tex = this.textures.createCanvas(key, w, h)!;
+    const ctx = tex.getContext();
+    const glow = (x: number, y: number, r: number, color: string) => {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, color);
+      g.addColorStop(1, color.replace(/[\d.]+\)$/, '0)'));
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    };
+    glow(w * 0.16, h * 0.04, w * 0.95, 'rgba(255, 186, 104, 0.16)');
+    glow(w * 1.04, h * 0.62, w * 0.62, 'rgba(120, 170, 200, 0.07)');
+    const v = ctx.createRadialGradient(w / 2, h * 0.52, h * 0.28, w / 2, h * 0.52, h * 0.78);
+    v.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    v.addColorStop(1, 'rgba(0, 0, 0, 0.42)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, w, h);
+    tex.refresh();
+    return key;
+  }
+
+  /** A small stack of Lifechips whose height follows the amount; the exact figure is always printed beside it. */
+  private chipStack(x: number, y: number, amount: number, bigBlind: number, max = 5): Phaser.GameObjects.Container {
+    const n = Math.max(1, Math.min(max, Math.ceil(amount / Math.max(1, bigBlind * 2))));
+    const c = this.add.container(x, y);
+    for (let i = 0; i < n; i++) {
+      const shade = this.add.ellipse(0.6, 3 - i * 2.6, 17, 6, 0x000000, 0.35);
+      const chip = this.add.image(0, -i * 2.6, 'chip').setDisplaySize(17, 17);
+      c.add([shade, chip]);
+    }
+    return c;
   }
 
   renderModel(model: TableModel): void {
@@ -144,6 +188,19 @@ export class TableScene extends Phaser.Scene {
       const rel = (e.seat - model.humanSeat + n) % n;
       this.animateTell(model, e, layout[rel]);
     }
+    // Feedback: the pot's chips travel to each winner once per hand (skipped with reduced motion).
+    if (view.phase === 'complete' && view.result && this.potHand !== model.handNumber) {
+      this.potHand = model.handNumber;
+      if (!this.reduceMotion) {
+        view.result.netChange.forEach((net, seat) => {
+          if (net <= 0) return;
+          const [tx, ty] = layout[(seat - model.humanSeat + n) % n].plate;
+          const stack = this.chipStack(200, 207, net, view.bigBlind, 6);
+          this.fx!.add(stack);
+          this.tweens.add({ targets: stack, x: tx - 30, y: ty, duration: 620, ease: 'Cubic.InOut', onComplete: () => this.tweens.add({ targets: stack, alpha: 0, duration: 260, onComplete: () => stack.destroy() }) });
+        });
+      }
+    }
   }
 
   // ─────────────────────────── drawing ───────────────────────────
@@ -158,7 +215,7 @@ export class TableScene extends Phaser.Scene {
     if (pot > 0) {
       const amount = this.txt(0, 0, String(pot), { fontFamily: UI, fontSize: '19px', color: '#EAD39A', fontStyle: '700' }).setOrigin(0, 0.5);
       const w = 21 + amount.width;
-      r.add(this.add.image(200 - w / 2 + 8, 205, 'chip').setDisplaySize(17, 17));
+      r.add(this.chipStack(200 - w / 2 + 8, 207, pot, view.bigBlind, 6));
       amount.setPosition(200 - w / 2 + 21, 204);
       r.add(amount);
       r.add(this.txt(200, 223, inFront > 0 ? `POT · ${inFront} IN BETS` : 'POT', { fontFamily: UI, fontSize: '9.5px', color: '#B5A98E', fontStyle: '700', letterSpacing: 2 } as Phaser.Types.GameObjects.Text.TextStyle).setOrigin(0.5));
@@ -314,7 +371,7 @@ export class TableScene extends Phaser.Scene {
 
     if (p.streetCommitted > 0 && view.phase === 'betting') {
       const [bx, by] = L.bet;
-      r.add(this.add.image(bx - 10, by, 'chip').setDisplaySize(18, 18));
+      r.add(this.chipStack(bx - 10, by + 2, p.streetCommitted, view.bigBlind));
       r.add(this.txt(bx + 2, by, String(p.streetCommitted), { fontFamily: UI, fontSize: '14px', color: '#EAD39A', fontStyle: '700', stroke: '#0b0d0c', strokeThickness: 3 }).setOrigin(0, 0.5));
     }
 

@@ -42,7 +42,7 @@ import {
   TABLE_NODES,
 } from '../game/run/run';
 import { DISCIPLINE_COLOR } from './theme';
-import { aetherGems, DISCIPLINE_ICON, icon, type IconName } from './icons';
+import { aetherGems, DISCIPLINE_ICON, eclipseMark, icon, type IconName, MERCHANT_ICON } from './icons';
 import { COVENANT_PLAIN, RELIC_PLAIN, SPELL_PLAIN } from './plain';
 
 export interface ScreenHandlers {
@@ -264,6 +264,7 @@ export function evolutionPanel(run: RunState, cb: ScreenHandlers): HTMLElement |
               h('span', { class: 'branch-text' }, SPELL_PLAIN[b].does),
             );
             card.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
+            card.dataset.disc = def.discipline;
             card.addEventListener('click', () => cb.command({ kind: 'evolve', uid: o.card.uid, branch: b, useToken: o.needsToken }));
             return card;
           }),
@@ -310,6 +311,11 @@ function transferLine(run: RunState, amount: number, counterparty: string, direc
 }
 
 let currentHandlers: ScreenHandlers;
+
+/** A merchant speaking, under their own mark. */
+function merchantVoice(id: string, line: string): HTMLElement {
+  return h('div', { class: 'merchant' }, h('span', { class: 'merchant-mark' }, icon(MERCHANT_ICON[id] ?? 'relic', 22)), h('p', { class: 'merchant-line' }, line));
+}
 
 /** The exact rules text, folded away under the plain description. */
 function rules(text: string): HTMLElement {
@@ -377,7 +383,7 @@ function shop(run: RunState, cb: ScreenHandlers): HTMLElement {
   return screen(
     run,
     royal ? 'The Royal Exchange' : velvet ? 'The Velvet Exchange' : 'Selene’s Lantern',
-    h('p', { class: 'merchant-line' }, merchantLine(run, s.merchant)),
+    merchantVoice(s.merchant, merchantLine(run, s.merchant)),
     h(
       'p',
       { class: 'lede' },
@@ -751,7 +757,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'Matron Wisp',
-        h('p', { class: 'merchant-line' }, merchantLine(run, WISP_ID)),
+        merchantVoice(WISP_ID, merchantLine(run, WISP_ID)),
         h('p', { class: 'lede' }, `Matron Wisp buys one relic at half its shop value, from her own purse of ${wallet} Lifechips.`),
         sold || !relics.length
           ? h('p', { class: 'muted' }, sold ? 'You have already sold to Matron Wisp.' : 'You carry no relic she would buy.')
@@ -808,7 +814,7 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
       content = screen(
         run,
         'The Broker Understairs',
-        h('p', { class: 'merchant-line' }, merchantLine(run, BROKER_ID)),
+        merchantVoice(BROKER_ID, merchantLine(run, BROKER_ID)),
         h('p', { class: 'lede' }, `Broker Osric buys one relic at half its shop value, from his own purse of ${wallet} Lifechips. He lends nothing and rescues no one.`),
         h('p', { class: 'muted' }, `His purse came once from the Cinder ledger (${run.accounts[CINDER_LEDGER] ?? 0} held back for replacements at the Ember Steps).`),
         sold || !relics.length
@@ -937,15 +943,22 @@ export function renderRunScreen(root: HTMLElement, run: RunState, cb: ScreenHand
   root.scrollTop = 0;
 }
 
+function titleMark(): HTMLElement {
+  const m = h('div', { class: 'title-mark' });
+  m.innerHTML = eclipseMark(132);
+  return m;
+}
+
 /** Title screen when no run is saved; offers a P3 Fallen continuation when one exists. */
 export function renderTitle(root: HTMLElement, hasFallen: boolean, cb: ScreenHandlers, testament: LegacyEntry[] = []): void {
   root.replaceChildren(
     h(
       'div',
       { class: 'screen-inner title' },
-      h('img', { src: 'assets/ui/ledger-seal.webp', alt: '', class: 'title-seal' }),
+      titleMark(),
       h('h1', {}, 'The Last Wager'),
-      h('p', { class: 'lede' }, 'A dark-fantasy poker roguelike where chips are life. Fictional Lifechips only.'),
+      h('p', { class: 'tagline' }, 'Poker · Magic · Consequence'),
+      h('p', { class: 'lede' }, 'Real No-limit Hold’em, where the chips are your life. Fictional Lifechips only.'),
       h(
         'div',
         { class: 'actions' },

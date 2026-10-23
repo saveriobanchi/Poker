@@ -759,10 +759,28 @@ button.choice {
   line-height: 1.45;
 }
 
+.merchant {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+/* Each merchant's mark, struck on a small brass seal. */
+.merchant-mark {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #2a1d0c;
+  background: radial-gradient(circle at 36% 30%, #e3c681, #a8843c 50%, #5f4a24 100%);
+  box-shadow: inset 0 0 0 2px rgba(60, 40, 15, 0.4), inset 0 1px 1px rgba(255, 240, 200, 0.5), 0 2px 3px rgba(0, 0, 0, 0.55);
+}
+
 .merchant-line {
   margin: 0;
-  padding-left: 14px;
-  border-left: 1px solid var(--brass-lo);
+  padding-left: 0;
   font-family: var(--serif);
   font-style: italic;
   font-size: 18px;
@@ -826,10 +844,18 @@ button.choice {
   gap: 18px;
 }
 
-.title-seal {
-  width: 104px;
-  height: 104px;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.6));
+.title-mark {
+  line-height: 0;
+  margin-bottom: -6px;
+}
+
+.title .tagline {
+  margin: -8px 0 0;
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--brass);
 }
 
 .title h1 {
@@ -864,12 +890,15 @@ button.choice {
 }
 
 .trail::before {
+  /* The route is an engraved groove: a dark cut with a lit lower edge. */
   content: '';
   position: absolute;
   left: 24px;
   right: 24px;
-  top: 21px;
-  border-top: 1px solid var(--rule);
+  top: 20px;
+  height: 3px;
+  border-top: 1px solid rgba(0, 0, 0, 0.75);
+  border-bottom: 1px solid rgba(196, 160, 82, 0.32);
 }
 
 .trail-node {
@@ -896,12 +925,14 @@ button.choice {
 }
 
 .trail-dot::before {
+  /* Stations are brass seals: a struck disc with a raised ring. */
   content: '';
   position: absolute;
-  inset: 4px;
-  transform: rotate(45deg);
+  inset: 2px;
+  border-radius: 50%;
   border: 1px solid var(--brass-lo);
-  background: var(--void);
+  background: radial-gradient(circle at 38% 32%, #2a2119, #0f0d0b 70%);
+  box-shadow: inset 0 0 0 2px #0f0d0b, inset 0 0 0 3px rgba(111, 89, 52, 0.6);
 }
 
 .trail-dot .icon {
@@ -913,8 +944,13 @@ button.choice {
 }
 
 .trail-node.done .trail-dot::before {
-  border-color: var(--brass);
-  background: var(--lacquer);
+  border-color: #8d7240;
+  background: radial-gradient(circle at 36% 30%, #e3c681, #a8843c 48%, #5f4a24 100%);
+  box-shadow: inset 0 0 0 2px rgba(60, 40, 15, 0.35), inset 0 1px 1px rgba(255, 240, 200, 0.5), 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+.trail-node.done .trail-dot {
+  color: #2a1d0c;
 }
 
 .trail-node.done {
@@ -929,11 +965,17 @@ button.choice {
   color: var(--ink);
 }
 
+.trail-node.here .trail-dot {
+  color: #f6dccb;
+}
+
+/* You are here: a red wax stamp, slightly irregular, with a pressed rim. */
 .trail-node.here .trail-dot::before {
-  inset: 1px;
-  border-color: var(--brass-hi);
-  background: linear-gradient(135deg, #ecd394, #a8843c);
-  box-shadow: 0 0 14px rgba(234, 211, 154, 0.35);
+  inset: -2px;
+  border: none;
+  border-radius: 47% 53% 50% 50% / 52% 48% 53% 47%;
+  background: radial-gradient(circle at 40% 34%, #c0484a, #8a2a2e 55%, #5c181b 100%);
+  box-shadow: inset 0 0 0 3px rgba(92, 24, 27, 0.55), inset 0 0 0 4px rgba(230, 140, 130, 0.25), 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .trail-node.here .trail-label {
@@ -1533,6 +1575,10 @@ button.branch {
 }
 
 .contract-body {
+  /* A ledger's severe red margin: two thin rules down the left edge of the contract. */
+  border-left: 1px solid rgba(138, 42, 46, 0.6);
+  box-shadow: -3px 0 0 -2px rgba(138, 42, 46, 0.35);
+  padding-left: 11px;
   display: flex;
   flex-direction: column;
   gap: 9px;
@@ -2042,4 +2088,74 @@ body.reduce-motion button.confirm {
     overflow-wrap: normal;
     word-break: keep-all;
   }
+}
+
+/* ───────── Discipline motifs (visual direction v1.2): faint engraved textures, readable in greyscale ───────── */
+
+button.spell,
+button.branch {
+  background-repeat: no-repeat;
+  background-position: right -6px bottom -8px, 0 0;
+  background-size: 64px 64px, auto;
+}
+
+/* Ember: firebrand hatching rising to the right. */
+button.spell[data-disc='Ember'],
+button.branch[data-disc='Ember'] {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23e08a6a' stroke-opacity='.28' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M10 60c6-10 2-18 10-26M22 62c5-9 3-16 9-23M34 62c4-8 2-13 7-19M46 60c3-6 2-10 6-14'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+}
+
+/* Thorn: angular bramble with binding rings. */
+button.spell[data-disc='Thorn'],
+button.branch[data-disc='Thorn'] {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%2385c2a8' stroke-opacity='.3' stroke-width='1.2' stroke-linejoin='round'%3E%3Cpath d='M4 58l12-10 6 6 12-14 6 6 12-14 8 4'/%3E%3Cpath d='M16 48l-2-6M34 40l-1-6M52 26l-3-5'/%3E%3Ccircle cx='22' cy='54' r='3'/%3E%3Ccircle cx='40' cy='46' r='3'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+}
+
+/* Veil: an ink wash and a faded double eye. */
+button.spell[data-disc='Veil'],
+button.branch[data-disc='Veil'] {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23c3b0ea' stroke-width='1.2'%3E%3Cpath stroke-opacity='.3' d='M14 40c6-8 12-11 18-11s12 3 18 11c-6 8-12 11-18 11s-12-3-18-11z'/%3E%3Cpath stroke-opacity='.14' d='M18 44c6-8 12-11 18-11s12 3 18 11c-6 8-12 11-18 11s-12-3-18-11z'/%3E%3Ccircle stroke-opacity='.3' cx='32' cy='40' r='4'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+}
+
+/* Mirror: refraction split symmetrically about a centre line. */
+button.spell[data-disc='Mirror'],
+button.branch[data-disc='Mirror'] {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%239fd0ec' stroke-opacity='.3' stroke-width='1.1'%3E%3Cpath d='M32 14v50M32 22l-14 14 14 14M32 22l14 14-14 14M24 30l-10 10 10 10M40 30l10 10-10 10'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+}
+
+button.spell.armed {
+  background-blend-mode: normal;
+}
+
+/* Castable now: a brass notch in the slip's corner, in addition to full strength. */
+button.spell:not(.unusable)::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-style: solid;
+  border-width: 0 9px 9px 0;
+  border-color: transparent var(--brass-hi) transparent transparent;
+}
+
+button.spell {
+  position: relative;
+}
+
+/* Sigils in larger contexts sit on a struck medallion (after the v1.2 emblem frames). */
+.info-entry > .icon,
+.branch-name .icon {
+  box-sizing: content-box;
+  padding: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--disc) 45%, #241c17), #120f0d 75%);
+  box-shadow: inset 0 0 0 1px rgba(196, 160, 82, 0.55), inset 0 0 0 3px #120f0d, inset 0 0 0 4px color-mix(in srgb, var(--disc) 50%, transparent);
 }

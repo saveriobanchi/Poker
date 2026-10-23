@@ -47,6 +47,15 @@ const PATHS = {
   /** Rethread: a looped thread. */
   rethread: `<path ${P} d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3.5v3.2h-3.2M6 20.5v-3.2h3.2"/>`,
   arrow: `<path ${P} d="M5 12h13M13 7l5 5-5 5"/>`,
+  // Merchant marks (visual direction v1.2: a small distinct symbol per merchant).
+  /** Selene: a hanging lantern. */
+  lantern: `<path ${P} d="M12 2.5v2M9 4.5h6M8 7h8l-1 10H9zM8 7l1-2.5h6L16 7M9.5 17h5v2.5h-5zM12 10.5c-1 1.2-1 2.6 0 3.5 1-.9 1-2.3 0-3.5z"/>`,
+  /** Elin: a half mask. */
+  mask: `<path ${P} d="M3 9c3-1.5 6-1.5 9 0 3-1.5 6-1.5 9 0-.3 4-2.6 6.5-5.5 6.5-1.6 0-2.8-.9-3.5-2.2-.7 1.3-1.9 2.2-3.5 2.2C5.6 15.5 3.3 13 3 9z"/><path ${P} d="M6.5 10.8c.8-.6 2-.6 2.8 0M14.7 10.8c.8-.6 2-.6 2.8 0"/>`,
+  /** Oran: a crown. */
+  crown: `<path ${P} d="M4 17.5L3 7.5l5 4 4-6.5 4 6.5 5-4-1 10zM4 20h16"/>`,
+  /** Wisp: a guttering candle. */
+  candle: `<path ${P} d="M9 10.5h6v10H9zM12 10.5V8.5M12 3.5c1.6 1.6 1.8 3.3 0 5-1.8-1.7-1.6-3.4 0-5zM7 20.5h10"/>`,
   // Discipline sigils (replace the suit glyphs once used for spell families).
   /** Ember: a flame. */
   ember: `<path ${P} d="M12 3c1 3.5 5.5 5.8 5.5 10.5a5.5 5.5 0 0 1-11 0c0-2.5 1.4-4 2.6-5.2.3 1.8 1 2.8 2.2 3.2C10.6 9 11 6 12 3z"/>`,
@@ -94,3 +103,32 @@ export const DISCIPLINE_ICON: Record<'Ember' | 'Veil' | 'Thorn' | 'Mirror', Icon
   Thorn: 'thorn',
   Mirror: 'mirror',
 };
+
+/** Each merchant's mark, keyed by merchant id. */
+export const MERCHANT_ICON: Record<string, IconName> = {
+  selene: 'lantern',
+  merchant_elin: 'mask',
+  merchant_oran: 'crown',
+  broker_osric: 'scales',
+  merchant_wisp: 'candle',
+};
+
+/**
+ * The game's mark (visual direction v1.2 "logo"): an eclipse over a thin
+ * sun ring, a three-point crown above and the Ledger's vertical rule below.
+ * Drawn as one engraving so it reads at any size.
+ */
+export function eclipseMark(size = 120): string {
+  return `<svg class="eclipse-mark" width="${size}" height="${size}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="em-corona" cx="50%" cy="50%" r="50%"><stop offset="62%" stop-color="#c4a052" stop-opacity="0"/><stop offset="70%" stop-color="#ead39a" stop-opacity=".55"/><stop offset="100%" stop-color="#c4a052" stop-opacity="0"/></radialGradient>
+  </defs>
+  <circle cx="60" cy="58" r="42" fill="url(#em-corona)"/>
+  <circle cx="60" cy="58" r="30.5" fill="none" stroke="#c4a052" stroke-width="1"/>
+  <circle cx="60" cy="58" r="34" fill="none" stroke="#6f5934" stroke-width=".8" stroke-dasharray="1.2 3.2"/>
+  <circle cx="62.5" cy="56.5" r="27" fill="#0a0c0b"/>
+  <path d="M60 58m-27 0a27 27 0 0 1 27-27" fill="none" stroke="#ead39a" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M51 20l3.5-7 5.5 5 5.5-5 3.5 7z" fill="none" stroke="#c4a052" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M60 96v18M55 109h10" stroke="#6f5934" stroke-width="1" stroke-linecap="round"/>
+</svg>`;
+}

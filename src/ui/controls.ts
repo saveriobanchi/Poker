@@ -279,6 +279,7 @@ export class Controls {
         b.className = 'spell';
         b.dataset.uid = card.uid;
         b.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
+        b.dataset.disc = def.discipline;
         const title = document.createElement('span');
         title.className = 'spell-name';
         title.append(icon(DISCIPLINE_ICON[def.discipline], 14), def.name);

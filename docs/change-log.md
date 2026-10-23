@@ -1,5 +1,32 @@
 # Change log
 
+## 2026-10-23 — Visual Direction v1.2
+
+ChatGPT's v1.2 art direction is now in the build. No rule, number, save or
+simulation changed. The full account is in `docs/briefs/010-report-for-chatgpt.md`.
+
+- **Card backs:** Cinder Etching and Crown Filigree are delivered and selectable
+  once the testament unlocks them. They pass after a recorded remask with the
+  canonical alpha (originals kept).
+- **Contrast gate:** the back contrast test is now WCAG 1.4.11 edge contrast
+  (3:1). The old mean-luminance test also failed the approved standard back.
+- **Route:** brass-seal stations, a red wax stamp for "you are here", and an
+  engraved groove for the line.
+- **Merchants:** each has a mark on a brass seal (lantern, mask, crown, scales,
+  candle).
+- **Spells:** discipline textures on the slips (firebrand, bramble, ink-wash
+  eye, refraction), a castable notch, and medallion sigils in larger contexts.
+- **Table:** candle edge-light, Lifechip stacks that follow the amount, and the
+  pot's chips travelling to the winner (off with reduced motion).
+- **Last Claim:** a red margin rule on the contract.
+- **Title:** the eclipse mark, with the tagline "Poker · Magic · Consequence".
+- **Not adopted:** the v1.2 discipline emblems; at 14 px they are illegible and
+  generic. They are kept in `art/design-system/`.
+- **Checks:** `npm run check` (205 tests), `npm run test:art` (9), and
+  `npm run art:check` all pass. The 44 px audit is clean in 32 cases, and no
+  pictographs remain.
+- **Still open:** all seven portraits are **needed**. No human playtest has run.
+
 ## 2026-10-22 — Visual v2: "the Ledger by candlelight"
 
 A full redesign of the interface around the art bible's Gilded Eclipse. No rule,
