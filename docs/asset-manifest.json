@@ -95,9 +95,10 @@
       "width": 512,
       "height": 512,
       "alpha": false,
-      "status": "placeholder",
-      "origin": "Claude vector placeholder",
-      "license": "project original"
+      "status": "integrated",
+      "origin": "Drawn in code from the game mark (eclipseMark): eclipse, sun ring, crown; PNGs rendered from public/icon.svg",
+      "license": "project original",
+      "review": "Full-bleed with a maskable safe zone; checked at 180, 120 (circle mask), 60, 32 and 16 px"
     },
     {
       "id": "audio.table",
