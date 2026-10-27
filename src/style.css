@@ -398,6 +398,19 @@ body:not(.at-table) #panel {
   font-weight: 700;
 }
 
+/* The hand in words sits on its own line above the pot odds. */
+#odds .holding {
+  display: block;
+  color: var(--bone);
+}
+
+#odds .holding b {
+  font-family: var(--display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--copper-hi);
+}
+
 /* Spell tray: a row of narrow vellum-edged slips, one per drawn spell. */
 #spell-row {
   display: flex;
@@ -464,9 +477,10 @@ button.spell .spell-name {
   color: var(--bone);
 }
 
+/* The painted emblem in the slip's corner and the colour band name the discipline, so the line
+   sigil gives its room to the spell's name ("Second Reflection" did not fit beside it). */
 button.spell .spell-name .icon {
-  color: color-mix(in srgb, var(--disc) 55%, #fff);
-  margin-top: 1px;
+  display: none;
 }
 
 button.spell .spell-cost {
@@ -1798,6 +1812,8 @@ button.branch {
     url('/assets/ui/contract-bottom.webp') bottom / 100% auto no-repeat;
   z-index: -1;
   pointer-events: none;
+  /* The P3 ornaments were painted in polished gold; warmed toward the reliquary's copper. */
+  filter: sepia(0.3) saturate(1.15) hue-rotate(-10deg) brightness(0.95);
 }
 
 .contract-body {
@@ -2234,15 +2250,11 @@ body.reduce-motion button.confirm {
     padding: 0 4px;
   }
 
+  /* 48 px of slip: the longest words ("Challenge", "Reflection") need the tighter type to fit. */
   button.spell {
-    padding: 4px 5px;
-    font-size: 11.5px;
-    letter-spacing: 0;
-  }
-
-  /* The colour band already names the discipline; the sigil gives its room to the spell's name. */
-  button.spell .spell-name .icon {
-    display: none;
+    padding: 4px 3px;
+    font-size: 10.5px;
+    letter-spacing: -0.01em;
   }
 
   #action-row button {

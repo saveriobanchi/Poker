@@ -652,12 +652,18 @@ new Phaser.Game({
   parent: 'game',
   width: TABLE_WIDTH * RENDER_ZOOM,
   height: TABLE_HEIGHT * RENDER_ZOOM,
-  backgroundColor: '#0b1013',
+  backgroundColor: '#0d0b0a',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   scene,
   callbacks: {
     postBoot: () => {
       (window as unknown as { lastWager: Game }).lastWager = new Game(scene);
+      // The game has drawn its first screen: fade the loading splash out.
+      const splash = document.getElementById('splash');
+      if (splash) {
+        splash.classList.add('gone');
+        window.setTimeout(() => splash.remove(), 450);
+      }
     },
   },
 });

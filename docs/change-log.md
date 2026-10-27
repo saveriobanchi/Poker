@@ -1,5 +1,33 @@
 # Change log
 
+## 2026-10-27 — Live, and a general upgrade
+
+No rule, number, save or random draw changed.
+
+- **Deploy fixed:** the Pages job had failed because the 10,000-hand simulation
+  ran past Vitest's 5 s default on a busy runner. CPU-bound tests now get a 60 s
+  budget (`vite.config.ts`), and the Ashen Reliquary build is live.
+- **Your hand in words:** on your turn the panel says what you hold ("You hold
+  Two Pair, Nines and Fours"; before the flop, "Pocket Nines" or "Ace–King
+  suited"), above the pot odds. It uses only your own cards and the board
+  (`src/ui/handReading.ts`, 3 tests).
+- **Loading splash:** an eclipse and the wordmark paint at once instead of a
+  blank screen, and fade when the game is ready. The spinning ring stops with
+  reduced motion.
+- **Link previews:** Open Graph and Twitter card tags with a 1200×630 share
+  image (`public/og-image.jpg`) made from the game's portraits and type.
+- **Spell names fit:** all 12 spell names, evolutions included, now fit their
+  slips at 390 and 320 px. Before, "Cinder Challenge", "Fate Exchange",
+  "Ravenous Eye" and "Second Reflection" were clipped. The small line sigil
+  left the tray because the painted emblem already names the discipline.
+- **Last Claim:** the contract's gold ornaments are warmed to copper.
+- **Table:** the canvas background matches the coal palette.
+
+## 2026-10-27 — Ashen Reliquary (design system v3)
+
+The owner's reference art became the design system; see
+`docs/design-system-v3.md` and `docs/briefs/011-ashen-reliquary.md`.
+
 ## 2026-10-23 — Visual Direction v1.2
 
 ChatGPT's v1.2 art direction is now in the build. No rule, number, save or

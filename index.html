@@ -12,9 +12,36 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icon-180.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Last Wager" />
+    <meta property="og:description" content="A dark-fantasy poker roguelike. Real No-limit Hold’em, where the chips are your life." />
+    <meta property="og:image" content="https://saveriobanchi.github.io/Poker/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://saveriobanchi.github.io/Poker/" />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>The Last Wager</title>
+    <style>
+      /* Loading splash: inline so it paints before the game's script and styles arrive. */
+      html { background: #0d0b0a; }
+      #splash { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; background: radial-gradient(90% 60% at 50% 40%, #1e1612, #0d0b0a 70%); color: #e2a97e; font: 600 13px/1.4 Cinzel, 'Times New Roman', serif; letter-spacing: 0.3em; text-transform: uppercase; transition: opacity 400ms; }
+      #splash.gone { opacity: 0; pointer-events: none; }
+      #splash svg { width: 120px; height: 120px; }
+      #splash .turn { transform-origin: 60px 60px; animation: splash-turn 2.4s linear infinite; }
+      @keyframes splash-turn { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { #splash .turn { animation: none; } }
+    </style>
   </head>
   <body>
+    <div id="splash" role="status" aria-label="Loading The Last Wager">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="44" fill="none" stroke="#7a4a2e" stroke-width="1" stroke-dasharray="2 5" class="turn" />
+        <circle cx="60" cy="60" r="34" fill="none" stroke="#b8734a" stroke-width="1.2" />
+        <circle cx="63" cy="57" r="30" fill="#0d0b0a" />
+        <path d="M60 60m-30 0a30 30 0 0 1 30-30" fill="none" stroke="#e2a97e" stroke-width="2" stroke-linecap="round" transform="rotate(-90 60 60)" />
+      </svg>
+      <span>The Last Wager</span>
+    </div>
     <header id="hud">
       <button id="hand-info" type="button" aria-expanded="false" aria-label="Table and route details">The Last Wager</button>
       <span class="hud-buttons">

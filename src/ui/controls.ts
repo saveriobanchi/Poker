@@ -8,6 +8,7 @@ import type { LegalActions, PlayerAction, PublicView } from '../game/rules/engin
 import { rankLabel, suitGlyph } from './format';
 import { pt } from './playtest';
 import { DISCIPLINE_COLOR } from './theme';
+import { handReading } from './handReading';
 import { aetherGems, DISCIPLINE_ICON, emblem, icon } from './icons';
 import { SPELL_PLAIN } from './plain';
 
@@ -203,12 +204,19 @@ export class Controls {
     else if (legal.callAmount >= me.stack) this.call.textContent = `All-in ${legal.callAmount}`;
     else this.call.textContent = `Call ${legal.callAmount}`;
 
-    // Pot odds, stated plainly (mobile QA v0.9): what the call costs against what it can win.
+    // What you hold, in words, then the pot odds stated plainly (mobile QA v0.9): what the call
+    // costs against what it can win. Both come from the player's own view only.
+    const holding = me.hole ? handReading(me.hole, view.board) : '';
+    const lines: string[] = [];
+    if (holding) lines.push(`<span class="holding">You hold <b>${holding}</b></span>`);
     if (!legal.canCheck) {
       const pot = view.seats.reduce((sum, p) => sum + p.totalCommitted, 0);
       const call = Math.min(legal.callAmount, me.stack);
       const need = Math.round((100 * call) / (pot + call));
-      this.odds.innerHTML = `Pot <b>${pot}</b> · to call <b>${call}</b> · you need <b>${need}%</b> equity to break even`;
+      lines.push(`<span>Pot <b>${pot}</b> · to call <b>${call}</b> · you need <b>${need}%</b> equity to break even</span>`);
+    }
+    if (lines.length) {
+      this.odds.innerHTML = lines.join(' ');
       this.odds.hidden = false;
     }
     const r = legal.raise;
