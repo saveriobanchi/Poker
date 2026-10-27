@@ -61,6 +61,7 @@ Provenance notes say the files were supplied by the owner and that the generatio
 | `npm run check` (typecheck and 28 suites) | 205 tests pass |
 | `npm run test:art` | 9 pass |
 | `npm run art:check` | 4 portraits delivered, 6 needed. Card-back edge contrast on the new table: Reliquary 4.37:1, Cinder 4.49:1, Crown 6.35:1 |
+| Emoji/pictograph scan of the rendered screens | 0 |
 | 44 px, overflow and off-screen audit: 390×844, 320×568 and both landscapes; table, shop and buyback screens; normal and playtest mode | 32 cases, 0 issues |
 
 ## Not done, and why
