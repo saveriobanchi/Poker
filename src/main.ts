@@ -1,8 +1,12 @@
+// Ashen Reliquary type: Cinzel Decorative for titles, Cinzel for engraved labels, Spectral for text.
+import '@fontsource/cinzel-decorative/latin-700.css';
 import '@fontsource/cinzel/latin-600.css';
-import '@fontsource/cormorant-garamond/latin-600.css';
-import '@fontsource/alegreya-sans/latin-500.css';
-import '@fontsource/alegreya-sans/latin-700.css';
-import '@fontsource/alegreya-sans/latin-500-italic.css';
+import '@fontsource/spectral/latin-400.css';
+import '@fontsource/spectral/latin-500.css';
+import '@fontsource/spectral/latin-600.css';
+import '@fontsource/spectral/latin-700.css';
+import '@fontsource/spectral/latin-400-italic.css';
+import '@fontsource/spectral/latin-500-italic.css';
 import Phaser from 'phaser';
 import './style.css';
 import { getMagicView } from './game/magic/table';
@@ -625,7 +629,7 @@ class Game {
 // Wait for the web fonts so canvas text renders with them from the first frame.
 await document.fonts.ready;
 await Promise.all(
-  ['600 16px Cinzel', '500 16px "Alegreya Sans"', '700 16px "Alegreya Sans"', '600 16px "Cormorant Garamond"'].map((f) => document.fonts.load(f).catch(() => undefined)),
+  ['600 16px Cinzel', '700 16px "Cinzel Decorative"', '500 16px Spectral', '600 16px Spectral', '700 16px Spectral', 'italic 500 16px Spectral'].map((f) => document.fonts.load(f).catch(() => undefined)),
 );
 
 // Portraits that passed the art gate (scripts/check-art.py --pack); the built-in list is the fallback.

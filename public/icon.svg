@@ -6,20 +6,20 @@
     <radialGradient id="ground" cx="30%" cy="22%" r="95%">
       <stop offset="0" stop-color="#2b2017"/>
       <stop offset=".55" stop-color="#14110e"/>
-      <stop offset="1" stop-color="#0a0c0b"/>
+      <stop offset="1" stop-color="#0d0b0a"/>
     </radialGradient>
     <radialGradient id="corona" cx="50%" cy="50%" r="50%">
-      <stop offset=".6" stop-color="#c4a052" stop-opacity="0"/>
-      <stop offset=".7" stop-color="#ead39a" stop-opacity=".55"/>
-      <stop offset=".86" stop-color="#c4a052" stop-opacity=".12"/>
-      <stop offset="1" stop-color="#c4a052" stop-opacity="0"/>
+      <stop offset=".6" stop-color="#b8734a" stop-opacity="0"/>
+      <stop offset=".7" stop-color="#e2a97e" stop-opacity=".55"/>
+      <stop offset=".86" stop-color="#b8734a" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#b8734a" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="512" height="512" fill="url(#ground)"/>
   <circle cx="256" cy="276" r="178" fill="url(#corona)"/>
-  <circle cx="256" cy="276" r="146" fill="none" stroke="#6f5934" stroke-width="4" stroke-dasharray="5 13"/>
-  <circle cx="256" cy="276" r="126" fill="none" stroke="#c4a052" stroke-width="7"/>
-  <circle cx="268" cy="264" r="112" fill="#0a0c0b"/>
-  <path d="M256 276m-112 0a112 112 0 0 1 112-112" fill="none" stroke="#ead39a" stroke-width="12" stroke-linecap="round" transform="rotate(-90 256 276)"/>
-  <path d="M218 112l15-33 23 23 23-23 15 33z" fill="none" stroke="#c4a052" stroke-width="8" stroke-linejoin="round"/>
+  <circle cx="256" cy="276" r="146" fill="none" stroke="#7a4a2e" stroke-width="4" stroke-dasharray="5 13"/>
+  <circle cx="256" cy="276" r="126" fill="none" stroke="#b8734a" stroke-width="7"/>
+  <circle cx="268" cy="264" r="112" fill="#0d0b0a"/>
+  <path d="M256 276m-112 0a112 112 0 0 1 112-112" fill="none" stroke="#e2a97e" stroke-width="12" stroke-linecap="round" transform="rotate(-90 256 276)"/>
+  <path d="M218 112l15-33 23 23 23-23 15 33z" fill="none" stroke="#b8734a" stroke-width="8" stroke-linejoin="round"/>
 </svg>

@@ -28,8 +28,10 @@ def main():
             i = r * 4 + s
             im = Image.open(GEN / f'cards/{rank}{suit}.png').convert('RGBA')
             sheet.paste(im, ((i % COLS) * FW, (i // COLS) * FH))
-    # Design v0.5: the exactly 180-degree-symmetric 300x420 back (checked below).
-    back = Image.open(ROOT / 'art/source/chatgpt-p3/back-300.png').convert('RGBA')
+    # The Reliquary back (owner art, 2026-10-27, prepared by scripts/prepare-owner-art.py): exactly
+    # 180-degree symmetric with the standard silhouette of art/source/chatgpt-p3/back-300.png (checked below).
+    back = Image.open(ROOT / 'art/source/owner-p10/back-reliquary-300.png').convert('RGBA')
+    assert back.getchannel('A').tobytes() == Image.open(ROOT / 'art/source/chatgpt-p3/back-300.png').getchannel('A').tobytes()
     assert back.size == (FW, FH) and back.tobytes() == back.rotate(180).tobytes(), 'card back must be 300x420 and exactly symmetric'
     sheet.paste(back, ((52 % COLS) * FW, (52 // COLS) * FH))
     sheet.save(OUT / 'cards.webp', 'WEBP', quality=86, method=6)

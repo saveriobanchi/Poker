@@ -35,7 +35,13 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont, ImageStat
 
 PAINTED = ['wagerer', 'vesper', 'oracle', 'corvin', 'adjudicator']  # already in the game (P2/P3 art)
 # Where a painted portrait's original lives, to restore it if its replacement is withdrawn or fails.
-ORIGINAL = {'adjudicator': 'art/source/chatgpt-p3/adjudicator.png'}
+ORIGINAL = {'adjudicator': 'art/source/chatgpt-p3/adjudicator.png', **{k: f'art/source/chatgpt-p2/portraits/{k}.png' for k in ('vesper', 'oracle', 'corvin')}}
+# Repaints of the P2 rivals supplied by the project owner (2026-10-27, prepared by scripts/prepare-owner-art.py).
+REPAINTS = [
+    {'character': 'Lady Vesper', 'path': 'art/incoming/p10/vesper.png'},
+    {'character': 'The Sightless Oracle', 'path': 'art/incoming/p10/oracle.png'},
+    {'character': 'Sir Corvin', 'path': 'art/incoming/p10/corvin.png'},
+]
 
 
 def sha256(path: Path) -> str:
@@ -225,7 +231,7 @@ def main() -> int:
     if args.approve and not args.reviewer:
         ap.error('--approve needs --reviewer (the person who looked at the 64 px proof and the phone screenshots)')
 
-    sources = {runtime_name(s['path']): (s, root / s['path']) for s in status_src['sources']}
+    sources = {runtime_name(s['path']): (s, root / s['path']) for s in status_src['sources'] + REPAINTS}
     for name in args.approve + args.revert:
         if name not in sources:
             ap.error(f'unknown portrait {name!r}; known: {", ".join(sorted(sources))}')
@@ -339,6 +345,9 @@ def main() -> int:
                 manifest['assets'].append(asset)
             asset['status'] = e['status']
             asset['check'] = {'date': today, 'sha256': e['sha256'], 'problems': e['problems'], 'edge_contrast': e['edge_contrast'], 'remask': e.get('remask'), 'detail': 'optional cosmetic: selectable once unlocked by the testament; same back on every face-down card'}
+        for e in report['portraits']:
+            if e['source'] in [r['path'] for r in REPAINTS] and not any(a.get('source') == e['source'] for a in manifest['assets']):
+                manifest['assets'].append({'id': f"portrait.{e['runtime']}.paint", 'source': e['source'], 'runtime': f"public/assets/portraits/{e['runtime']}.webp", 'width': 512, 'height': 512, 'alpha': True, 'origin': 'supplied by the project owner (2026-10-27); matte and disc framing by scripts/prepare-owner-art.py', 'license': 'owner-supplied; generation method not stated'})
         by_source = {e['source']: e for e in report['portraits']}
         for asset in manifest['assets']:
             e = by_source.get(asset.get('source'))

@@ -21,15 +21,16 @@ const CARD_BACK_FRAME = 52;
 const CARD_W = 50;
 const CARD_H = 70;
 const DISPLAY = 'Cinzel, Georgia, serif';
-const UI = '"Alegreya Sans", "Gill Sans", sans-serif';
+const UI = 'Spectral, Georgia, serif';
 /** Palette shared with src/style.css. */
 const C = {
-  plate: 0x16120f,
-  brass: 0xc4a052,
-  brassHi: 0xead39a,
-  brassLo: 0x6f5934,
-  arcane: 0xa28ecc,
-  arcaneDim: 0x3a3247,
+  plate: 0x141110,
+  vermilion: 0x9e2f25,
+  brass: 0xb8734a,
+  brassHi: 0xe2a97e,
+  brassLo: 0x7a4a2e,
+  arcane: 0xb496b8,
+  arcaneDim: 0x3a2d3a,
 };
 
 export interface TableModel {
@@ -213,15 +214,26 @@ export class TableScene extends Phaser.Scene {
     const r = this.root!;
     // One figure: the whole pot, the same number the odds line uses. Bets still in front of seats show beside them.
     if (pot > 0) {
-      const amount = this.txt(0, 0, String(pot), { fontFamily: UI, fontSize: '19px', color: '#EAD39A', fontStyle: '700' }).setOrigin(0, 0.5);
+      const amount = this.txt(0, 0, String(pot), { fontFamily: UI, fontSize: '19px', color: '#E2A97E', fontStyle: '700' }).setOrigin(0, 0.5);
       const w = 21 + amount.width;
+      // The pot sits in a reliquary cartouche: coal plate, copper frame, a lozenge at each end.
+      const cw = Math.max(104, w + 44);
+      const frame = this.add.graphics();
+      frame.fillStyle(0x000000, 0.4).fillRect(200 - cw / 2 + 1, 187, cw, 46);
+      frame.fillStyle(C.plate, 0.88).fillRect(200 - cw / 2, 185, cw, 46);
+      frame.lineStyle(1, C.brass, 0.85).strokeRect(200 - cw / 2, 185, cw, 46);
+      frame.lineStyle(1, C.brassLo, 0.9).strokeRect(200 - cw / 2 + 3, 188, cw - 6, 40);
+      for (const x of [200 - cw / 2, 200 + cw / 2]) {
+        frame.fillStyle(C.brassHi, 1).fillPoints([new Phaser.Math.Vector2(x - 4, 208), new Phaser.Math.Vector2(x, 204), new Phaser.Math.Vector2(x + 4, 208), new Phaser.Math.Vector2(x, 212)], true);
+      }
+      r.add(frame);
       r.add(this.chipStack(200 - w / 2 + 8, 207, pot, view.bigBlind, 6));
       amount.setPosition(200 - w / 2 + 21, 204);
       r.add(amount);
-      r.add(this.txt(200, 223, inFront > 0 ? `POT · ${inFront} IN BETS` : 'POT', { fontFamily: UI, fontSize: '9.5px', color: '#B5A98E', fontStyle: '700', letterSpacing: 2 } as Phaser.Types.GameObjects.Text.TextStyle).setOrigin(0.5));
+      r.add(this.txt(200, 223, inFront > 0 ? `POT · ${inFront} IN BETS` : 'POT', { fontFamily: UI, fontSize: '9.5px', color: '#B3A68C', fontStyle: '700', letterSpacing: 2 } as Phaser.Types.GameObjects.Text.TextStyle).setOrigin(0.5));
     }
     if (model.magic.streetLocked) {
-      r.add(this.tag(200, 240, 'POT-LIMIT THIS STREET', '#477A68', '#E4F0EA'));
+      r.add(this.tag(200, 240, 'POT-LIMIT THIS STREET', '#5E7E68', '#E4F0EA'));
     }
   }
 
@@ -231,7 +243,7 @@ export class TableScene extends Phaser.Scene {
       const y = 300;
       if (i >= board.length) {
         const slot = this.add.graphics();
-        slot.lineStyle(1, 0xc9a24a, 0.22).strokeRoundedRect(x - CARD_W / 2, y - CARD_H / 2, CARD_W, CARD_H, 5);
+        slot.lineStyle(1, 0xb8734a, 0.22).strokeRoundedRect(x - CARD_W / 2, y - CARD_H / 2, CARD_W, CARD_H, 5);
         this.root!.add(slot);
         continue;
       }
@@ -298,7 +310,7 @@ export class TableScene extends Phaser.Scene {
       disc.fillStyle(busted ? 0x2a2622 : 0x3a2a24, 1).fillCircle(cx, py, 19);
       r.add(disc);
       const initials = model.names[seat].split(/\s+/).filter((w) => /^[A-Z]/.test(w) && w !== 'The').map((w) => w[0]).join('').slice(0, 2);
-      r.add(this.txt(cx, py, initials, { fontFamily: DISPLAY, fontSize: '15px', color: busted ? '#6d6458' : '#F3D27A', fontStyle: '600' }).setOrigin(0.5));
+      r.add(this.txt(cx, py, initials, { fontFamily: DISPLAY, fontSize: '15px', color: busted ? '#6d6458' : '#E2A97E', fontStyle: '600' }).setOrigin(0.5));
     }
     const ring = this.add.graphics();
     ring.lineStyle(1.5, busted ? 0x555555 : C.brass, 1).strokeCircle(cx, py, 20);
@@ -309,7 +321,7 @@ export class TableScene extends Phaser.Scene {
     const name = this.txt(textX, py - 10, model.names[seat], {
       fontFamily: DISPLAY,
       fontSize: isHuman ? '13px' : '11px',
-      color: busted ? '#6d6458' : '#ECE2C8',
+      color: busted ? '#6d6458' : '#E8DCC4',
       fontStyle: '600',
     }).setOrigin(0, 0.5);
     const room = left + w - 8 - textX;
@@ -317,11 +329,11 @@ export class TableScene extends Phaser.Scene {
     r.add(name);
     if (busted) {
       const gone = status === 'exited' ? 'Departed · Fallen' : status === 'dead' ? 'Claimed' : 'Last Claim';
-      r.add(this.txt(textX, py + 9, gone, { fontFamily: UI, fontSize: '12px', color: status === 'exited' ? '#B5A98E' : '#D58474', fontStyle: '700' }).setOrigin(0, 0.5));
+      r.add(this.txt(textX, py + 9, gone, { fontFamily: UI, fontSize: '12px', color: status === 'exited' ? '#B3A68C' : '#D58474', fontStyle: '700' }).setOrigin(0, 0.5));
     } else {
       r.add(this.add.image(textX + 6, py + 9, 'chip').setDisplaySize(12, 12));
       r.add(
-        this.txt(textX + 15, py + 9, String(stack), { fontFamily: UI, fontSize: '14px', color: '#EAD39A', fontStyle: '700' }).setOrigin(0, 0.5),
+        this.txt(textX + 15, py + 9, String(stack), { fontFamily: UI, fontSize: '14px', color: '#E2A97E', fontStyle: '700' }).setOrigin(0, 0.5),
       );
       // Aether pips (public).
       const pipX = left + w - 12;
@@ -348,8 +360,8 @@ export class TableScene extends Phaser.Scene {
       const gap = 28 * s;
       // Opponent cards this viewer may see: public reveals (gold) and its own Unmask reads (violet).
       const shown: { card: Card; glow: number }[] = [];
-      for (const k of magic.publicKnown) if (k.seat === seat) shown.push({ card: k.card, glow: 0xf3d27a });
-      for (const k of magic.known) if (k.seat === seat && !shown.some((x) => x.card === k.card)) shown.push({ card: k.card, glow: 0x9d86c9 });
+      for (const k of magic.publicKnown) if (k.seat === seat) shown.push({ card: k.card, glow: 0xe2a97e });
+      for (const k of magic.known) if (k.seat === seat && !shown.some((x) => x.card === k.card)) shown.push({ card: k.card, glow: 0xb496b8 });
       for (let i = 0; i < 2; i++) {
         const x = cx2 + (i === 0 ? -gap / 2 : gap / 2);
         let face: Card | null = p.hole ? p.hole[i] : null;
@@ -372,7 +384,7 @@ export class TableScene extends Phaser.Scene {
     if (p.streetCommitted > 0 && view.phase === 'betting') {
       const [bx, by] = L.bet;
       r.add(this.chipStack(bx - 10, by + 2, p.streetCommitted, view.bigBlind));
-      r.add(this.txt(bx + 2, by, String(p.streetCommitted), { fontFamily: UI, fontSize: '14px', color: '#EAD39A', fontStyle: '700', stroke: '#0b0d0c', strokeThickness: 3 }).setOrigin(0, 0.5));
+      r.add(this.txt(bx + 2, by, String(p.streetCommitted), { fontFamily: UI, fontSize: '14px', color: '#E2A97E', fontStyle: '700', stroke: '#0b0d0c', strokeThickness: 3 }).setOrigin(0, 0.5));
     }
 
     // Spell cast this hand (public), on the plate edge.
@@ -387,7 +399,7 @@ export class TableScene extends Phaser.Scene {
     const label = this.statusLabel(view, seat);
     if (label) {
       const [tx, ty] = L.label;
-      const text = label.win ? this.tag(tx, ty, label.text.toUpperCase(), '#CBA552', '#1D140A', 11) : this.tag(tx, ty, label.text.toUpperCase(), '#15110E', '#ECE2C8', 10.5, '#6F5934');
+      const text = label.win ? this.tag(tx, ty, label.text.toUpperCase(), '#B8734A', '#1E0F07', 11) : this.tag(tx, ty, label.text.toUpperCase(), '#141110', '#E8DCC4', 10.5, '#7A4A2E');
       r.add(text);
       if (label.win && !this.reduceMotion) this.tweens.add({ targets: text, y: ty - 6, duration: 500, yoyo: true, repeat: 1, ease: 'Sine.InOut' });
     }

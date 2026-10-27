@@ -8,7 +8,7 @@ import type { LegalActions, PlayerAction, PublicView } from '../game/rules/engin
 import { rankLabel, suitGlyph } from './format';
 import { pt } from './playtest';
 import { DISCIPLINE_COLOR } from './theme';
-import { aetherGems, DISCIPLINE_ICON, icon } from './icons';
+import { aetherGems, DISCIPLINE_ICON, emblem, icon } from './icons';
 import { SPELL_PLAIN } from './plain';
 
 export interface ControlsCallbacks {
@@ -314,6 +314,7 @@ export class Controls {
         const row = document.createElement('div');
         row.className = 'info-entry';
         row.style.setProperty('--disc', DISCIPLINE_COLOR[def.discipline]);
+        row.dataset.disc = def.discipline;
         const name = document.createElement('span');
         name.className = 'info-name';
         name.textContent = `${def.name} · ${def.cost ? `${def.cost} Aether` : 'free'}`;
@@ -324,7 +325,7 @@ export class Controls {
         const does = document.createElement('span');
         does.className = 'info-does';
         does.textContent = plain.does;
-        row.append(icon(DISCIPLINE_ICON[def.discipline], 18), name, meta, does);
+        row.append(emblem(def.discipline, 44), name, meta, does);
         return row;
       }),
     );

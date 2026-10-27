@@ -1,13 +1,21 @@
 {
-  "generated": "2026-10-23",
+  "generated": "2026-10-27",
   "portraits": [
     {
       "character": "Ledger Adjudicator",
       "runtime": "adjudicator",
       "source": "art/incoming/p4/adjudicator.png",
-      "present": false,
-      "status": "needed",
-      "detail": "source file not delivered"
+      "present": true,
+      "sha256": "1ff626cd4461111dfb729871d24e8a5ac3dcb5213a4a3805d6674e52bd3299f8",
+      "problems": [],
+      "provenance": {
+        "author": "Supplied by the project owner in the development session of 2026-10-27; the generation method and tool were not stated",
+        "method": "Owner-supplied painted portrait (original: art/source/owner-p10/portrait-adjudicator.png). scripts/prepare-owner-art.py tightened the matte, replaced fringe colours, trimmed the figure to its painted disc on the coal ground and resized to 512x512. Nothing was painted or redrawn.",
+        "license": "Used with the owner's permission for this project; the owner is responsible for the rights to the supplied image",
+        "date": "2026-10-27"
+      },
+      "status": "delivered",
+      "detail": "passes machine checks; packed for the 64 px and phone review"
     },
     {
       "character": "Mara Quill",
@@ -56,6 +64,54 @@
       "present": false,
       "status": "needed",
       "detail": "source file not delivered"
+    },
+    {
+      "character": "Lady Vesper",
+      "runtime": "vesper",
+      "source": "art/incoming/p10/vesper.png",
+      "present": true,
+      "sha256": "d170e2fe2404c39dbd4fa8ce890fc7d8017819a85062be7ae3d6a8ca8529be86",
+      "problems": [],
+      "provenance": {
+        "author": "Supplied by the project owner in the development session of 2026-10-27; the generation method and tool were not stated",
+        "method": "Owner-supplied painted portrait (original: art/source/owner-p10/portrait-vesper.png). scripts/prepare-owner-art.py tightened the matte, replaced fringe colours, trimmed the figure to its painted disc on the coal ground and resized to 512x512. Nothing was painted or redrawn.",
+        "license": "Used with the owner's permission for this project; the owner is responsible for the rights to the supplied image",
+        "date": "2026-10-27"
+      },
+      "status": "delivered",
+      "detail": "passes machine checks; packed for the 64 px and phone review"
+    },
+    {
+      "character": "The Sightless Oracle",
+      "runtime": "oracle",
+      "source": "art/incoming/p10/oracle.png",
+      "present": true,
+      "sha256": "b914b08e992626f3a49d415b60fc891ebd9ceaf115a64729052dd7aa6666eea4",
+      "problems": [],
+      "provenance": {
+        "author": "Supplied by the project owner in the development session of 2026-10-27; the generation method and tool were not stated",
+        "method": "Owner-supplied painted portrait (original: art/source/owner-p10/portrait-oracle.png). scripts/prepare-owner-art.py tightened the matte, replaced fringe colours, trimmed the figure to its painted disc on the coal ground and resized to 512x512. Nothing was painted or redrawn.",
+        "license": "Used with the owner's permission for this project; the owner is responsible for the rights to the supplied image",
+        "date": "2026-10-27"
+      },
+      "status": "delivered",
+      "detail": "passes machine checks; packed for the 64 px and phone review"
+    },
+    {
+      "character": "Sir Corvin",
+      "runtime": "corvin",
+      "source": "art/incoming/p10/corvin.png",
+      "present": true,
+      "sha256": "7c55e2aaad51df59959596887ad8f93cc2bcc5ac0b584b649e3464cfbfe45d21",
+      "problems": [],
+      "provenance": {
+        "author": "Supplied by the project owner in the development session of 2026-10-27; the generation method and tool were not stated",
+        "method": "Owner-supplied painted portrait (original: art/source/owner-p10/portrait-corvin.png). scripts/prepare-owner-art.py tightened the matte, replaced fringe colours, trimmed the figure to its painted disc on the coal ground and resized to 512x512. Nothing was painted or redrawn.",
+        "license": "Used with the owner's permission for this project; the owner is responsible for the rights to the supplied image",
+        "date": "2026-10-27"
+      },
+      "status": "delivered",
+      "detail": "passes machine checks; packed for the 64 px and phone review"
     }
   ],
   "backs": [
@@ -65,7 +121,7 @@
       "sha256": "1155c010ad5cf174962d7673cdd72a241fbd3449cb1fa9b3ffe2a48122531f60",
       "status": "delivered",
       "problems": [],
-      "edge_contrast": 3.73,
+      "edge_contrast": 4.49,
       "remask": {
         "step": "alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)",
         "original": "art/incoming/p8/original/back-cinder.png",
@@ -80,7 +136,7 @@
       "sha256": "2982e3dd073b1bd254b0f6d2301c623a2807ca74463fc3e1ac5ea70b0b3ca170",
       "status": "delivered",
       "problems": [],
-      "edge_contrast": 5.28,
+      "edge_contrast": 6.35,
       "remask": {
         "step": "alpha replaced by the canonical back alpha (art/source/chatgpt-p3/back-300.png)",
         "original": "art/incoming/p8/original/back-crown.png",

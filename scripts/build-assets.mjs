@@ -24,17 +24,19 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'art/source');
 const OUT = join(ROOT, 'art/generated');
 
+// Ashen Reliquary palette (owner's visual direction, 2026-10-27): bone ivory, oxidized copper,
+// bruised vermilion, coal. The 'gold' names are kept so the court recolouring below is unchanged.
 const P = {
-  parchment: '#F2E8D0',
-  parchmentDeep: '#E2D1AC',
-  ink: '#201E22',
-  crimson: '#A92C3C',
-  crimsonDeep: '#8E1B2A',
-  gold: '#C9A24A',
-  goldLight: '#F3D27A',
-  goldMuted: '#856B3E',
-  feltMain: '#132E29',
-  feltDeep: '#0D201D',
+  parchment: '#EADFC6',
+  parchmentDeep: '#CBB58C',
+  ink: '#1E1A18',
+  crimson: '#9E2B25',
+  crimsonDeep: '#6E1B18',
+  gold: '#B8734A',
+  goldLight: '#E2A97E',
+  goldMuted: '#7A4A2E',
+  feltMain: '#1B1714',
+  feltDeep: '#0E0C0B',
   woodInk: '#231A18',
   woodEdge: '#473126',
   violet: '#77629A',
@@ -145,6 +147,10 @@ function cardBase(id) {
       <feTurbulence type="fractalNoise" baseFrequency="0.012 0.09" numOctaves="2" seed="3"/>
       <feColorMatrix type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.45  0 0 0 0 0.3  0 0 0 0.35 0"/>
     </filter>
+    <filter id="stain-${id}" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="4" seed="${19 + (id.length * 7 + id.charCodeAt(0)) % 23}"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.42  0 0 0 0 0.3  0 0 0 0 0.17  0 0 0 -2.6 1.45"/>
+    </filter>
     <radialGradient id="vig-${id}" cx="50%" cy="45%" r="75%">
       <stop offset="60%" stop-color="${P.parchment}" stop-opacity="0"/>
       <stop offset="100%" stop-color="${P.parchmentDeep}" stop-opacity="0.9"/>
@@ -154,6 +160,7 @@ function cardBase(id) {
     <rect width="${W}" height="${H}" fill="${P.parchment}"/>
     <rect width="${W}" height="${H}" filter="url(#fibres-${id})" opacity="0.35"/>
     <rect width="${W}" height="${H}" filter="url(#grain-${id})" opacity="0.28"/>
+    <rect width="${W}" height="${H}" filter="url(#stain-${id})" opacity="0.16"/>
     <rect width="${W}" height="${H}" fill="url(#vig-${id})"/>
   </g>
   <rect x="5" y="5" width="${W - 10}" height="${H - 10}" rx="14" fill="none" stroke="${P.gold}" stroke-width="3"/>
@@ -225,53 +232,81 @@ function cardSvg(rank, suit, sources) {
 function feltSvg() {
   const w = 1200;
   const h = 1560;
-  // Logical table: x 8..392, y 120..420 at 3x scale.
+  // The Ashen table: a coal-stone slab in an oxidized copper rim, with a ritual circle cut into it
+  // under the pot and the board (logical table x 8..392, y 120..420 at 3x scale).
+  const cx = 600;
+  const cy = 790;
+  const ticks = Array.from({ length: 48 }, (_, i) => {
+    const a = (i / 48) * Math.PI * 2;
+    const r0 = i % 4 === 0 ? 300 : 312;
+    return `M${(cx + Math.cos(a) * r0).toFixed(1)} ${(cy + Math.sin(a) * r0 * 0.78).toFixed(1)}L${(cx + Math.cos(a) * 322).toFixed(1)} ${(cy + Math.sin(a) * 322 * 0.78).toFixed(1)}`;
+  }).join('');
+  const crescents = [0, 1, 2, 3]
+    .map((i) => {
+      const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+      const x = cx + Math.cos(a) * 352;
+      const y = cy + Math.sin(a) * 352 * 0.78;
+      return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="11"/><path d="M4 -10a11 11 0 0 1 0 20a8 8 0 0 0 0-20z" fill="${P.goldMuted}" stroke="none"/></g>`;
+    })
+    .join('');
+  // Engraving = a dark cut with a lit lower lip, drawn twice with a small offset.
+  const ring = (rx, ry, extra = '') => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" ${extra}/>`;
+  const carved = (shapes) => `<g fill="none" stroke="#000" stroke-opacity="0.75" stroke-width="3">${shapes}</g><g fill="none" stroke="${P.goldLight}" stroke-opacity="0.16" stroke-width="1.6" transform="translate(0 2.5)">${shapes}</g>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <defs>
-    <filter id="wood" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.06" numOctaves="4" seed="11"/>
-      <feColorMatrix type="matrix" values="0 0 0 0 0.42  0 0 0 0 0.24  0 0 0 0 0.13  0 0 0 0.85 0"/>
+    <filter id="patina" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="4" seed="23"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.37  0 0 0 0 0.49  0 0 0 0 0.41  0 0 0 -2.2 1.25"/>
     </filter>
-    <filter id="feltNoise" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="5"/>
-      <feColorMatrix type="matrix" values="0 0 0 0 0.02  0 0 0 0 0.12  0 0 0 0 0.1  0 0 0 0.5 0"/>
+    <filter id="copperGrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.6 0.05" numOctaves="3" seed="4"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.62  0 0 0 0 0.36  0 0 0 0 0.2  0 0 0 0.7 0"/>
     </filter>
-    <radialGradient id="feltLight" cx="50%" cy="48%" r="60%">
-      <stop offset="0%" stop-color="#1B3D36"/>
-      <stop offset="65%" stop-color="${P.feltMain}"/>
+    <filter id="stone" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.006" numOctaves="5" seed="31"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.14  0 0 0 0 0.1  0 0 0 0.32 0"/>
+    </filter>
+    <filter id="grit" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="5"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.36  0 0 0 0 0.28  0 0 0 0.12 0"/>
+    </filter>
+    <radialGradient id="slab" cx="50%" cy="46%" r="62%">
+      <stop offset="0%" stop-color="#241b16"/>
+      <stop offset="60%" stop-color="${P.feltMain}"/>
       <stop offset="100%" stop-color="${P.feltDeep}"/>
     </radialGradient>
     <radialGradient id="room" cx="50%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#151a1c"/>
-      <stop offset="100%" stop-color="#07090a"/>
+      <stop offset="0%" stop-color="#171210"/>
+      <stop offset="100%" stop-color="#070606"/>
     </radialGradient>
-    <linearGradient id="railShine" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#F3D27A" stop-opacity="0.08"/>
-      <stop offset="50%" stop-color="#ffffff" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0.35"/>
+    <linearGradient id="rimLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${P.goldLight}" stop-opacity="0.35"/>
+      <stop offset="45%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.55"/>
     </linearGradient>
     <clipPath id="railClip"><rect x="24" y="360" width="1152" height="900" rx="450"/></clipPath>
     <clipPath id="feltClip"><rect x="60" y="396" width="1080" height="828" rx="414"/></clipPath>
   </defs>
   <rect width="${w}" height="${h}" fill="url(#room)"/>
-  <ellipse cx="600" cy="1240" rx="560" ry="60" fill="#000" opacity="0.5"/>
+  <ellipse cx="600" cy="1250" rx="580" ry="64" fill="#000" opacity="0.55"/>
   <g clip-path="url(#railClip)">
-    <rect width="${w}" height="${h}" fill="${P.woodInk}"/>
-    <rect width="${w}" height="${h}" filter="url(#wood)"/>
-    <rect x="24" y="360" width="1152" height="900" fill="url(#railShine)"/>
+    <rect width="${w}" height="${h}" fill="#3e2316"/>
+    <rect width="${w}" height="${h}" filter="url(#copperGrain)"/>
+    <rect width="${w}" height="${h}" filter="url(#patina)" opacity="0.8"/>
+    <rect x="24" y="360" width="1152" height="900" fill="url(#rimLight)"/>
   </g>
-  <rect x="24" y="360" width="1152" height="900" rx="450" fill="none" stroke="${P.woodEdge}" stroke-width="6"/>
-  <rect x="52" y="388" width="1096" height="844" rx="422" fill="none" stroke="${P.goldMuted}" stroke-width="5"/>
+  <rect x="24" y="360" width="1152" height="900" rx="450" fill="none" stroke="#1a0f09" stroke-width="5"/>
+  <rect x="30" y="366" width="1140" height="888" rx="444" fill="none" stroke="${P.goldLight}" stroke-opacity="0.45" stroke-width="2"/>
+  <rect x="50" y="386" width="1100" height="848" rx="424" fill="none" stroke="#1a0f09" stroke-width="6"/>
   <g clip-path="url(#feltClip)">
-    <rect width="${w}" height="${h}" fill="url(#feltLight)"/>
-    <rect width="${w}" height="${h}" filter="url(#feltNoise)"/>
+    <rect width="${w}" height="${h}" fill="url(#slab)"/>
+    <rect width="${w}" height="${h}" filter="url(#stone)"/>
+    <rect width="${w}" height="${h}" filter="url(#grit)"/>
+    ${carved(ring(372, 290) + ring(322, 251) + ring(300, 234, 'stroke-dasharray="4 10"') + `<path d="${ticks}"/>` + `<path d="M${cx} ${cy - 290}v-24M${cx} ${cy + 290}v24M${cx - 372} ${cy}h-26M${cx + 372} ${cy}h26"/>`)}
+    <g fill="none" stroke="#000" stroke-opacity="0.6" stroke-width="2.5">${crescents}</g>
   </g>
-  <rect x="60" y="396" width="1080" height="828" rx="414" fill="none" stroke="#000" stroke-opacity="0.55" stroke-width="10"/>
-  <rect x="102" y="438" width="996" height="744" rx="372" fill="none" stroke="${P.gold}" stroke-opacity="0.35" stroke-width="3"/>
-  <g transform="translate(600 640)" opacity="0.12" fill="none" stroke="${P.goldLight}" stroke-width="3">
-    <circle r="70"/><circle r="52"/>
-    <path d="M0 -70 L0 70 M-70 0 L70 0 M-50 -50 L50 50 M-50 50 L50 -50"/>
-  </g>
+  <rect x="60" y="396" width="1080" height="828" rx="414" fill="none" stroke="#000" stroke-opacity="0.7" stroke-width="14"/>
+  <rect x="96" y="432" width="1008" height="756" rx="378" fill="none" stroke="${P.gold}" stroke-opacity="0.22" stroke-width="2"/>
 </svg>`;
 }
 
@@ -310,6 +345,8 @@ function dealerSvg() {
 // ───────────────────────────── render ─────────────────────────────
 
 async function main() {
+  // --table: only the table, Lifechip and dealer button (the card faces are left as they are).
+  const tableOnly = process.argv.includes('--table');
   const fontUrl = 'data:font/ttf;base64,' + readFileSync(join(SRC, 'fonts/NotoSerifDisplay-Bold.ttf')).toString('base64');
   const sources = { AS: readFileSync(join(SRC, 'vector-playing-cards/AS.svg'), 'utf8') };
   for (const r of 'JQK') for (const s of 'CDHS') sources[r + s] = readFileSync(join(SRC, `vector-playing-cards/${r}${s}.svg`), 'utf8');
@@ -327,7 +364,7 @@ async function main() {
     await page.locator('svg').first().screenshot({ path: file, omitBackground: true });
   };
 
-  for (const rank of RANKS) {
+  for (const rank of tableOnly ? [] : RANKS) {
     for (const suit of SUITS) {
       await shoot(cardSvg(rank, suit, sources), W, H, join(OUT, `cards/${rank}${suit}.png`));
     }

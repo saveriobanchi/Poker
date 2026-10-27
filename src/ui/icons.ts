@@ -47,6 +47,10 @@ const PATHS = {
   /** Rethread: a looped thread. */
   rethread: `<path ${P} d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3.5v3.2h-3.2M6 20.5v-3.2h3.2"/>`,
   arrow: `<path ${P} d="M5 12h13M13 7l5 5-5 5"/>`,
+  /** Chevron of a menu plate. */
+  chevron: `<path ${P} d="M9.5 5.5l6.5 6.5-6.5 6.5"/>`,
+  /** Eclipse: a dark disc with a lit crescent and a ray at each quarter (begin a run). */
+  eclipse: `<circle ${P} cx="12" cy="12" r="5.5"/><path ${P} d="M14.2 7c2.6 1.3 3.6 4.6 2.2 7.2M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>`,
   // Merchant marks (visual direction v1.2: a small distinct symbol per merchant).
   /** Selene: a hanging lantern. */
   lantern: `<path ${P} d="M12 2.5v2M9 4.5h6M8 7h8l-1 10H9zM8 7l1-2.5h6L16 7M9.5 17h5v2.5h-5zM12 10.5c-1 1.2-1 2.6 0 3.5 1-.9 1-2.3 0-3.5z"/>`,
@@ -104,6 +108,21 @@ export const DISCIPLINE_ICON: Record<'Ember' | 'Veil' | 'Thorn' | 'Mirror', Icon
   Mirror: 'mirror',
 };
 
+/**
+ * A discipline's painted emblem (Ashen Reliquary art, public/assets/emblems/). Used at 28 px and
+ * up: below that the line sigil above stays, because the painting turns to mud at tray size.
+ */
+export function emblem(discipline: keyof typeof DISCIPLINE_ICON, size = 40): HTMLImageElement {
+  const img = document.createElement('img');
+  img.className = 'emblem';
+  img.src = `assets/emblems/${discipline.toLowerCase()}.webp`;
+  img.alt = '';
+  img.width = size;
+  img.height = size;
+  img.decoding = 'async';
+  return img;
+}
+
 /** Each merchant's mark, keyed by merchant id. */
 export const MERCHANT_ICON: Record<string, IconName> = {
   selene: 'lantern',
@@ -121,14 +140,14 @@ export const MERCHANT_ICON: Record<string, IconName> = {
 export function eclipseMark(size = 120): string {
   return `<svg class="eclipse-mark" width="${size}" height="${size}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
   <defs>
-    <radialGradient id="em-corona" cx="50%" cy="50%" r="50%"><stop offset="62%" stop-color="#c4a052" stop-opacity="0"/><stop offset="70%" stop-color="#ead39a" stop-opacity=".55"/><stop offset="100%" stop-color="#c4a052" stop-opacity="0"/></radialGradient>
+    <radialGradient id="em-corona" cx="50%" cy="50%" r="50%"><stop offset="62%" stop-color="#b8734a" stop-opacity="0"/><stop offset="70%" stop-color="#e2a97e" stop-opacity=".55"/><stop offset="100%" stop-color="#b8734a" stop-opacity="0"/></radialGradient>
   </defs>
   <circle cx="60" cy="58" r="42" fill="url(#em-corona)"/>
-  <circle cx="60" cy="58" r="30.5" fill="none" stroke="#c4a052" stroke-width="1"/>
-  <circle cx="60" cy="58" r="34" fill="none" stroke="#6f5934" stroke-width=".8" stroke-dasharray="1.2 3.2"/>
-  <circle cx="62.5" cy="56.5" r="27" fill="#0a0c0b"/>
-  <path d="M60 58m-27 0a27 27 0 0 1 27-27" fill="none" stroke="#ead39a" stroke-width="1.6" stroke-linecap="round"/>
-  <path d="M51 20l3.5-7 5.5 5 5.5-5 3.5 7z" fill="none" stroke="#c4a052" stroke-width="1.2" stroke-linejoin="round"/>
-  <path d="M60 96v18M55 109h10" stroke="#6f5934" stroke-width="1" stroke-linecap="round"/>
+  <circle cx="60" cy="58" r="30.5" fill="none" stroke="#b8734a" stroke-width="1"/>
+  <circle cx="60" cy="58" r="34" fill="none" stroke="#7a4a2e" stroke-width=".8" stroke-dasharray="1.2 3.2"/>
+  <circle cx="62.5" cy="56.5" r="27" fill="#0d0b0a"/>
+  <path d="M60 58m-27 0a27 27 0 0 1 27-27" fill="none" stroke="#e2a97e" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M51 20l3.5-7 5.5 5 5.5-5 3.5 7z" fill="none" stroke="#b8734a" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M60 96v18M55 109h10" stroke="#7a4a2e" stroke-width="1" stroke-linecap="round"/>
 </svg>`;
 }

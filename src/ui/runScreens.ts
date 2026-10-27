@@ -42,7 +42,8 @@ import {
   TABLE_NODES,
 } from '../game/run/run';
 import { DISCIPLINE_COLOR } from './theme';
-import { aetherGems, DISCIPLINE_ICON, eclipseMark, icon, type IconName, MERCHANT_ICON } from './icons';
+import { portraitFor } from './TableScene';
+import { aetherGems, DISCIPLINE_ICON, eclipseMark, emblem, icon, type IconName, MERCHANT_ICON } from './icons';
 import { COVENANT_PLAIN, RELIC_PLAIN, SPELL_PLAIN } from './plain';
 
 export interface ScreenHandlers {
@@ -259,7 +260,7 @@ export function evolutionPanel(run: RunState, cb: ScreenHandlers): HTMLElement |
             const card = h(
               'button',
               { type: 'button', class: 'branch' },
-              h('span', { class: 'branch-name' }, icon(DISCIPLINE_ICON[def.discipline], 15), def.name),
+              h('span', { class: 'branch-name' }, emblem(def.discipline, 34), def.name),
               h('span', { class: 'branch-cost' }, def.cost ? aetherGems(def.cost, def.cost, 11) : 'free'),
               h('span', { class: 'branch-text' }, SPELL_PLAIN[b].does),
             );
@@ -949,24 +950,53 @@ function titleMark(): HTMLElement {
   return m;
 }
 
+/** A framed menu plate: icon well, title, one line of what it does, a chevron. */
+function menuPlate(iconName: IconName, title: string, sub: string, onClick: () => void, cls = ''): HTMLButtonElement {
+  const b = h('button', { type: 'button', class: `menu-plate ${cls}`.trim() }, h('span', { class: 'menu-well' }, icon(iconName, 22)), h('span', { class: 'menu-text' }, h('span', { class: 'menu-title' }, title), h('span', { class: 'menu-sub' }, sub)), icon('chevron', 18));
+  b.addEventListener('click', onClick);
+  return b;
+}
+
+/** The rivals whose painted portraits exist, shown on the title as the people at the tables. */
+const TITLE_RIVALS = ['vesper', 'oracle', 'corvin'];
+
 /** Title screen when no run is saved; offers a P3 Fallen continuation when one exists. */
 export function renderTitle(root: HTMLElement, hasFallen: boolean, cb: ScreenHandlers, testament: LegacyEntry[] = []): void {
+  const keeper = portraitFor('adjudicator') ? h('img', { class: 'keeper-portrait', src: 'assets/portraits/adjudicator.webp', alt: '' }) : titleMark();
+  const rivals = TITLE_RIVALS.filter((id) => portraitFor(id) && PROFILES[id]);
+  const last = testament[testament.length - 1];
   root.replaceChildren(
     h(
       'div',
       { class: 'screen-inner title' },
-      titleMark(),
-      h('h1', {}, 'The Last Wager'),
-      h('p', { class: 'tagline' }, 'Poker · Magic · Consequence'),
-      h('p', { class: 'lede' }, 'Real No-limit Hold’em, where the chips are your life. Fictional Lifechips only.'),
       h(
-        'div',
-        { class: 'actions' },
-        btn('Begin a new run', () => cb.newRun(), 'primary'),
-        hasFallen ? btn('Continue your Fallen Wagerer', () => cb.continueFallen()) : null,
+        'header',
+        { class: 'logo' },
+        h('h1', {}, h('span', { class: 'logo-the' }, 'The'), h('span', { class: 'logo-name' }, 'Last Wager')),
+        h('p', { class: 'tagline' }, 'A dark-fantasy poker roguelike'),
+      ),
+      h('figure', { class: 'keeper' }, keeper, h('figcaption', {}, h('strong', {}, 'The Ledger Adjudicator'), 'Keeper of every Last Claim')),
+      h('p', { class: 'lede' }, 'Real No-limit Hold’em, where the chips are your life. Some gamble for gold; you wager what remains of yourself. Fictional Lifechips only.'),
+      h(
+        'nav',
+        { class: 'menu', 'aria-label': 'Main menu' },
+        menuPlate('eclipse', 'Begin a new run', 'A new Wagerer · 100 Lifechips', () => cb.newRun(), 'primary'),
+        hasFallen ? menuPlate('moon', 'Continue your Fallen Wagerer', 'The Registry Below', () => cb.continueFallen()) : null,
       ),
       hasFallen ? h('p', { class: 'muted' }, 'A Wagerer who survived a Last Claim in the previous build waits at the Registry Below, with the exact Lifechips and covenant they left with.') : null,
-      testament.length
+      rivals.length
+        ? h(
+            'section',
+            { class: 'rivals' },
+            h('h3', {}, 'At the tables'),
+            h(
+              'ul',
+              {},
+              ...rivals.map((id) => h('li', {}, h('img', { src: `assets/portraits/${id}.webp`, alt: '' }), h('strong', {}, PROFILES[id].name), h('span', {}, PROFILES[id].title))),
+            ),
+          )
+        : null,
+      last
         ? h(
             'section',
             { class: 'record testament' },

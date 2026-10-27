@@ -1,0 +1,72 @@
+{
+  "supplied": "2026-10-27, by the project owner in the development session",
+  "portraits": {
+    "adjudicator": {
+      "source": "art/source/owner-p10/portrait-adjudicator.png",
+      "output": "art/incoming/p4/adjudicator.png",
+      "disc": [
+        627,
+        622,
+        612
+      ]
+    },
+    "vesper": {
+      "source": "art/source/owner-p10/portrait-vesper.png",
+      "output": "art/incoming/p10/vesper.png",
+      "disc": [
+        626,
+        636,
+        548
+      ]
+    },
+    "corvin": {
+      "source": "art/source/owner-p10/portrait-corvin.png",
+      "output": "art/incoming/p10/corvin.png",
+      "disc": [
+        628,
+        606,
+        590
+      ]
+    },
+    "oracle": {
+      "source": "art/source/owner-p10/portrait-oracle.png",
+      "output": "art/incoming/p10/oracle.png",
+      "disc": [
+        640,
+        628,
+        606
+      ]
+    }
+  },
+  "emblems": {
+    "ember": {
+      "source": "art/source/owner-p10/emblem-ember.png",
+      "output": "public/assets/emblems/ember.webp"
+    },
+    "veil": {
+      "source": "art/source/owner-p10/emblem-veil.png",
+      "output": "public/assets/emblems/veil.webp"
+    },
+    "thorn": {
+      "source": "art/source/owner-p10/emblem-thorn.png",
+      "output": "public/assets/emblems/thorn.webp"
+    },
+    "mirror": {
+      "source": "art/source/owner-p10/emblem-mirror.png",
+      "output": "public/assets/emblems/mirror.webp"
+    }
+  },
+  "back": {
+    "source": "art/source/owner-p10/back-reliquary.png",
+    "crop": [
+      40,
+      33,
+      1019,
+      1440
+    ],
+    "output": "art/source/owner-p10/back-reliquary-300.png",
+    "symmetry": "upper half kept, rotated 180 degrees into the lower half",
+    "alpha": "art/source/chatgpt-p3/back-300.png",
+    "keyline": "2 px copper (#D69668 at 85%) along the silhouette edge, for 3:1 edge contrast on the table"
+  }
+}

@@ -1,45 +1,60 @@
 /*
- * THE LAST WAGER — interface, v2 ("the Ledger by candlelight").
- * One deliberate dark world from the art bible's Gilded Eclipse: soot and walnut
- * surfaces, brass hairlines, vellum type, a warm key light from the upper left.
- * Controls are engraved plaques (square corners, an inner rule), lists read as
- * ledger entries (rules above and below, dotted leaders to the figure), and
- * every icon is the game's own line drawing (src/ui/icons.ts) — no emoji.
+ * THE LAST WAGER — interface v3, "Ashen Reliquary" (the owner's visual direction, 2026-10-27).
+ * A pilgrimage of cards, will and consequence: coal-black stone, bone-ivory paper, oxidized
+ * copper fittings, smoked plum for magic, bruised vermilion for blood and seals, muted celadon
+ * for the safe path, ash grey for what is spent. Titles in Cinzel Decorative, engraved labels
+ * in Cinzel, text in Spectral. Controls are framed plates with copper corner brackets (never
+ * round pills); lists read as ledger entries; every icon is the game's own line drawing
+ * (src/ui/icons.ts) and the four discipline emblems are painted art (public/assets/emblems).
+ * Textures are generated here (SVG turbulence), so no third-party image is needed.
  */
 :root {
-  /* Surfaces */
-  --void: #0a0c0b;
-  --soot: #121110;
-  --lacquer: #1b1613;
-  --walnut: #2a1f19;
-  /* Brass */
-  --brass: #c4a052;
-  --brass-hi: #ead39a;
-  --brass-lo: #6f5934;
-  --rule: rgba(196, 160, 82, 0.34);
-  --rule-faint: rgba(196, 160, 82, 0.16);
-  /* Type colours */
-  --vellum: #ece2c8;
-  --vellum-2: #b5a98e;
-  --ash: #7d7566;
+  /* Surfaces: coal */
+  --void: #0d0b0a;
+  --soot: #121010;
+  --lacquer: #1a1614;
+  --walnut: #251d18;
+  /* Fittings: oxidized copper */
+  --copper: #b8734a;
+  --copper-hi: #e2a97e;
+  --copper-lo: #7a4a2e;
+  --rule: rgba(184, 115, 74, 0.34);
+  --rule-faint: rgba(184, 115, 74, 0.16);
+  /* Type colours: bone ivory and ash */
+  --bone: #e8dcc4;
+  --bone-2: #b3a68c;
+  --ash: #8a857c;
   /* Meaning */
-  --oxblood: #8a2a2e;
-  --ember: #c4553f;
-  --verdigris: #6fa48f;
-  --arcane: #a28ecc;
-  --parchment: #f1e6cb;
+  --oxblood: #8e2a22;
+  --vermilion: #9e2f25;
+  --ember: #c0503a;
+  --verdigris: #7f9e86;
+  --celadon: #5e7e68;
+  --plum: #4a3346;
+  --arcane: #b496b8;
+  --parchment: #ece1c8;
   --ink: #1d1814;
   /* Type */
+  --title: 'Cinzel Decorative', Cinzel, 'Times New Roman', serif;
   --display: Cinzel, 'Times New Roman', serif;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --ui: 'Alegreya Sans', 'Gill Sans', 'Trebuchet MS', sans-serif;
+  --serif: Spectral, Georgia, serif;
+  --ui: Spectral, Georgia, serif;
   /* Legacy names still used by inline styles */
-  --gold: var(--brass);
-  --gold-light: var(--brass-hi);
-  --gold-muted: var(--brass-lo);
-  --text: var(--vellum);
-  --muted: var(--vellum-2);
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .72 0 0 0 0 .5 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --gold: var(--copper);
+  --gold-light: var(--copper-hi);
+  --gold-muted: var(--copper-lo);
+  --text: var(--bone);
+  --muted: var(--bone-2);
+  /* Generated textures: fine grain, mottled stone, brushed metal. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .85 0 0 0 0 .66 0 0 0 0 .5 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .16 0 0 0 -0.7 .32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  --brushed: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='60'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .85 0 0 0 0 .7 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
+  /* Copper corner brackets of a framed plate. */
+  --orn:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M1.5 11V5L5 1.5h6M4 4.5h0.1' fill='none' stroke='%23e2a97e' stroke-opacity='.75' stroke-width='1'/%3E%3C/svg%3E") top 3px left 3px / 12px 12px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M10.5 11V5L7 1.5H1' fill='none' stroke='%23e2a97e' stroke-opacity='.75' stroke-width='1'/%3E%3C/svg%3E") top 3px right 3px / 12px 12px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M1.5 1v6L5 10.5h6' fill='none' stroke='%23e2a97e' stroke-opacity='.75' stroke-width='1'/%3E%3C/svg%3E") bottom 3px left 3px / 12px 12px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M10.5 1v6L7 10.5H1' fill='none' stroke='%23e2a97e' stroke-opacity='.75' stroke-width='1'/%3E%3C/svg%3E") bottom 3px right 3px / 12px 12px no-repeat;
   color-scheme: dark;
 }
 
@@ -52,10 +67,10 @@ body {
   margin: 0;
   height: 100%;
   background: var(--void);
-  color: var(--vellum);
+  color: var(--bone);
   font-family: var(--ui);
   font-size: 16px;
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: lining-nums tabular-nums;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
@@ -71,8 +86,9 @@ body {
   overflow: hidden;
   background:
     var(--grain),
-    radial-gradient(120% 70% at 12% -12%, rgba(214, 160, 80, 0.13), transparent 62%),
-    radial-gradient(90% 60% at 104% 108%, rgba(80, 120, 128, 0.07), transparent 60%),
+    radial-gradient(120% 70% at 12% -12%, rgba(196, 120, 72, 0.14), transparent 62%),
+    radial-gradient(90% 60% at 104% 108%, rgba(74, 51, 70, 0.22), transparent 60%),
+    var(--mottle),
     var(--void);
 }
 
@@ -87,29 +103,34 @@ body {
 }
 
 :focus-visible {
-  outline: 1px solid var(--brass-hi);
+  outline: 1px solid var(--copper-hi);
   outline-offset: 3px;
 }
 
-/* ───────────────────────── Plaques (buttons) ───────────────────────── */
+/* ───────────────────────── Framed plates (buttons) ───────────────────────── */
 
+/* Every plate: a rectangular frame, copper corner brackets, an inner rule and a textured fill.
+   Variants only change --fill, --edge and the ink. */
 button {
-  font-family: var(--ui);
-  font-weight: 700;
+  --fill: linear-gradient(180deg, #221c18, #141110);
+  --edge: var(--copper-lo);
+  font-family: var(--display);
+  font-weight: 600;
   font-size: 14px;
   line-height: 1.1;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--vellum);
+  color: var(--bone);
   min-height: 46px;
-  padding: 0 14px;
-  border: 1px solid var(--brass-lo);
-  border-radius: 2px;
-  background: linear-gradient(180deg, #211b17, #15110e);
+  padding: 0 16px;
+  border: 1px solid var(--edge);
+  border-radius: 1px;
+  background: var(--orn), var(--brushed), var(--fill);
   box-shadow:
-    inset 0 1px 0 rgba(234, 211, 154, 0.08),
-    inset 0 0 0 3px #15110e,
-    inset 0 0 0 4px var(--rule-faint);
+    inset 0 1px 0 rgba(226, 169, 126, 0.12),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 4px rgba(184, 115, 74, 0.2),
+    0 2px 0 rgba(0, 0, 0, 0.55);
   cursor: pointer;
   touch-action: manipulation;
   transition: filter 140ms, transform 80ms, background 140ms;
@@ -117,7 +138,7 @@ button {
 
 button:not(:disabled):active {
   transform: translateY(1px);
-  filter: brightness(1.18);
+  filter: brightness(1.2);
 }
 
 button:disabled {
@@ -126,56 +147,53 @@ button:disabled {
   box-shadow: none;
 }
 
-/* Brass plate: the one decisive action on a screen. */
-button.primary,
+/* Wax-red plate: the one decisive action on a screen (begin, deal, make the claim). */
+button.primary {
+  --fill: radial-gradient(120% 140% at 30% 0%, #b5402f, #8e2a22 45%, #57150f 100%);
+  --edge: #c9805a;
+  color: #f6e6d2;
+  text-shadow: 0 1px 1px rgba(40, 6, 2, 0.7);
+}
+
+/* Copper plate: raise. */
 #btn-raise {
-  color: #1d140a;
-  border-color: #f0dca6;
-  background: linear-gradient(180deg, #ecd394 0%, #cba552 46%, #a8843c 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 246, 220, 0.65),
-    inset 0 0 0 3px rgba(203, 165, 82, 0.9),
-    inset 0 0 0 4px rgba(70, 46, 14, 0.38),
-    0 2px 0 #4b3a1a;
-  text-shadow: 0 1px 0 rgba(255, 240, 205, 0.45);
+  --fill: linear-gradient(180deg, #93583a 0%, #6e3d23 55%, #4c2816 100%);
+  --edge: #d09068;
+  color: #f6e6d2;
+  text-shadow: 0 1px 1px rgba(30, 12, 4, 0.7);
 }
 
-/* Vellum plate: the safe continuing action (check / call). */
+/* Celadon enamel: the safe continuing action (check / call). */
 #btn-call {
-  color: var(--ink);
-  border-color: #d9c79c;
-  background: linear-gradient(180deg, #f4ead2, #ddcfad);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 0 0 3px #e6dabd,
-    inset 0 0 0 4px rgba(60, 45, 25, 0.22),
-    0 2px 0 #5d4f37;
+  --fill: linear-gradient(180deg, #4b6656 0%, #34493c 55%, #22302a 100%);
+  --edge: #8fae98;
+  color: #eef0e2;
+  text-shadow: 0 1px 1px rgba(5, 15, 10, 0.7);
 }
 
-/* Raise carried by Cinder: the plate turns to oxblood enamel. */
+/* Raise carried by Cinder: the copper plate glows like an ember. */
 #btn-raise.enchanted {
-  color: #fbeedd;
-  border-color: #e58a6e;
-  background: linear-gradient(180deg, #c45a40, #8a2a2e 70%);
+  --fill: radial-gradient(120% 140% at 50% 120%, #e0703f, #9e2f25 55%, #4c1410 100%);
+  --edge: #f0a07a;
+  color: #fff1e4;
   box-shadow:
-    inset 0 1px 0 rgba(255, 210, 190, 0.4),
-    inset 0 0 0 3px rgba(160, 50, 45, 0.9),
-    inset 0 0 0 4px rgba(255, 200, 170, 0.25),
-    0 2px 0 #3d1214;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    inset 0 1px 0 rgba(255, 210, 190, 0.35),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 4px rgba(255, 170, 120, 0.35),
+    0 0 14px rgba(224, 112, 63, 0.35);
 }
 
 button.danger {
+  --fill: linear-gradient(180deg, #9a3428, #661b16);
+  --edge: #c0503a;
   color: #fbeedd;
-  border-color: #b5474a;
-  background: linear-gradient(180deg, #9a3236, #6e1f22);
 }
 
 button.ghost {
-  background: transparent;
+  --fill: linear-gradient(180deg, rgba(20, 17, 16, 0.6), rgba(20, 17, 16, 0.2));
   box-shadow: none;
-  border-color: var(--rule);
-  color: var(--vellum-2);
+  --edge: var(--rule);
+  color: var(--bone-2);
 }
 
 button.small {
@@ -185,7 +203,7 @@ button.small {
 }
 
 button.confirm {
-  outline: 1px solid var(--brass-hi);
+  outline: 1px solid var(--copper-hi);
   outline-offset: 3px;
   animation: confirm-pulse 900ms ease-in-out infinite alternate;
 }
@@ -209,7 +227,7 @@ button.confirm {
   gap: 6px;
   padding: 2px 10px;
   border-bottom: 1px solid var(--rule-faint);
-  background: linear-gradient(180deg, rgba(10, 12, 11, 0.9), rgba(10, 12, 11, 0.4));
+  background: linear-gradient(180deg, rgba(13, 11, 10, 0.9), rgba(13, 11, 10, 0.4));
 }
 
 #hud #hand-info {
@@ -226,7 +244,7 @@ button.confirm {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--copper);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -242,7 +260,7 @@ button.confirm {
   white-space: normal;
   line-height: 1.5;
   padding: 2px 0 6px;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 .hud-buttons {
@@ -260,7 +278,7 @@ button.confirm {
   border: none;
   background: none;
   box-shadow: none;
-  color: var(--brass);
+  color: var(--copper);
   display: grid;
   place-items: center;
   position: relative;
@@ -272,7 +290,7 @@ button.confirm {
   left: 14px;
   right: 14px;
   bottom: 7px;
-  border-bottom: 1px solid var(--brass-hi);
+  border-bottom: 1px solid var(--copper-hi);
 }
 
 #hud .hud-buttons #btn-sound[aria-pressed='true']::after {
@@ -287,9 +305,9 @@ button.confirm {
   padding: 0 8px;
   font-size: 11.5px;
   letter-spacing: 0.14em;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   text-decoration: underline;
-  text-decoration-color: var(--brass-lo);
+  text-decoration-color: var(--copper-lo);
   text-underline-offset: 5px;
   display: block;
 }
@@ -319,11 +337,11 @@ body:not(.at-table) #panel {
   gap: 8px;
   background:
     var(--grain),
-    linear-gradient(180deg, #231a15 0%, #17120f 55%, #110e0c 100%);
-  border-top: 1px solid var(--brass-lo);
+    linear-gradient(180deg, #1f1915 0%, #151210 55%, #0f0d0c 100%);
+  border-top: 1px solid var(--copper-lo);
   box-shadow:
     0 -1px 0 rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(234, 211, 154, 0.12),
+    inset 0 1px 0 rgba(226, 169, 126, 0.12),
     inset 0 3px 0 rgba(0, 0, 0, 0.25),
     inset 0 4px 0 var(--rule-faint);
 }
@@ -336,7 +354,7 @@ body:not(.at-table) #panel {
   font-size: 17px;
   font-weight: 600;
   line-height: 1.25;
-  color: var(--vellum);
+  color: var(--bone);
   text-align: center;
   text-wrap: balance;
 }
@@ -349,7 +367,7 @@ body:not(.at-table) #panel {
   gap: 14px;
   font-size: 12.5px;
   letter-spacing: 0.03em;
-  color: var(--brass);
+  color: var(--copper);
   white-space: nowrap;
   overflow-x: auto;
   scrollbar-width: none;
@@ -372,7 +390,7 @@ body:not(.at-table) #panel {
   margin: 0;
   font-size: 13.5px;
   letter-spacing: 0.02em;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   text-align: center;
 }
 
@@ -407,7 +425,7 @@ body:not(.at-table) #panel {
 .gems .icon.lit {
   --gem-fill: currentColor;
   opacity: 1;
-  filter: drop-shadow(0 0 3px rgba(162, 142, 204, 0.55));
+  filter: drop-shadow(0 0 3px rgba(180, 150, 184, 0.55));
 }
 
 #spells {
@@ -419,6 +437,7 @@ body:not(.at-table) #panel {
 }
 
 button.spell {
+  font-family: var(--ui);
   min-height: 48px;
   padding: 5px 7px 4px;
   display: flex;
@@ -434,10 +453,7 @@ button.spell {
   line-height: 1.12;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--disc) 60%, #000);
   border-top: 2px solid var(--disc);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
 }
 
 button.spell .spell-name {
@@ -445,7 +461,7 @@ button.spell .spell-name {
   align-items: flex-start;
   gap: 4px;
   max-width: 100%;
-  color: var(--vellum);
+  color: var(--bone);
 }
 
 button.spell .spell-name .icon {
@@ -458,9 +474,9 @@ button.spell .spell-cost {
 }
 
 button.spell.armed {
-  outline: 1px solid var(--brass-hi);
+  outline: 1px solid var(--copper-hi);
   outline-offset: 2px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--disc) 55%, #15110e), #1d1612);
+  --fill: linear-gradient(180deg, color-mix(in srgb, var(--disc) 60%, #141110), #1d1612);
 }
 
 button.spell.unusable {
@@ -475,7 +491,7 @@ button.spell.unusable {
   padding: 0;
   display: grid;
   place-items: center;
-  color: var(--brass);
+  color: var(--copper);
   background: transparent;
   box-shadow: none;
   border-color: var(--rule);
@@ -483,8 +499,8 @@ button.spell.unusable {
 
 .spell-info-toggle.open {
   color: var(--ink);
-  background: var(--brass);
-  border-color: var(--brass-hi);
+  background: var(--copper);
+  border-color: var(--copper-hi);
 }
 
 #spell-reason {
@@ -493,7 +509,7 @@ button.spell.unusable {
   font-style: italic;
   font-size: 15px;
   font-weight: 600;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   text-align: center;
 }
 
@@ -528,14 +544,15 @@ button.spell.unusable {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--vellum);
+  color: var(--bone);
 }
 
 .info-meta {
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--brass);
+  font-family: var(--ui);
+  font-size: 13.5px;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--copper-hi);
 }
 
 .info-meta.now {
@@ -545,7 +562,7 @@ button.spell.unusable {
 .info-does {
   font-size: 14px;
   line-height: 1.35;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 #spell-choice {
@@ -563,7 +580,7 @@ button.spell.unusable {
   font-size: 17px;
   font-weight: 600;
   font-style: italic;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   text-align: center;
 }
 
@@ -591,10 +608,10 @@ button.choice {
   padding: 0 2px;
   font-size: 12.5px;
   white-space: nowrap;
-  background: transparent;
+  background: var(--orn);
   box-shadow: none;
   border-color: var(--rule);
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 #raise-slider {
@@ -608,12 +625,12 @@ button.choice {
 
 #raise-slider::-webkit-slider-runnable-track {
   height: 2px;
-  background: linear-gradient(90deg, var(--brass), var(--brass-lo));
+  background: linear-gradient(90deg, var(--copper), var(--copper-lo));
 }
 
 #raise-slider::-moz-range-track {
   height: 2px;
-  background: linear-gradient(90deg, var(--brass), var(--brass-lo));
+  background: linear-gradient(90deg, var(--copper), var(--copper-lo));
 }
 
 #raise-slider::-webkit-slider-thumb {
@@ -621,24 +638,24 @@ button.choice {
   width: 14px;
   height: 30px;
   margin-top: -14px;
-  border: 1px solid #f0dca6;
+  border: 1px solid #efc29f;
   border-radius: 1px;
-  background: linear-gradient(180deg, #ecd394, #a8843c);
-  box-shadow: 0 1px 0 #4b3a1a;
+  background: linear-gradient(180deg, #e6ad84, #8a4f2e);
+  box-shadow: 0 1px 0 #3a1e10;
 }
 
 #raise-slider::-moz-range-thumb {
   width: 14px;
   height: 30px;
-  border: 1px solid #f0dca6;
+  border: 1px solid #efc29f;
   border-radius: 1px;
-  background: linear-gradient(180deg, #ecd394, #a8843c);
+  background: linear-gradient(180deg, #e6ad84, #8a4f2e);
 }
 
 #btn-custom {
   display: none;
   padding: 0;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   background: transparent;
   box-shadow: none;
   border-color: var(--rule);
@@ -653,17 +670,20 @@ button.choice {
 
 #action-row button {
   min-height: 50px;
-  font-size: 15px;
+  padding: 0 8px;
+  font-size: 14.5px;
+  letter-spacing: 0.06em;
 }
 
+/* Coal plate: fold. */
 #btn-fold {
-  color: var(--vellum-2);
-  background: transparent;
+  --fill: linear-gradient(180deg, #1a1614, #0c0a09);
+  color: var(--bone-2);
 }
 
 .evolve-cta {
-  color: var(--brass-hi);
-  border-color: var(--brass);
+  color: var(--copper-hi);
+  border-color: var(--copper);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -693,12 +713,12 @@ button.choice {
 .screen-inner h1,
 .screen-inner h2 {
   margin: 2px 0 0;
-  font-family: var(--display);
+  font-family: var(--title);
   font-weight: 600;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
+  text-transform: none;
+  letter-spacing: 0.06em;
   text-wrap: balance;
 }
 
@@ -715,19 +735,19 @@ button.choice {
   margin: 10px auto 0;
   width: 150px;
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'%3E%3Cpath d='M7 .8L12.2 5 7 9.2 1.8 5z' fill='none' stroke='%23c4a052' stroke-width='1.2'/%3E%3Ccircle cx='7' cy='5' r='1.3' fill='%23c4a052'/%3E%3C/svg%3E") center / 14px 10px no-repeat,
-    linear-gradient(90deg, transparent, var(--brass-lo) 30%, transparent 44%, transparent 56%, var(--brass-lo) 70%, transparent) center / 100% 1px no-repeat;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'%3E%3Cpath d='M7 .8L12.2 5 7 9.2 1.8 5z' fill='none' stroke='%23b8734a' stroke-width='1.2'/%3E%3Ccircle cx='7' cy='5' r='1.3' fill='%23b8734a'/%3E%3C/svg%3E") center / 14px 10px no-repeat,
+    linear-gradient(90deg, transparent, var(--copper-lo) 30%, transparent 44%, transparent 56%, var(--copper-lo) 70%, transparent) center / 100% 1px no-repeat;
 }
 
 /* Section heads read as ledger labels, not as more display type. */
 .screen-inner h3 {
   margin: 0 0 8px;
-  font-family: var(--ui);
+  font-family: var(--display);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--copper);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -745,7 +765,7 @@ button.choice {
   font-size: 19px;
   font-weight: 600;
   line-height: 1.4;
-  color: var(--vellum);
+  color: var(--bone);
 }
 
 .screen-inner p {
@@ -754,7 +774,7 @@ button.choice {
 
 .muted,
 .note {
-  color: var(--vellum-2);
+  color: var(--bone-2);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -773,8 +793,8 @@ button.choice {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: #2a1d0c;
-  background: radial-gradient(circle at 36% 30%, #e3c681, #a8843c 50%, #5f4a24 100%);
+  color: #2a140a;
+  background: radial-gradient(circle at 36% 30%, #d99a6c, #8a4f2e 50%, #4f2a17 100%);
   box-shadow: inset 0 0 0 2px rgba(60, 40, 15, 0.4), inset 0 1px 1px rgba(255, 240, 200, 0.5), 0 2px 3px rgba(0, 0, 0, 0.55);
 }
 
@@ -785,7 +805,7 @@ button.choice {
   font-style: italic;
   font-size: 18px;
   line-height: 1.4;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 .warning-text {
@@ -804,7 +824,7 @@ button.choice {
   flex-direction: column;
   font-size: 15px;
   line-height: 1.4;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 .plan li {
@@ -819,7 +839,7 @@ button.choice {
   content: counter(plan, upper-roman);
   font-family: var(--display);
   font-size: 12px;
-  color: var(--brass);
+  color: var(--copper);
   padding-top: 2px;
 }
 
@@ -836,42 +856,242 @@ button.choice {
   gap: 6px;
 }
 
-/* Title */
+/* Title: the logo over an eclipse, the Keeper's portrait, framed menu plates, the rivals. */
 .title {
   align-items: center;
   text-align: center;
-  padding-top: 7vh;
-  gap: 18px;
+  padding-top: 3vh;
+  gap: 16px;
 }
 
 .title-mark {
   line-height: 0;
-  margin-bottom: -6px;
 }
 
-.title .tagline {
-  margin: -8px 0 0;
-  font-family: var(--display);
-  font-size: 12px;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--brass);
+.logo {
+  position: relative;
+  width: 100%;
+  padding: 26px 0 4px;
+  isolation: isolate;
+}
+
+/* The eclipse behind the wordmark and the Ledger's rule through it, as on the reliquary board. */
+.logo::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: -6px;
+  width: 168px;
+  height: 168px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 57% 45%, rgba(13, 11, 10, 0.55) 0 55%, transparent 56%),
+    radial-gradient(circle, transparent 0 57%, rgba(226, 169, 126, 0.7) 58.5%, rgba(184, 115, 74, 0.2) 62%, transparent 71%);
+  box-shadow: 0 0 70px rgba(158, 47, 37, 0.3);
+}
+
+.logo::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: -14px;
+  bottom: -12px;
+  border-left: 1px solid rgba(226, 169, 126, 0.55);
+  background: radial-gradient(circle, var(--copper-hi) 2px, transparent 2.5px) center top / 6px 6px no-repeat;
 }
 
 .title h1 {
-  font-size: 32px;
-  line-height: 1.15;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  color: var(--bone);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.8), 0 0 24px rgba(184, 115, 74, 0.35);
+}
+
+.logo-the {
+  font-size: 18px;
+  letter-spacing: 0.2em;
+  color: var(--copper-hi);
+}
+
+.logo-name {
+  font-size: 40px;
+  letter-spacing: 0.04em;
+  background: linear-gradient(180deg, #f4e8d2 10%, #d9b48f 60%, #9c6440);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.title .tagline {
+  margin: 12px 0 0;
+  font-family: var(--display);
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--copper);
+}
+
+.keeper {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.keeper-portrait {
+  width: 176px;
+  height: 176px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #0e0c0b;
+  border: 2px solid var(--copper);
+  box-shadow:
+    0 0 0 5px #0e0c0b,
+    0 0 0 6px var(--copper-lo),
+    0 0 0 11px rgba(13, 11, 10, 0.6),
+    0 0 0 12px rgba(122, 74, 46, 0.45),
+    0 18px 40px rgba(0, 0, 0, 0.7),
+    0 0 70px rgba(158, 47, 37, 0.28);
+}
+
+.keeper figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--bone-2);
+}
+
+.keeper figcaption strong {
+  font-family: var(--display);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--copper-hi);
 }
 
 .title .lede {
+  font-size: 17px;
   font-style: italic;
-  color: var(--vellum-2);
-  max-width: 30ch;
+  font-weight: 400;
+  color: var(--bone-2);
+  max-width: 32ch;
 }
 
-.title .actions {
+.menu {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* A menu plate: icon well on the left, title and one line beneath, a chevron. */
+button.menu-plate {
+  width: 100%;
+  min-height: 68px;
+  padding: 8px 14px 8px 8px;
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.menu-well {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  color: var(--copper-hi);
+  border: 1px solid rgba(226, 169, 126, 0.45);
+  background: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.35));
+  box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.35);
+}
+
+.menu-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.menu-title {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.menu-sub {
+  font-family: var(--ui);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.82;
+}
+
+.menu-plate > .icon {
+  color: var(--copper-hi);
+}
+
+.rivals {
+  width: 100%;
+  text-align: left;
+}
+
+.rivals ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.rivals li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.rivals img {
+  width: 74px;
+  height: 74px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--copper);
+  box-shadow: 0 0 0 3px #0e0c0b, 0 0 0 4px var(--copper-lo), 0 6px 14px rgba(0, 0, 0, 0.6);
+}
+
+.rivals strong {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--bone);
+}
+
+.rivals span {
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--bone-2);
 }
 
 .testament {
@@ -898,7 +1118,7 @@ button.choice {
   top: 20px;
   height: 3px;
   border-top: 1px solid rgba(0, 0, 0, 0.75);
-  border-bottom: 1px solid rgba(196, 160, 82, 0.32);
+  border-bottom: 1px solid rgba(184, 115, 74, 0.32);
 }
 
 .trail-node {
@@ -920,7 +1140,7 @@ button.choice {
   height: 26px;
   display: grid;
   place-items: center;
-  color: var(--brass-lo);
+  color: var(--copper-lo);
   position: relative;
 }
 
@@ -930,9 +1150,9 @@ button.choice {
   position: absolute;
   inset: 2px;
   border-radius: 50%;
-  border: 1px solid var(--brass-lo);
-  background: radial-gradient(circle at 38% 32%, #2a2119, #0f0d0b 70%);
-  box-shadow: inset 0 0 0 2px #0f0d0b, inset 0 0 0 3px rgba(111, 89, 52, 0.6);
+  border: 1px solid var(--copper-lo);
+  background: radial-gradient(circle at 38% 32%, #2a2119, #0e0c0b 70%);
+  box-shadow: inset 0 0 0 2px #0e0c0b, inset 0 0 0 3px rgba(122, 74, 46, 0.6);
 }
 
 .trail-dot .icon {
@@ -940,21 +1160,21 @@ button.choice {
 }
 
 .trail-node.done .trail-dot {
-  color: var(--brass);
+  color: var(--copper);
 }
 
 .trail-node.done .trail-dot::before {
-  border-color: #8d7240;
-  background: radial-gradient(circle at 36% 30%, #e3c681, #a8843c 48%, #5f4a24 100%);
+  border-color: #8a5432;
+  background: radial-gradient(circle at 36% 30%, #d99a6c, #8a4f2e 48%, #4f2a17 100%);
   box-shadow: inset 0 0 0 2px rgba(60, 40, 15, 0.35), inset 0 1px 1px rgba(255, 240, 200, 0.5), 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 
 .trail-node.done .trail-dot {
-  color: #2a1d0c;
+  color: #2a140a;
 }
 
 .trail-node.done {
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 .trail-node.skipped {
@@ -974,12 +1194,12 @@ button.choice {
   inset: -2px;
   border: none;
   border-radius: 47% 53% 50% 50% / 52% 48% 53% 47%;
-  background: radial-gradient(circle at 40% 34%, #c0484a, #8a2a2e 55%, #5c181b 100%);
+  background: radial-gradient(circle at 40% 34%, #c0484a, #8e2a22 55%, #5c181b 100%);
   box-shadow: inset 0 0 0 3px rgba(92, 24, 27, 0.55), inset 0 0 0 4px rgba(230, 140, 130, 0.25), 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .trail-node.here .trail-label {
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   font-weight: 700;
 }
 
@@ -1002,7 +1222,7 @@ button.choice {
   font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 .purse-chips img {
@@ -1016,7 +1236,7 @@ button.choice {
   font-size: 30px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 .purse-rep {
@@ -1026,7 +1246,7 @@ button.choice {
   letter-spacing: 0.1em;
   line-height: 1.5;
   text-transform: uppercase;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 .purse-items {
@@ -1041,11 +1261,11 @@ button.choice {
   align-items: center;
   gap: 5px;
   font-size: 13.5px;
-  color: var(--vellum);
+  color: var(--bone);
 }
 
 .relic .icon {
-  color: var(--brass);
+  color: var(--copper);
 }
 
 .relic.covenant .icon {
@@ -1053,7 +1273,7 @@ button.choice {
 }
 
 .relic.token {
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 /* Ledger entries: offers, records, duties, evolutions. */
@@ -1099,19 +1319,24 @@ button.choice {
   top: -1px;
   width: 10px;
   height: 6px;
-  border-top: 1px solid var(--brass);
+  border-top: 1px solid var(--copper);
 }
 
 .record::before,
 .evolve::before {
   left: 0;
-  border-left: 1px solid var(--brass);
+  border-left: 1px solid var(--copper);
 }
 
 .record::after,
 .evolve::after {
   right: 0;
-  border-right: 1px solid var(--brass);
+  border-right: 1px solid var(--copper);
+}
+
+button.offer,
+button.branch {
+  font-family: var(--ui);
 }
 
 button.offer {
@@ -1131,13 +1356,13 @@ button.offer {
 
 button.offer:not(:disabled):active {
   transform: none;
-  background: rgba(196, 160, 82, 0.06);
+  background: rgba(184, 115, 74, 0.06);
 }
 
 .offer.chosen,
 button.offer[aria-pressed='true'] {
-  background: linear-gradient(90deg, rgba(196, 160, 82, 0.13), rgba(196, 160, 82, 0.02));
-  box-shadow: inset 2px 0 0 var(--brass-hi);
+  background: linear-gradient(90deg, rgba(184, 115, 74, 0.13), rgba(184, 115, 74, 0.02));
+  box-shadow: inset 2px 0 0 var(--copper-hi);
 }
 
 .offer.sold {
@@ -1162,7 +1387,7 @@ button.offer[aria-pressed='true'] {
   flex: 1;
   align-self: flex-end;
   margin-bottom: 5px;
-  border-bottom: 1px dotted var(--brass-lo);
+  border-bottom: 1px dotted var(--copper-lo);
   min-width: 12px;
 }
 
@@ -1179,12 +1404,12 @@ button.offer[aria-pressed='true'] {
   font-size: 14.5px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--vellum);
+  color: var(--bone);
   text-align: left;
 }
 
 .offer-name .icon {
-  color: var(--brass);
+  color: var(--copper);
 }
 
 .price {
@@ -1193,7 +1418,7 @@ button.offer[aria-pressed='true'] {
   gap: 4px;
   font-size: 17px;
   font-weight: 700;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 .price::after {
@@ -1207,7 +1432,7 @@ button.offer[aria-pressed='true'] {
   font-size: 15px;
   line-height: 1.4;
   font-weight: 500;
-  color: var(--vellum-2);
+  color: var(--bone-2);
   text-align: left;
 }
 
@@ -1223,7 +1448,7 @@ button.offer[aria-pressed='true'] {
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--brass-lo);
+  color: var(--copper-lo);
   padding: 2px 0;
 }
 
@@ -1232,7 +1457,7 @@ button.offer[aria-pressed='true'] {
 }
 
 .rules[open] summary {
-  color: var(--brass);
+  color: var(--copper);
 }
 
 .transfer {
@@ -1240,7 +1465,7 @@ button.offer[aria-pressed='true'] {
   font-size: 14.5px;
   font-weight: 700;
   line-height: 1.35;
-  color: var(--vellum);
+  color: var(--bone);
 }
 
 .transfer.short {
@@ -1252,7 +1477,7 @@ button.offer[aria-pressed='true'] {
 }
 
 .rarity {
-  font-family: var(--ui);
+  font-family: var(--display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -1274,7 +1499,7 @@ button.offer[aria-pressed='true'] {
 .duties p {
   font-size: 15px;
   line-height: 1.45;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 .duties ol {
@@ -1286,7 +1511,7 @@ button.offer[aria-pressed='true'] {
   gap: 6px;
   font-size: 14.5px;
   line-height: 1.45;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 .duties li {
@@ -1299,7 +1524,7 @@ button.offer[aria-pressed='true'] {
 }
 
 .duties li.active {
-  color: var(--vellum);
+  color: var(--bone);
   font-weight: 700;
 }
 
@@ -1322,13 +1547,13 @@ button.offer[aria-pressed='true'] {
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--copper);
   border-bottom: 1px solid var(--rule);
 }
 
 .standings td:first-child {
   font-family: var(--display);
-  color: var(--brass-lo);
+  color: var(--copper-lo);
   width: 28px;
 }
 
@@ -1338,7 +1563,7 @@ button.offer[aria-pressed='true'] {
 }
 
 .standings tr.me td {
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   font-weight: 700;
 }
 
@@ -1348,7 +1573,7 @@ button.offer[aria-pressed='true'] {
 }
 
 .outcome-win {
-  color: var(--brass-hi) !important;
+  color: var(--copper-hi) !important;
 }
 
 .outcome-dead {
@@ -1367,7 +1592,7 @@ button.offer[aria-pressed='true'] {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--brass);
+  color: var(--copper);
   border-top: 1px solid var(--rule);
 }
 
@@ -1394,7 +1619,7 @@ button.offer[aria-pressed='true'] {
   gap: 6px;
   padding: 7px 0;
   font-size: 14px;
-  color: var(--vellum);
+  color: var(--bone);
   border-bottom: 1px dotted var(--rule-faint);
 }
 
@@ -1418,19 +1643,19 @@ button.offer[aria-pressed='true'] {
   width: 6px;
   height: 6px;
   transform: rotate(45deg);
-  border: 1px solid var(--brass-lo);
+  border: 1px solid var(--copper-lo);
 }
 
 .res i.on {
-  background: var(--brass);
-  border-color: var(--brass);
+  background: var(--copper);
+  border-color: var(--copper);
 }
 
 .res.evolved {
   font-family: var(--serif);
   font-style: italic;
   font-size: 14px;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
 }
 
 .evolve h3 .icon {
@@ -1460,7 +1685,6 @@ button.branch {
   letter-spacing: 0;
   font-weight: 500;
   border-top: 2px solid var(--disc);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--disc) 18%, #15110e), #15110e 70%);
 }
 
 .branch-name {
@@ -1471,7 +1695,7 @@ button.branch {
   font-size: 13.5px;
   font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--vellum);
+  color: var(--bone);
 }
 
 .branch-name .icon {
@@ -1485,7 +1709,7 @@ button.branch {
 .branch-text {
   font-size: 13.5px;
   line-height: 1.35;
-  color: var(--vellum-2);
+  color: var(--bone-2);
 }
 
 /* ───────────────────────── Last Claim (parchment) ───────────────────────── */
@@ -1517,23 +1741,25 @@ button.branch {
   aspect-ratio: 1200 / 630;
   max-height: 128px;
   background: url('/assets/ui/ledger-title.webp') center / contain no-repeat;
+  /* The P3 title card was painted green and gold; toned to coal and copper to match the reliquary. */
+  filter: grayscale(1) sepia(0.55) brightness(0.92) contrast(1.08);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   padding-bottom: 6%;
   font-family: var(--display);
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   text-align: center;
   flex: 0 0 auto;
 }
 
 .ledger-kicker {
-  font-family: var(--ui);
+  font-family: var(--display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.22em;
-  color: var(--brass);
+  color: var(--copper);
   text-transform: uppercase;
 }
 
@@ -1576,8 +1802,8 @@ button.branch {
 
 .contract-body {
   /* A ledger's severe red margin: two thin rules down the left edge of the contract. */
-  border-left: 1px solid rgba(138, 42, 46, 0.6);
-  box-shadow: -3px 0 0 -2px rgba(138, 42, 46, 0.35);
+  border-left: 1px solid rgba(142, 42, 34, 0.6);
+  box-shadow: -3px 0 0 -2px rgba(142, 42, 34, 0.35);
   padding-left: 11px;
   display: flex;
   flex-direction: column;
@@ -1624,7 +1850,7 @@ button.branch {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  border: 1.5px solid #8a6c34;
+  border: 1.5px solid #7a4a2e;
   box-shadow: 0 0 0 3px rgba(241, 230, 203, 0.9), 0 0 0 4px rgba(110, 85, 40, 0.5);
   flex: 0 0 auto;
 }
@@ -1636,7 +1862,7 @@ button.branch {
 
 .audience .monogram {
   background: #3a2a24;
-  color: var(--brass-hi);
+  color: var(--copper-hi);
   font-family: var(--display);
   font-size: 20px;
   display: grid;
@@ -1685,15 +1911,15 @@ button.branch {
 
 .contract-body button.primary {
   align-items: center;
-  color: #1d140a;
-  border-color: #8a6c34;
-  background: linear-gradient(180deg, #ecd394, #c49c4a);
-  box-shadow: inset 0 1px 0 rgba(255, 246, 220, 0.6), inset 0 0 0 3px rgba(203, 165, 82, 0.9), inset 0 0 0 4px rgba(70, 46, 14, 0.3);
+  color: #1e0f07;
+  border-color: #7a4a2e;
+  background: linear-gradient(180deg, #e6ad84, #a8653f);
+  box-shadow: inset 0 1px 0 rgba(255, 246, 220, 0.6), inset 0 0 0 3px rgba(184, 115, 74, 0.9), inset 0 0 0 4px rgba(70, 46, 14, 0.3);
 }
 
 .contract-body button.danger {
   align-items: center;
-  background: linear-gradient(180deg, #9a3236, #6e1f22);
+  background: linear-gradient(180deg, #9a3428, #661b16);
   color: #fbeedd;
   border-color: var(--oxblood);
   box-shadow: inset 0 0 0 3px rgba(154, 50, 54, 0.9), inset 0 0 0 4px rgba(255, 210, 190, 0.2);
@@ -1801,7 +2027,7 @@ button.branch {
   width: 100%;
   color: var(--ink);
   background: var(--grain), linear-gradient(180deg, #f3e9cf, #e2d4b2);
-  border: 1px solid #8a6c34;
+  border: 1px solid #7a4a2e;
   border-radius: 1px;
   box-shadow: inset 0 0 0 4px #f3e9cf, inset 0 0 0 5px rgba(110, 85, 40, 0.45), 0 18px 40px rgba(0, 0, 0, 0.6);
   padding: 24px 22px 20px;
@@ -1880,7 +2106,7 @@ button.branch {
 }
 
 .feedback-scale button.picked {
-  background: var(--brass);
+  background: var(--copper);
   color: var(--ink);
 }
 
@@ -1896,10 +2122,10 @@ button.branch {
   font-style: italic;
   font-size: 16px;
   font-weight: 600;
-  color: var(--vellum);
-  background: linear-gradient(180deg, #2a2019, #18130f);
-  border: 1px solid var(--brass-lo);
-  box-shadow: inset 0 0 0 3px #18130f, inset 0 0 0 4px var(--rule-faint), 0 10px 24px rgba(0, 0, 0, 0.5);
+  color: var(--bone);
+  background: linear-gradient(180deg, #241d19, #161210);
+  border: 1px solid var(--copper-lo);
+  box-shadow: inset 0 0 0 3px #161210, inset 0 0 0 4px var(--rule-faint), 0 10px 24px rgba(0, 0, 0, 0.5);
 }
 
 /* ───────────────────────── Motion preferences ───────────────────────── */
@@ -2068,7 +2294,7 @@ body.reduce-motion button.confirm {
     grid-row: 2;
     overflow-y: auto;
     border-top: none;
-    border-left: 1px solid var(--brass-lo);
+    border-left: 1px solid var(--copper-lo);
   }
 
   #spell-row {
@@ -2090,52 +2316,54 @@ body.reduce-motion button.confirm {
   }
 }
 
-/* ───────── Discipline motifs (visual direction v1.2): faint engraved textures, readable in greyscale ───────── */
+/* ───────── Discipline emblems (Ashen Reliquary): the painted emblem sits in each slip's corner ───────── */
 
 button.spell,
 button.branch {
-  background-repeat: no-repeat;
-  background-position: right -6px bottom -8px, 0 0;
-  background-size: 64px 64px, auto;
+  --fill: linear-gradient(180deg, color-mix(in srgb, var(--disc) 30%, #141110), #110e0d 85%);
+  --edge: color-mix(in srgb, var(--disc) 70%, #000);
+  position: relative;
+  isolation: isolate;
 }
 
-/* Ember: firebrand hatching rising to the right. */
-button.spell[data-disc='Ember'],
-button.branch[data-disc='Ember'] {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23e08a6a' stroke-opacity='.28' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M10 60c6-10 2-18 10-26M22 62c5-9 3-16 9-23M34 62c4-8 2-13 7-19M46 60c3-6 2-10 6-14'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+/* The emblem: half out of the slip's lower right corner, dim enough that the name always wins. */
+button.spell::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -10px;
+  bottom: -12px;
+  width: 54px;
+  height: 54px;
+  background: center / contain no-repeat;
+  opacity: 0.5;
 }
 
-/* Thorn: angular bramble with binding rings. */
-button.spell[data-disc='Thorn'],
-button.branch[data-disc='Thorn'] {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%2385c2a8' stroke-opacity='.3' stroke-width='1.2' stroke-linejoin='round'%3E%3Cpath d='M4 58l12-10 6 6 12-14 6 6 12-14 8 4'/%3E%3Cpath d='M16 48l-2-6M34 40l-1-6M52 26l-3-5'/%3E%3Ccircle cx='22' cy='54' r='3'/%3E%3Ccircle cx='40' cy='46' r='3'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+button.spell[data-disc='Ember']::before {
+  background-image: url('/assets/emblems/ember.webp');
 }
 
-/* Veil: an ink wash and a faded double eye. */
-button.spell[data-disc='Veil'],
-button.branch[data-disc='Veil'] {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23c3b0ea' stroke-width='1.2'%3E%3Cpath stroke-opacity='.3' d='M14 40c6-8 12-11 18-11s12 3 18 11c-6 8-12 11-18 11s-12-3-18-11z'/%3E%3Cpath stroke-opacity='.14' d='M18 44c6-8 12-11 18-11s12 3 18 11c-6 8-12 11-18 11s-12-3-18-11z'/%3E%3Ccircle stroke-opacity='.3' cx='32' cy='40' r='4'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+button.spell[data-disc='Veil']::before {
+  background-image: url('/assets/emblems/veil.webp');
 }
 
-/* Mirror: refraction split symmetrically about a centre line. */
-button.spell[data-disc='Mirror'],
-button.branch[data-disc='Mirror'] {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%239fd0ec' stroke-opacity='.3' stroke-width='1.1'%3E%3Cpath d='M32 14v50M32 22l-14 14 14 14M32 22l14 14-14 14M24 30l-10 10 10 10M40 30l10 10-10 10'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(180deg, color-mix(in srgb, var(--disc) 24%, #15110e), #15110e 80%);
+button.spell[data-disc='Thorn']::before {
+  background-image: url('/assets/emblems/thorn.webp');
 }
 
-button.spell.armed {
-  background-blend-mode: normal;
+button.spell[data-disc='Mirror']::before {
+  background-image: url('/assets/emblems/mirror.webp');
 }
 
-/* Castable now: a brass notch in the slip's corner, in addition to full strength. */
+button.spell.unusable::before {
+  opacity: 0.25;
+}
+
+button.spell.armed::before {
+  opacity: 0.85;
+}
+
+/* Castable now: a copper notch in the slip's corner, in addition to full strength. */
 button.spell:not(.unusable)::after {
   content: '';
   position: absolute;
@@ -2143,19 +2371,21 @@ button.spell:not(.unusable)::after {
   right: 0;
   border-style: solid;
   border-width: 0 9px 9px 0;
-  border-color: transparent var(--brass-hi) transparent transparent;
+  border-color: transparent var(--copper-hi) transparent transparent;
 }
 
-button.spell {
-  position: relative;
+/* Larger contexts show the whole emblem: the spell list and evolution choices. */
+.emblem {
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.7));
 }
 
-/* Sigils in larger contexts sit on a struck medallion (after the v1.2 emblem frames). */
-.info-entry > .icon,
-.branch-name .icon {
-  box-sizing: content-box;
-  padding: 4px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--disc) 45%, #241c17), #120f0d 75%);
-  box-shadow: inset 0 0 0 1px rgba(196, 160, 82, 0.55), inset 0 0 0 3px #120f0d, inset 0 0 0 4px color-mix(in srgb, var(--disc) 50%, transparent);
+.info-entry > .emblem {
+  grid-row: span 3;
+  align-self: center;
+}
+
+.branch-name .emblem {
+  margin: -4px 0;
 }
